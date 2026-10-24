@@ -1,0 +1,132 @@
+doctype html
+html(lang="vi")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title NOC Network Control Center - EcoHub
+    link(rel="preconnect", href="https://fonts.googleapis.com")
+    link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin)
+    link(href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap", rel="stylesheet")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap", rel="stylesheet")
+    link(rel="stylesheet", href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css")
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+    link(rel="stylesheet", href="/assets/admin/style.css")
+  body
+    
+    //- Thẻ div bọc ngoài cùng
+    .app-container
+
+      // ================= SIDEBAR (Bên trái) =================
+      aside.admin-sidebar(id="adminSidebar")
+        a.admin-sidebar__brand(href="/admin")
+          i.fa-solid.fa-bolt
+          .admin-sidebar__brand-text
+            div.brand
+              strong EcoHub 
+              strong NOC
+            span Quản lý mạng lưới Hub
+
+        nav.admin-sidebar__menu
+          a.menu-item(
+            href="/admin",
+            class=(activePage === 'dashboard' ? 'active' : '')
+          )
+            i.fa-solid.fa-border-all
+            span Dashboard trung tâm
+          
+          a.menu-item(
+            href="/admin/hub/list",
+            class=(activePage === 'hub' ? 'active' : '')
+          )
+            i.fa-solid.fa-network-wired
+            span Quản lý mạng lưới Hub
+
+          a.menu-item(
+            href="/admin/vehicle/list",
+            class=(activePage === 'vehicle' ? 'active' : '')
+          )
+            i.fa-solid.fa-motorcycle
+            span Quản lý Phương tiện
+            
+          a.menu-item(
+            href="/admin/charging/port/list",
+            class=(activePage === 'charging-port' ? 'active' : '')
+          )
+            i.fa-solid.fa-charging-station
+            span Quản lý cổng sạc
+          
+          a.menu-item(
+            href="/admin/charging/schedule/smart",
+            class=(activePage === 'schedule' ? 'active' : '')
+          )
+            i.fa-solid.fa-clock-rotate-left
+            span Lịch sạc thông minh
+          
+          a.menu-item(
+            href="/admin/dispatch",
+            class=(activePage === 'dispatch' ? 'active' : '')
+          )
+            i.fa-solid.fa-shuffle
+            span Điều phối xe
+          
+          a.menu-item(
+            href="/admin/incident/manage",
+            class=(activePage === 'incident' ? 'active' : '')
+          )
+            i.fa-solid.fa-triangle-exclamation
+            span Quản lý sự cố
+          
+          a.menu-item(
+            href="/admin/simulation/demand/surging",
+            class=(activePage === 'simulation' ? 'active' : '')
+          )
+            i.fa-solid.fa-user-shield
+            span Mô phỏng What-If
+
+        .admin-sidebar__bottom
+          .admin-sidebar__user
+            .avatar OP
+            .user-info
+              strong Trực ban NOC
+              span Ca trực #02
+
+      //- Lớp nền mờ khi mở menu trên mobile
+      .sidebar-overlay(id="sidebarOverlay")
+
+      // ================= MAIN DASHBOARD (Bên phải) =================
+      main.dashboard
+        
+        // ---------- Header ----------
+        header.dashboard-header
+          .dashboard-header__left
+            //- Nút menu hamburger (chỉ hiện trên mobile)
+            button.mobile-menu-btn(id="menuToggle")
+              i.fa-solid.fa-bars
+            block titleName
+          
+          .dashboard-header__right
+            .status-badge
+              i.fa-solid.fa-circle
+              | Mobility Hubs Online
+            .time-display
+              i.fa-regular.fa-clock
+              | 14 : 32 : 18
+            button.notification-btn
+              i.fa-regular.fa-bell
+              span.badge-dot
+            .user-profile-header
+              .avatar-sm AM
+              span Nguyễn Minh Anh
+              i.fa-solid.fa-chevron-down
+
+        // ---------- Body ----------
+        block main
+
+    script(src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js")
+    script(src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+    script(src="/assets/admin/script.js")
+    script(src="/assets/admin/map.js")
+    script(src="/assets/admin/map-dashboard.js")
+      

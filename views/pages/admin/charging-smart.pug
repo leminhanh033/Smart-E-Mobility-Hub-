@@ -1,0 +1,279 @@
+extends ../../layouts/admin/default.pug
+
+block titleName
+  h1.dashboard-header__title Lịch sạc thông minh
+
+block main 
+  .smart-charging-page.container
+    
+    // =========================================
+    // KHU VỰC CHỌN HUB
+    // =========================================
+    .hub-selector-card
+      div.column
+        label.hub-label MOBILITY HUB
+        .hub-select-wrapper
+          select.form-control
+            option HUB_BK_CS2 - ĐH Bách Khoa CS2
+      
+      .auto-optimize-status
+        i.fa-regular.fa-circle-check.text-green
+        span Lịch tự động đã được tối ưu lúc 14:32
+
+    // =========================================
+    // HÀNG THỐNG KÊ (STATS)
+    // =========================================
+    .stats-row
+      .stat-box
+        span.stat-label Tổng cổng sạc
+        .stat-value 10
+        span.stat-sub AC: 8 &bull; DC: 2
+      
+      .stat-box
+        span.stat-label Cổng khả dụng
+        .stat-value.text-green 8
+        span.stat-sub 2 cổng đang sử dụng / bảo trì
+      
+      .stat-box
+        span.stat-label Xe đang chờ sạc
+        .stat-value 5
+        span.stat-sub Xếp theo mức ưu tiên
+      
+      .stat-box
+        span.stat-label Hàng chờ khẩn cấp
+        .stat-value.text-red 1
+        span.stat-sub Có phương tiện pin dưới 10%
+
+    // =========================================
+    // KHU VỰC CHÍNH (2 CỘT)
+    // =========================================
+    .main-grid
+      // ================= CỘT TRÁI: XE ĐANG CHỜ SẠC =================
+      .col-left
+        .card
+          .card-header
+            .header-left
+              h2.card-title Xe đang chờ sạc
+              p.card-subtitle Ưu tiên theo mức pin và lịch sử dụng gần nhất. Kéo thả để can thiệp thủ công.
+            .header-right
+              span.badge-count 5 phương tiện
+
+          .card-body.vehicle-queue-list
+            //- Xe 1
+            .queue-item
+              .drag-handle
+                i.fa-solid.fa-grip-vertical
+              .item-index 1
+              .item-info
+                .item-title
+                  strong EV-BK-042
+                  span.priority-badge.bg-red KHẨN CẤP
+                .item-desc VinFast Feliz S
+                .item-meta
+                  span Pin: 
+                    strong.text-red 8%
+                  span Sử dụng tiếp: 
+                    strong 15:30
+                  span Chờ: 
+                    strong 12 phút
+              .item-port
+                strong CH-02
+                span 14:35 - 15:55
+
+            //- Xe 2
+            .queue-item
+              .drag-handle
+                i.fa-solid.fa-grip-vertical
+              .item-index 2
+              .item-info
+                .item-title
+                  strong EV-BK-018
+                  span.priority-badge.bg-orange ƯU TIÊN CAO
+                .item-desc VinFast Evo 200
+                .item-meta
+                  span Pin: 
+                    strong.text-orange 16%
+                  span Sử dụng tiếp: 
+                    strong 17:00
+                  span Chờ: 
+                    strong 9 phút
+              .item-port
+                strong CH-04
+                span 14:40 - 15:25
+
+            //- Xe 3
+            .queue-item
+              .drag-handle
+                i.fa-solid.fa-grip-vertical
+              .item-index 3
+              .item-info
+                .item-title
+                  strong EV-BK-051
+                  span.priority-badge.bg-orange ƯU TIÊN CAO
+                .item-desc VinFast Feliz S
+                .item-meta
+                  span Pin: 
+                    strong.text-orange 18%
+                  span Sử dụng tiếp: 
+                    strong 18:15
+                  span Chờ: 
+                    strong 17 phút
+              .item-port
+                strong CH-05
+                span 15:20 - 16:05
+
+            //- Xe 4
+            .queue-item
+              .drag-handle
+                i.fa-solid.fa-grip-vertical
+              .item-index 4
+              .item-info
+                .item-title
+                  strong EV-BK-063
+                  span.priority-badge.bg-green BÌNH THƯỜNG
+                .item-desc EcoBike Sport
+                .item-meta
+                  span Pin: 
+                    strong 32%
+                  span Sử dụng tiếp: 
+                    strong Không có
+                  span Chờ: 
+                    strong 6 phút
+              .item-port
+                span.text-muted Đang chờ phân bổ
+
+            //- Xe 5
+            .queue-item
+              .drag-handle
+                i.fa-solid.fa-grip-vertical
+              .item-index 5
+              .item-info
+                .item-title
+                  strong EV-BK-071
+                  span.priority-badge.bg-green BÌNH THƯỜNG
+                .item-desc EcoBike City
+                .item-meta
+                  span Pin: 
+                    strong 39%
+                  span Sử dụng tiếp: 
+                    strong Không có
+                  span Chờ: 
+                    strong 4 phút
+              .item-port
+                span.text-muted Đang chờ phân bổ
+
+      // ================= CỘT PHẢI: LỊCH CỔNG SẠC =================
+      .col-right
+        .card
+          .card-header
+            .header-left
+              h2.card-title Lịch cổng sạc
+              p.card-subtitle Phân bổ tự động phương tiện vào các cổng sạc.
+            .header-right
+              span.badge-count 10 cổng
+
+          .card-body.port-schedule-list
+            //- Cổng 1
+            .port-item
+              .port-info
+                strong CH-01
+                span AC 3.3kW
+              .port-progress
+                .progress-header
+                  span 14:00 - 14:45
+                  span.status-text.text-blue ĐANG SẠC
+                .progress-track
+                  .progress-fill.bg-blue(style="width: 60%")
+              
+            //- Cổng 2
+            .port-item
+              .port-info
+                strong CH-02
+                span AC 3.3kW
+              .port-progress
+                .progress-header
+                  span 14:35 - 15:20
+                  span.status-text.text-green ĐÃ LÊN LỊCH
+                .progress-track
+                  .progress-fill.bg-green(style="width: 40%")
+
+            //- Cổng 3
+            .port-item
+              .port-info
+                strong CH-03
+                span.text-red Không khả dụng
+              .port-progress
+                .progress-header
+                  span ---
+                  span.status-text.text-red BẢO TRÌ
+                .progress-track
+                  .progress-fill.bg-red(style="width: 100%")
+
+            //- Cổng 4
+            .port-item
+              .port-info
+                strong CH-04
+                span AC 3.3kW
+              .port-progress
+                .progress-header
+                  span 14:40 - 15:25
+                  span.status-text.text-green ĐÃ LÊN LỊCH
+                .progress-track
+                  .progress-fill.bg-green(style="width: 30%")
+
+            //- Cổng 5
+            .port-item
+              .port-info
+                strong CH-05
+                span AC 3.3kW
+              .port-progress
+                .progress-header
+                  span 15:20 - 16:05
+                  span.status-text.text-green ĐÃ LÊN LỊCH
+                .progress-track
+                  .progress-fill.bg-green(style="width: 15%")
+
+            //- Cổng 6
+            .port-item
+              .port-info
+                strong CH-06
+                span AC 3.3kW
+              .port-progress
+                .progress-header
+                  span Chưa phân bổ
+                  span.status-text.text-muted KHẢ DỤNG
+                .progress-track
+                  .progress-fill.bg-gray(style="width: 0%")
+
+            //- Cổng 7
+            .port-item
+              .port-info
+                strong CH-07
+                span AC 3.3kW
+              .port-progress
+                .progress-header
+                  span Chưa phân bổ
+                  span.status-text.text-muted KHẢ DỤNG
+                .progress-track
+                  .progress-fill.bg-gray(style="width: 0%")
+
+            //- Khung Cảnh báo
+            .warning-box
+              i.fa-solid.fa-triangle-exclamation
+              p
+                strong Cảnh báo tài nguyên sạc.
+                |  EV-BK-063 và EV-BK-071 chưa được phân bổ cổng. Hệ thống sẽ tiếp tục xếp lịch khi tài nguyên khả dụng.
+
+    // =========================================
+    // THANH HÀNH ĐỘNG (FOOTER)
+    // =========================================
+    .page-actions
+      button.btn-secondary(type="button")
+        i.fa-solid.fa-rotate
+        | Cập nhật dữ liệu
+      button.btn-dark(type="button")
+        i.fa-solid.fa-wand-magic-sparkles
+        | Khôi phục lịch tự động
+      button.btn-primary(type="button")
+        i.fa-solid.fa-floppy-disk
+        | Lưu thay đổi

@@ -1,0 +1,277 @@
+extends ../../layouts/admin/default.pug
+
+block titleName
+  h1.dashboard-header__title Quản lý Cổng sạc
+
+block main 
+  .charging-port-list.container
+
+    // =========================================
+    // THANH CHỌN HUB & NÚT THÊM MỚI
+    // =========================================
+    .port-hub-toolbar
+      .port-hub-toolbar__left
+        label.form-label Mobility Hub đang quản lý
+        p.port-hub-toolbar__desc Chọn Hub để xem và quản lý các cổng sạc thuộc Hub đó.
+      .port-hub-toolbar__right
+        select.form-select.hub-selector
+          option HUB_BK_CS2 - ĐH Bách Khoa CS2
+          option HUB_METRO - Ga Metro ĐHQG
+          option HUB_UIT_IU - ĐH CNTT & Quốc Tế
+        button.btn-add-port(type="button")
+          i.fa-solid.fa-plus
+          span Thêm cổng sạc
+
+    // =========================================
+    // THỐNG KÊ (STATS)
+    // =========================================
+    .port-stats-grid
+      .port-stat-card
+        span.port-stat-card__label TỔNG CỔNG SẠC
+        .port-stat-card__value 10
+        span.port-stat-card__sub AC: 8 &bull; DC: 2
+      
+      .port-stat-card.port-stat-card--ready
+        span.port-stat-card__label SẴN SÀNG
+        .port-stat-card__value 7
+        span.port-stat-card__sub Có thể phân bổ
+        
+      .port-stat-card.port-stat-card--charging
+        span.port-stat-card__label ĐANG SẠC
+        .port-stat-card__value 1
+        span.port-stat-card__sub Có phiên hoạt động
+        
+      .port-stat-card.port-stat-card--error
+        span.port-stat-card__label BẢO TRÌ / LỖI
+        .port-stat-card__value 2
+        span.port-stat-card__sub Không khả dụng
+
+    // =========================================
+    // THANH CÔNG CỤ (Tìm kiếm, Bộ lọc)
+    // =========================================
+    .port-toolbar
+      .port-toolbar__left
+        .search-box
+          i.fa-solid.fa-magnifying-glass
+          input(type="text", placeholder="Tìm theo mã cổng sạc (VD: CH-01)...")
+        
+        .filter-selects
+          select.form-select
+            option Tất cả loại
+            option AC
+            option DC
+          
+          select.form-select
+            option Tất cả trạng thái
+            option Sẵn sàng
+            option Đang sạc
+            option Bảo trì
+            option Lỗi
+          
+          button.btn-sync(type="button")
+            i.fa-solid.fa-rotate
+            | Đặt lại
+
+    // =========================================
+    // BẢNG DỮ LIỆU CỔNG SẠC
+    // =========================================
+    .port-table-wrapper
+      .table-header
+        h3.table-title Danh sách cổng sạc
+        span.table-badge HUB_BK_CS2 &bull; 10 cổng
+
+      table.port-table
+        thead
+          tr
+            th #
+            th CỔNG SẠC
+            th LOẠI
+            th CÔNG SUẤT
+            th TRẠNG THÁI
+            th PHIÊN HIỆN TẠI
+            th CẬP NHẬT
+            th THAO TÁC
+
+        tbody
+          if listPorts && listPorts.length > 0
+            each port, index in listPorts
+              tr
+                td #{index + 1}
+                
+                td
+                  .port-info
+                    .port-icon
+                      i.fa-solid.fa-bolt
+                    .port-text
+                      strong= port.portCode
+                      span= port.hubName || "HUB_BK_CS2"
+                
+                td= port.type
+                
+                td #{port.power} kW
+                
+                td
+                  if port.status === 'active'
+                    span.badge.badge--green
+                      i.fa-solid.fa-circle
+                      | Sẵn sàng
+                  else if port.status === 'charging'
+                    span.badge.badge--orange
+                      i.fa-solid.fa-circle
+                      | Đang sạc
+                  else if port.status === 'maintenance'
+                    span.badge.badge--blue
+                      i.fa-solid.fa-circle
+                      | Bảo trì
+                  else if port.status === 'inactive'
+                    span.badge.badge--orange
+                      i.fa-solid.fa-circle
+                      | Ngừng hoạt động
+                  else
+                    span.badge.badge--red
+                      i.fa-solid.fa-circle
+                      | Lỗi
+                
+                td
+                  if port.status === 'charging' && port.session
+                    .session-info.session-info--active
+                      strong= port.session.vehicleId
+                      span= port.session.time
+                  else
+                    span.session-info ---
+                
+                td.timestamp= port.updatedAtFormat
+                
+                td.inrow 
+                  if port.status === 'charging'
+                    button.btn-detail.btn-warning(type="button", data-id=port._id)
+                      | Dừng sạc
+                  
+                  button.btn-detail.btn-edit-port(type="button", data-id=port._id)
+                    i.fa-solid.fa-pen
+                    | Sửa
+          else
+            //- Trường hợp không có dữ liệu
+            tr
+              td(colspan="8", style="text-align: center; padding: 20px;") Không có dữ liệu cổng sạc.
+    // =========================================
+    // PHÂN TRANG
+    // =========================================
+    .port-pagination
+      .pagination-info
+        | Hiển thị 1 - 5 / 10 cổng sạc
+      
+      .pagination-controls
+        button.btn-page(type="button", disabled)
+          i.fa-solid.fa-chevron-left
+        button.btn-page.active(type="button") 1
+        button.btn-page(type="button") 2
+        button.btn-page(type="button") 3
+        button.btn-page(type="button")
+          i.fa-solid.fa-chevron-right
+
+        .page-jump
+          select.form-select-sm
+            option 10
+            option 20
+          span / trang
+        
+        .page-jump-input
+          span Đến trang
+          input(type="number", value="1")
+
+    // =========================================
+    // MODAL THÊM CỔNG SẠC MỚI
+    // =========================================
+    .modal-overlay(id="addPortModal")
+      .modal-container
+        .modal-header
+          .modal-header__title
+            h2 Thêm cổng sạc mới
+          button.modal-close(id="closePortModalBtn")
+            i.fa-solid.fa-xmark
+
+        .modal-body
+          form#create-port
+            .form-group
+              label.form-label MOBILITY HUB
+              select#hubID.form-control()
+                each hub in hubList
+                  option(value=hub._id) #{hub.name}
+
+            .form-row-2
+              .form-group
+                label.form-label MÃ CỔNG <span class="text-red">*</span>
+                input#portCode.form-control(type="text", placeholder="VD: CH-11")
+              .form-group
+                label.form-label LOẠI CỔNG <span class="text-red">*</span>
+                select#type.form-control
+                  option AC
+                  option DC
+
+            .form-row-2
+              .form-group
+                label.form-label CÔNG SUẤT ĐỊNH MỨC (kW) <span class="text-red">*</span>
+                input#power.form-control(type="number", value="3.3", step="0.1")
+              .form-group
+                label.form-label TRẠNG THÁI
+                select#status.form-control
+                  option(value="active") Sẵn sàng
+                  option(value="charging") Đang sạc
+                  option(value="maintenance") Bảo trì
+                  option(value="error") Lỗi
+                  option(value="inactive") Ngừng hoạt động
+
+        .modal-footer
+          button.btn-cancel(id="cancelPortModalBtn", type="button") Hủy
+          button.btn-submit(type="submit", form="create-port") Thêm cổng sạc
+  
+    // =========================================
+    // MODAL CHỈNH SỬA CỔNG SẠC (EDIT PORT)
+    // =========================================
+    .modal-overlay(id="editPortModal")
+      .modal-container
+        //- Header
+        .modal-header
+          .modal-header__title
+            h2 Chỉnh sửa cổng sạc
+          button.modal-close(id="closePortEditModalBtn")
+            i.fa-solid.fa-xmark
+
+        //- Body (Form)
+        .modal-body
+          form#edit-port
+            .form-group
+              label.form-label MOBILITY HUB
+              select#hubID.form-control()
+                each hub in hubList
+                  option(value=hub._id) #{hub.name}
+
+            .form-row-2
+              .form-group
+                label.form-label MÃ CỔNG <span class="text-red">*</span>
+                //- Thêm ID để JS đắp dữ liệu
+                input#portCode.form-control(type="text", placeholder="CH-11")
+              .form-group
+                label.form-label LOẠI CỔNG <span class="text-red">*</span>
+                select#type.form-control
+                  option(value="AC") AC
+                  option(value="DC") DC
+
+            .form-row-2
+              .form-group
+                label.form-label CÔNG SUẤT ĐỊNH MỨC (kW) <span class="text-red">*</span>
+                input#power.form-control(type="number", placeholder="3.3", step="0.1")
+              .form-group
+                label.form-label TRẠNG THÁI
+                select#status.form-control
+                  option(value="active") Sẵn sàng
+                  option(value="charging") Đang sạc
+                  option(value="maintenance") Bảo trì
+                  option(value="error") Lỗi
+                  option(value="inactive") Ngừng hoạt động
+
+        //- Footer (Nút bấm)
+        .modal-footer
+          button.btn-cancel(id="cancelPortEditModalBtn", type="button") Hủy
+          button.btn-submit(type="submit", form="edit-port" ) Lưu thay đổi

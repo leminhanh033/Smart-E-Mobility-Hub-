@@ -1,0 +1,734 @@
+:root {
+  --primary-color: #00d67d;
+  --primary-hover: #00b86b;
+  --bg-color: #f4f7f9;
+  --card-bg: #ffffff;
+  --text-main: #1a202c;
+  --text-muted: #718096;
+  --text-light: #a0aec0;
+  --border-color: #edf2f7;
+  --input-bg: #f8fafc;
+  --radius-lg: 16px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* --- SIDEBAR (Bên trái) --- */
+.sidebar {
+  width: 32%;
+  height: 100vh;
+  background-color: var(--card-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  border-right: 1px solid var(--border-color);
+  position: fixed;
+}
+
+.sidebar .brand {
+  text-align: center;
+}
+
+.sidebar .brand__logo {
+  width: 110px;
+  height: 110px;
+  background-color: #e6fdf3;
+  border-radius: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.sidebar .brand__logo i {
+  font-size: 52px;
+  color: var(--primary-color);
+}
+
+.sidebar .brand__title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.sidebar .brand__title .highlight {
+  color: var(--primary-color);
+}
+
+.sidebar .brand__subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 260px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* --- MAIN CONTENT (Bên phải) --- */
+.main-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  margin-left: 32%;
+}
+
+/* --- REGISTER BLOCK --- */
+.register {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 460px;
+  padding: 32px 36px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  position: relative;
+}
+
+/* Nút quay lại */
+.register .btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #e6fdf3;
+  color: #00a862;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+}
+
+.register .btn-back:hover {
+  background-color: #d1fae5;
+}
+
+.register .register__title,
+.register .card__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 24px;
+}
+
+/* --- FORM ELEMENTS --- */
+.register .form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.register .form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.register .form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.register .form__label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4a5568;
+  letter-spacing: 0.5px;
+}
+
+.register .input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.register .input-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.register .input-icon-right {
+  position: absolute;
+  right: 14px;
+  color: var(--text-light);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.register .form__input {
+  width: 100%;
+  height: 42px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0 38px;
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.register .form__input:focus {
+  border-color: var(--primary-color);
+  background-color: #fff;
+}
+
+.register .form__input::placeholder {
+  color: var(--text-light);
+}
+
+/* Checkbox */
+.register .form__checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.register .form__checkbox input[type="checkbox"] {
+  accent-color: var(--primary-color);
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.register .form__checkbox label {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.register .form__checkbox a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Submit Button */
+.register .btn-submit {
+  width: 100%;
+  height: 44px;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.register .btn-submit:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Divider */
+.register .divider {
+  text-align: center;
+  position: relative;
+  margin: 8px 0;
+}
+
+.register .divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+.register .divider span {
+  position: relative;
+  background-color: var(--card-bg);
+  padding: 0 12px;
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+/* OTP Button */
+.register .btn-otp {
+  width: 100%;
+  height: 42px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.register .btn-otp:hover {
+  background-color: #edf2f7;
+}
+
+.register .btn-otp i {
+  color: var(--primary-color);
+  font-size: 14px;
+}
+
+/* Footer của Register (khớp với class trong pug: .form__footer) */
+.register .form__footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.register .form__footer p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.register .form__footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register .form__footer small {
+  font-size: 10px;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 850px) {
+  .container {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    padding: 30px 20px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .register .form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* --- RESET PASSWORD BLOCK --- */
+.reset-password {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 460px;
+  padding: 32px 36px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  position: relative;
+}
+
+/* Nút quay lại */
+.reset-password .btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #e6fdf3;
+  color: #00a862;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+}
+
+.reset-password .btn-back:hover {
+  background-color: #d1fae5;
+}
+
+/* Header (Icon + Title) */
+.reset-password .reset-password__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.reset-password .reset-password__icon {
+  width: 48px;
+  height: 48px;
+  background-color: #e6fdf3;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.reset-password .reset-password__icon i {
+  color: var(--primary-color);
+  font-size: 20px;
+}
+
+.reset-password .reset-password__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+  margin: 0;
+}
+
+/* --- FORM ELEMENTS --- */
+.reset-password .form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reset-password .form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reset-password .form__label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4a5568;
+  letter-spacing: 0.5px;
+}
+
+.reset-password .input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.reset-password .input-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.reset-password .input-icon-right {
+  position: absolute;
+  right: 14px;
+  color: var(--text-light);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Icon check xanh */
+.reset-password .input-icon-right.success-icon {
+  color: var(--primary-color);
+  cursor: default;
+}
+
+.reset-password .form__input {
+  width: 100%;
+  height: 42px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0 38px;
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.reset-password .form__input:focus {
+  border-color: var(--primary-color);
+  background-color: #fff;
+}
+
+.reset-password .form__input::placeholder {
+  color: var(--text-light);
+}
+
+/* Nút Gửi OTP */
+.reset-password .input-wrapper--otp .form__input {
+  padding-right: 75px; /* Chừa chỗ cho nút Gửi OTP */
+}
+
+.reset-password .btn-send-otp {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+.reset-password .btn-send-otp:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Submit Button */
+.reset-password .btn-submit {
+  width: 100%;
+  height: 44px;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.reset-password .btn-submit:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Footer của Form */
+.reset-password .form__footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.reset-password .form__footer p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.reset-password .form__footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.reset-password .form__footer small {
+  font-size: 10px;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 850px) {
+  .reset-password {
+    padding: 24px 20px;
+  }
+}
+
+/* --- END RESET PASSWORD BLOCK --- */
+/* --- LOGIN BLOCK --- */
+.login {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 460px;
+  padding: 40px 36px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  position: relative;
+}
+
+.login .login__title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+/* --- FORM ELEMENTS --- */
+.login .form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login .form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login .form__label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4a5568;
+  letter-spacing: 0.5px;
+}
+
+.login .input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login .input-icon-right {
+  position: absolute;
+  right: 14px;
+  color: var(--text-light);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.login .form__input {
+  width: 100%;
+  height: 42px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0 16px; /* Không có icon bên trái nên padding đều 2 bên */
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+/* Riêng ô mật khẩu cần chừa chỗ cho icon mắt */
+.login .form__group:nth-child(2) .form__input {
+  padding-right: 38px;
+}
+
+.login .form__input:focus {
+  border-color: var(--primary-color);
+  background-color: #fff;
+}
+
+.login .form__input::placeholder {
+  color: var(--text-light);
+}
+
+/* Quên mật khẩu */
+.login .form__forgot-password {
+  text-align: right;
+  margin-top: -8px; /* Kéo lên gần ô mật khẩu */
+  margin-bottom: 4px;
+}
+
+.login .form__forgot-password a {
+  font-size: 12px;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.login .form__forgot-password a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Submit Button */
+.login .btn-submit {
+  width: 100%;
+  height: 44px;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.login .btn-submit:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Divider */
+.login .divider {
+  text-align: center;
+  position: relative;
+  margin: 12px 0;
+}
+
+.login .divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+.login .divider span {
+  position: relative;
+  background-color: var(--card-bg);
+  padding: 0 12px;
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* Footer của Form */
+.login .form__footer {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.login .form__footer p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.login .form__footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 850px) {
+  .login {
+    padding: 32px 24px;
+  }
+}
+
+.just-validate-error-label{
+  position: absolute;
+  top:45px;
+  left:0;
+  font-size:12px;
+}
+
+.register .form__checkbox .just-validate-error-label{
+  position:absolute;
+  top: 510px;
+  left:36px;
+}

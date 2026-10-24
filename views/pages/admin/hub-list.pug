@@ -1,0 +1,341 @@
+extends ../../layouts/admin/default.pug
+
+block titleName
+  h1.dashboard-header__title Quản lý Hệ thống Mạng lưới Mobility Hubs
+
+block main 
+  //- Đã đổi thành .hub-list
+  .hub-list.container
+
+    // =========================================
+    // THANH CÔNG CỤ (Lọc, Tìm kiếm, Thêm mới)
+    // =========================================
+    .hub-controls
+      .hub-controls__left
+        .search-box
+          i.fa-solid.fa-magnifying-glass
+          input(type="text", placeholder="Tìm theo Hub ID hoặc tên Hub...")
+      
+      .hub-controls__right
+        .status-filter-wrapper
+          .status-filter-label Trạng thái hoạt động
+          
+          .status-filter-group
+            button.status-btn.active(type="button") Tất cả
+            
+            button.status-btn(type="button")
+              span.dot.dot--green
+              | Hoạt động
+              
+            button.status-btn(type="button")
+              span.dot.dot--orange
+              | Quá tải
+              
+            button.status-btn(type="button")
+              span.dot.dot--red
+              | Ngừng hoạt động
+                
+        button.btn-add-hub(type="button")
+          i.fa-solid.fa-plus
+          | Thêm Hub mới
+
+    // =========================================
+    // BẢNG DỮ LIỆU
+    // =========================================
+    .hub-table-wrapper
+      table.hub-table
+        thead
+          tr
+            th #
+            th HUB ID
+            th TÊN HUB & VỊ TRÍ
+            th ĐẦU ĐỔ XE
+            th CỔNG SẠC
+            th TỌA ĐỘ GPS
+            th TRẠNG THÁI
+            th THAO TÁC
+
+
+        tbody
+          //- Duyệt mảng listHub. Nếu mảng rỗng, có thể thêm phần hiển thị "Không có dữ liệu"
+          if listHub && listHub.length > 0
+            each hub, index in listHub
+              tr
+                //- 1. Số thứ tự
+                td #{index + 1}
+                
+                //- 2. Hub ID
+                td.hub-id= hub.hubID
+                
+                //- 3. Tên và Địa chỉ
+                td
+                  .hub-name= hub.name
+                  .hub-address= hub.address
+                
+                //- 4. Đầu đổ xe (Tính toán động)
+                td
+                  .capacity-info
+                    strong #{hub.parkingNumber} chỗ
+                    .capacity-details
+                      span.text-red Đỗ #{hub.parkingUsed}
+                      span &bull;
+                      //- Tính số chỗ trống = Tổng - Đã đỗ
+                      span.text-green Trống #{hub.parkingNumber - hub.parkingUsed}
+                    
+                    //- Tính phần trăm thanh tiến trình
+                    //- (Có thể thêm logic đổi màu bg--orange nếu % > 80)
+                    - var percent = Math.round((hub.parkingUsed / hub.parkingNumber) * 100) || 0;
+                    - var barColor = percent >= 80 ? 'bg--orange' : 'bg--green';
+                    .progress-mini
+                      .progress-mini__fill(class=barColor, style=`width: ${percent}%`)
+                
+                //- 5. Cổng sạc
+                td
+                  .charging-info
+                    strong #{hub.parkingUsed} / #{hub.chargingUsed}
+                    span.charging-sub (Đỗ #{hub.parkingUsed} / Đang sạc #{hub.chargingUsed})
+                
+                //- 6. Tọa độ GPS
+                td.gps-coord= hub.gps
+                
+                //- 7. Trạng thái (Badge)
+                td
+                  if hub.status === 'active'
+                    span.badge.badge--green Hoạt động
+                  else if hub.status === 'overload'
+                    span.badge.badge--orange Quá tải
+                  else if hub.status === 'maintenance'
+                    span.badge.badge--orange Đang bảo trì
+                  else if hub.status === 'inactive'
+                    span.badge.badge--red Ngừng hoạt động
+                  else 
+                    span.badge.badge--green= hub.status
+                
+                //- 8. Thao tác
+                td
+                  .action-group
+                    button.btn-edit(type="button", data-id=hub.id )
+                      i.fa-solid.fa-pen
+                      | Sửa
+                    label.toggle-switch
+                      //- Tự động check nếu trạng thái không phải bảo trì
+                      input(type="checkbox", checked=(hub.turnOn == true), id=hub.id)
+                      span.slider
+
+             
+          else
+            tr
+              td(colspan="8", style="text-align: center; padding: 20px;") Không có dữ liệu Hub nào.
+
+    // =========================================
+    // CẢNH BÁO CHÂN TRANG
+    // =========================================
+    .warning-banner
+      .warning-content
+        i.fa-solid.fa-triangle-exclamation
+        div
+          strong Quy tác ngoại lệ 2 (Rule Exception 2)
+          p Hệ thống từ chối tắt (Disable) Hub nếu còn phiên sạc hoặc lượt thuê xe đang chạy
+      .warning-actions
+        button.btn-text(type="button") Xem chi tiết
+        button.btn-close(type="button")
+          i.fa-solid.fa-xmark
+
+    // =========================================
+    // PHÂN TRANG
+    // =========================================
+    .pagination-footer
+      .pagination-info
+        | Tổng cộng: 
+        strong #{listHub.length} Mobility Hubs
+      
+      .pagination-controls
+        .page-size
+          span Hiển thị
+          select
+            option 10
+            option 20
+            option 50
+          span / trang
+        
+        .page-nav
+          span Trang 1 / 1
+          button.btn-page(type="button", disabled)
+            i.fa-solid.fa-chevron-left
+          button.btn-page.btn-page--active(type="button") 1
+          button.btn-page(type="button", disabled)
+            i.fa-solid.fa-chevron-right
+    // =========================================
+    // MODAL THÊM HUB MỚI
+    // =========================================
+    .modal-overlay(id="addHubModal")
+      .modal-container
+        //- Header
+        .modal-header
+          .modal-header__title
+            h2 Thêm Mobility Hub mới
+            p Nhập thông tin cơ bản và cấu hình ban đầu cho Hub mới.
+          button.modal-close(id="closeModalBtn")
+            i.fa-solid.fa-xmark
+
+        //- Body (Form)
+        .modal-body
+          form#create-hub
+            .form-group
+              label.form-label Hub ID
+              input#hubID.form-control(type="text", placeholder="Ví dụ: HUB_NEW_01")
+            
+            .form-group
+              label.form-label Tên hiển thị
+              input#name.form-control(type="text", placeholder="Ví dụ: Hub Metro")
+            
+            .form-group
+              label.form-label Địa điểm
+              .input-with-icon
+                i.fa-solid.fa-magnifying-glass
+                input#address.form-control(type="text", placeholder="Tìm địa chỉ hoặc khu vực")
+            
+            .form-group
+              label.form-label Tọa độ GPS
+              .input-with-action
+                input#gpsInput.form-control(type="text", placeholder="Chưa xác định")
+                button.btn-select-map.js-open-map(type="button" data-target="add")
+                  i.fa-solid.fa-location-dot
+                  | Chọn trên map
+            
+            //- Hàng 3 cột
+            .form-row-3
+              .form-group
+                label.form-label Bãi đỗ xe
+                input#parkingNumber.form-control(type="number", value="25")
+              .form-group
+                label.form-label Cổng sạc AC
+                input#ACNumber.form-control(type="number", value="8")
+              .form-group
+                label.form-label Cổng sạc DC
+                input#DCNumber.form-control(type="number", value="2")
+
+        //- Footer (Nút bấm)
+        .modal-footer
+          button.btn-cancel(id="cancelModalBtn", type="button") Hủy
+          button.btn-submit#hubCreateButton(type="submit", form="create-hub") Thêm Hub
+        
+        // =========================================
+        // MODAL BẢN ĐỒ (Ẩn mặc định)
+        // =========================================
+        .map-modal-overlay#mapModalOverlay
+          .map-modal-content
+            .map-modal-header
+              h3 Chọn tọa độ trên bản đồ
+              button.btn-close-map#btnCloseMap
+                i.fa-solid.fa-xmark
+            
+            .map-modal-body
+              //- Thẻ div chứa bản đồ Leaflet
+              #mapPicker(style="width: 100%; height: 400px; border-radius: 8px;")
+              
+            .map-modal-footer
+              button.btn-confirm-map#btnConfirmMap(type="button") Xác nhận vị trí
+
+    // =========================================
+    // MODAL chỉnh sửa
+    // =========================================
+    .modal-overlay(id="editHubModal")
+      .modal-container
+        //- Header
+        .modal-header
+          .modal-header__title
+            h2 Chỉnh sửa Mobility Hub 
+          button.modal-close(id="closeModalBtnEditEdit")
+            i.fa-solid.fa-xmark
+
+        //- Body (Form)
+        .modal-body
+          form#edit-hub
+            .form-group.displayNone
+              input#dataID(value="${hub.id}")
+            .form-group
+              label.form-label Hub ID
+              input#hubIDEdit.form-control(
+                type="text"
+                )
+            .form-group
+              label.form-label Tên hiển thị
+              input#nameEdit.form-control(
+                type="text"
+                )
+            .form-group
+              label.form-label Trạng thái
+              select#statusEdit.form-control(type="text")
+                option(
+                  value="active"
+                  ) Hoạt động
+                option(
+                  value="inactive"
+                  ) Ngừng hoạt động
+                option(
+                  value="overload"
+                  ) Quá tải
+                option(
+                  value="maintenance"
+                  ) Đang bảo trì
+            .form-group
+              label.form-label Địa điểm
+              .input-with-icon
+                i.fa-solid.fa-magnifying-glass
+                input#addressEdit.form-control(
+                  type="text"
+                  )
+            .form-group
+              label.form-label Tọa độ GPS
+              .input-with-action
+                input#gpsInputEdit.form-control(
+                  type="text"
+                  )
+                button.btn-select-map.js-open-map(
+                  data-target="edit" 
+                  type="button"
+                  )
+                  i.fa-solid.fa-location-dot
+                  | Chọn trên map
+            .form-row-3
+              .form-group
+                label.form-label Bãi đỗ xe
+                input#parkingNumberEdit.form-control(
+                  type="number"
+                  )
+              .form-group
+                label.form-label Cổng sạc AC
+                input#ACNumberEdit.form-control(
+                  type="number"
+                  )
+              .form-group
+                label.form-label Cổng sạc DC
+                input#DCNumberEdit.form-control(
+                  type="number"
+                  )
+
+        //- Footer (Nút bấm)
+        .modal-footer
+          button.btn-cancel(id="cancelModalBtnEdit", type="button") Hủy
+          button.btn-submit#hubEditButton(type="submit", form="edit-hub") Chỉnh sửa Hub
+
+        // =========================================
+        // MODAL BẢN ĐỒ (Ẩn mặc định)
+        // =========================================
+        .map-modal-overlay#mapModalOverlay-edit
+          .map-modal-content
+            .map-modal-header
+              h3 Chọn tọa độ trên bản đồ
+              button.btn-close-map#btnCloseMapEdit
+                i.fa-solid.fa-xmark
+            
+            .map-modal-body
+              //- Thẻ div chứa bản đồ Leaflet
+              #mapPickerEdit(style="width: 100%; height: 400px; border-radius: 8px;")
+              
+            .map-modal-footer
+              button.btn-confirm-map#btnConfirmMapEdit(type="button") Xác nhận vị trí
+    
+
+        

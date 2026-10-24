@@ -1,0 +1,122 @@
+extends ../../layouts/user/default.pug
+
+
+block main
+  main.dashboard
+    .container
+
+      // ---------- HERO SECTION ----------
+      section.hero
+        .hero__content
+          span.hero__subtitle TRANG CHỦ
+          h1.hero__title Chào mừng trở lại!
+          p.hero__desc
+            | Bắt đầu hành trình hoặc tiếp tục đặt chỗ đang chờ.
+            | Dịch chuyển xanh thông minh và tận tâm tại
+            | ĐHQG-HCM.
+        .hero__status
+          .status-badge
+            i.fa-solid.fa-bolt
+            .status-text
+              span TRẠNG THÁI HỆ THỐNG
+              strong 6/8 Hubs Hoạt động
+
+      // ---------- DỊCH VỤ CHÍNH ----------
+      section.services
+        .section-header
+          .section-header__left
+            h2.section-title Dịch vụ chính
+            p.section-desc Khám phá các tiện ích di chuyển đặt trong thông minh trong khuôn viên
+
+        .services__grid
+
+          // Card 1 — Đặt xe đưa đón
+          .service-card
+            .service-card__top
+              .service-card__icon.icon--green
+                i.fa-solid.fa-motorcycle
+              span.service-card__badge.badge--green 120+ xe
+            h3.service-card__title Đặt xe dùng chung
+            p.service-card__desc
+              | Tìm xe máy điện hoặc xe đạp điện
+              | phù hợp tại các điểm trạm trên
+              | trường.
+            a.service-card__link(href="/shared-vehicle/book")
+              | Tìm xe
+              i.fa-solid.fa-arrow-right
+
+          // Card 2 — Đặt chỗ đỗ
+          .service-card
+            .service-card__top
+              .service-card__icon.icon--blue
+                i.fa-solid.fa-square-parking
+              span.service-card__badge.badge--blue Giữ chỗ
+            h3.service-card__title Đặt chỗ đỗ
+            p.service-card__desc
+              | Chọn Hub và giữ vị trí đỗ an
+              | toàn trước khi đến giảng đường hoặc
+              | KTX.
+            a.service-card__link(href="/book/parking")
+              | Đặt chỗ
+              i.fa-solid.fa-arrow-right
+
+          // Card 3 — Lập lịch sạc
+          .service-card
+            .service-card__top
+              .service-card__icon.icon--purple
+                i.fa-solid.fa-bolt
+              span.service-card__badge.badge--purple Trụ 3.3kW
+            h3.service-card__title Lập lịch sạc
+            p.service-card__desc
+              | Đăng ký thời gian sạc cho xe cá nhân,
+              | hệ thống tự động giữ trụ &amp; công suất
+              | tối ưu.
+            a.service-card__link(href="/book/charging/schedule")
+              | Đăng ký sạc
+              i.fa-solid.fa-arrow-right
+
+          // Card 4 — Hoạt động & Lịch sử
+          .service-card
+            .service-card__top
+              .service-card__icon.icon--orange
+                i.fa-solid.fa-clock-rotate-left
+              span.service-card__badge.badge--orange Thời gian thực
+            h3.service-card__title Hoạt động &amp; Lịch sử
+            p.service-card__desc
+              | Xem các chuyến đi đang đến ra, đặt
+              | chỗ hiện tại, biến lịch sử hoạt động và
+              | giao dịch.
+            a.service-card__link(href="/activity/active")
+              | Xem hoạt động
+              i.fa-solid.fa-arrow-right
+
+      // ---------- ĐẶT CHỖ HIỆN TẠI ----------
+      section.current-bookings
+        .section-header
+          .section-header__left
+            h2.section-title Đặt chỗ hiện tại
+          a.section-link(href="/hoat-dong")
+            | Chi tiết hành trình
+            i.fa-solid.fa-arrow-right
+
+        .booking-card
+          .booking-card__left
+            .booking-card__icon
+              i.fa-solid.fa-motorcycle
+            .booking-card__info
+              .booking-card__badges
+                span.badge.badge--warning
+                  i.fa-solid.fa-clock
+                  | Cần 12 phút giữ chỗ
+                span.badge.badge--gray ID: HRB-20260530
+              h3.booking-card__title
+                | VinFast Feliz S
+                span.booking-card__code &bull; EV-METRO-042
+              p.booking-card__route
+                | Điểm đến: 
+                strong HUB_METRO (Cơ sở Nhà ĐHQG)
+                |  &bull; Chốt nhận: A-04 &bull; Pin: 88% (~45 km)
+
+          .booking-card__right
+            button.btn-outline(type="button") Hủy giữ chỗ
+            button.btn-primary(type="button") Nhận xe

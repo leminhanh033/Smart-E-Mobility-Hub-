@@ -1,0 +1,138 @@
+extends ../../layouts/user/default.pug
+
+block main
+  main.activity-history
+    .container
+
+      // ---------- Header ----------
+      .activity-history__header
+        .activity-history__title-group
+          h1.activity-history__title Lịch sử hoạt động
+          p.activity-history__desc Xem lại toàn bộ đặt xe, đặt chỗ và các giao dịch của bạn trên hệ thống.
+
+        // Thanh tìm kiếm
+        .activity-history__search
+          i.fa-solid.fa-magnifying-glass
+          input(type="text", placeholder="Tìm kiếm Hub, mã xe, mã đặt chỗ...")
+
+      // ---------- Toggle (Đang hoạt động / Lịch sử) ----------
+      .activity-history__toggle
+        a.toggle-btn(href="/activity/active") Đang hoạt động
+        a.toggle-btn.active(href="/activity/history") Lịch sử
+      
+      // ---------- Bộ lọc (Filters) ----------
+      .activity-history__filters
+        button.filter-pill.active(type="button") Tất cả
+        button.filter-pill(type="button") Đặt xe
+        button.filter-pill(type="button") Đặt chỗ đỗ
+        button.filter-pill(type="button") Đăng ký sạc
+        button.filter-pill(type="button") Báo sự cố
+
+      // ---------- Danh sách (Table) ----------
+      .activity-history__list
+        .list-header
+          .list-header__col(style="flex: 2;") Hành động
+          .list-header__col(style="flex: 1.5;") Hub
+          .list-header__col(style="flex: 1;") Thời gian
+          .list-header__col(style="flex: 1;") Thời lượng
+          .list-header__col(style="flex: 1;") Chi phí
+          .list-header__col(style="flex: 1;") Trạng thái
+
+        // ==========================================
+        // HIỂN THỊ DỮ LIỆU ĐỘNG TỪ VÒNG LẶP
+        // ==========================================
+        if historyList && historyList.length > 0
+          each item in historyList
+            //- 1. Khai báo các biến mặc định
+            - var iconClass = 'fa-motorcycle'
+            - var iconColor = 'icon--green'
+            - var title = ''
+            - var subText = ''
+            - var hubMain = ''
+            - var hubSub = ''
+            - var badgeClass = (item.status === 'completed') ? 'badge--green' : 'badge--gray'
+            - var statusText = (item.status === 'completed') ? 'Hoàn tất' : 'Đã hủy'
+
+            //- 2. Xử lý logic theo từng loại
+            if item.type === 'rental'
+              - title = 'Thuê xe máy'
+              - subText = (item.vehicleID ? item.vehicleID.model : 'Xe đã xóa') + (item.vehicleID ? ' — ' + item.vehicleID.vehicleCode : '')
+              - hubMain = (item.startHubID ? item.startHubID.name : 'N/A') + (item.endHubID ? ' → ' + item.endHubID.name : '')
+              - hubSub = (item.startHubID ? item.startHubID.address : '') + (item.endHubID ? ' → ' + item.endHubID.address : '')
+              
+            else if item.type === 'parking'
+              - iconClass = 'fa-square-parking'
+              - iconColor = 'icon--blue'
+              - title = 'Đặt chỗ đỗ'
+              - subText = 'Chỗ ' + item.slotCode
+              - hubMain = item.hubID ? item.hubID.name : 'N/A'
+              - hubSub = item.hubID ? item.hubID.address : ''
+              
+            else if item.type === 'charging'
+              - iconClass = 'fa-bolt'
+              - iconColor = 'icon--purple'
+              - title = 'Đăng ký sạc'
+              - subText = 'Trụ ' + item.portType + ' • Mục tiêu ' + item.desiredPin + '%'
+              - hubMain = item.hubID ? item.hubID.name : 'N/A'
+              - hubSub = item.hubID ? item.hubID.address : ''
+
+            //- 3. Render HTML dùng chung
+            .list-row
+              //- Cột Hành động
+              .list-row__col(style="flex: 2;")
+                .cell-icon(class=iconColor)
+                  i.fa-solid(class=iconClass)
+                .cell-info
+                  strong= title
+                  span= subText
+              
+              //- Cột Hub
+              .list-row__col(style="flex: 1.5;")
+                strong= hubMain
+                span= hubSub
+                
+              //- Cột Thời gian
+              .list-row__col(style="flex: 1;")
+                strong= item.dateStr
+                span= item.timeStr
+                
+              //- Cột Thời lượng
+              .list-row__col(style="flex: 1;")
+                strong= item.durationStr
+                span —
+                
+              //- Cột Chi phí
+              .list-row__col(style="flex: 1;")
+                strong= item.costStr
+                
+              //- Cột Trạng thái
+              .list-row__col(style="flex: 1;")
+                span.badge(class=badgeClass)= statusText
+
+        else
+          //- Trường hợp không có dữ liệu
+          .empty-state(style="text-align: center; padding: 40px; color: #64748b; width: 100%;")
+            i.fa-regular.fa-folder-open(style="font-size: 40px; margin-bottom: 16px;")
+            h3 Bạn chưa có lịch sử hoạt động nào.
+            p Các chuyến đi đã hoàn thành hoặc đã hủy sẽ xuất hiện tại đây.
+
+      // ---------- Phân trang (Pagination) ----------
+      .activity-history__pagination
+        
+        // Nút chuyển trang
+        .pagination__controls
+          button.pagination__btn(type="button", disabled)
+            i.fa-solid.fa-chevron-left
+          button.pagination__btn.active(type="button") 1
+          button.pagination__btn(type="button") 2
+          button.pagination__btn(type="button")
+            i.fa-solid.fa-chevron-right
+
+        // Ô nhập số trang muốn tới
+        .pagination__jump
+          span.pagination__jump-label Đến trang
+          input.pagination__jump-input(
+            type="number", 
+            placeholder="..."
+            value=1
+          )

@@ -1,0 +1,197 @@
+extends ../../layouts/user/default.pug
+
+block main
+  main.schedule-charging
+
+    // ================= LEFT =================
+    section.schedule-charging__main
+      // Tabs
+      .book-parking__tabs
+        a.tab-btn(href="/book/parking") Đặt chỗ đỗ
+        a.tab-btn.active(href="/book/charging/schedule") Lập lịch sạc
+        a.tab-btn(href="/book/charging/demand") Đăng ký nhu cầu sạc
+
+      .schedule-charging__header
+        h1.schedule-charging__title Lập lịch sạc xe điện cá nhân
+        p.schedule-charging__subtitle Chọn đúng xe cần sạc và để hệ thống tự sắp xếp chỗ sạc tối ưu tại Mobility Hub.
+
+      // ---------- SECTION 1 ----------
+      .schedule-section
+        h2.schedule-section__title
+          span.schedule-section__num 1
+          | CHỌN XE CẦN SẠC ĐÃ ĐĂNG KÝ
+
+        .vehicle-picker
+          if listVehicles && listVehicles.length > 0
+            each vehicle, index in listVehicles
+              .vehicle-pick(
+                class=(index === 0 ? 'vehicle-pick--selected' : '')
+                data-id=vehicle._id
+                data-name=vehicle.model
+                data-plate=vehicle.license
+                data-pin=vehicle.pin || 20
+              )
+                .vehicle-pick__icon
+                  if vehicle.type === 'Xe đạp điện'
+                    i.fa-solid.fa-bicycle
+                  else
+                    i.fa-solid.fa-motorcycle
+                .vehicle-pick__info
+                  strong.vehicle-pick__name= vehicle.model
+                  span.vehicle-pick__plate= vehicle.license
+                  span.vehicle-pick__pin Pin: #{vehicle.pin || 20}%
+                i.fa-solid.fa-circle-check.vehicle-pick__check
+          
+          button.vehicle-pick.vehicle-pick--add#btnAddNewVehicle(type="button")
+            .vehicle-pick__icon.add-icon
+              i.fa-solid.fa-plus
+            .vehicle-pick__info
+              strong.vehicle-pick__name Thêm phương tiện mới
+              span.vehicle-pick__plate Đăng ký xe để sạc
+
+      // ---------- SECTION 2 ----------
+      .schedule-section
+        h2.schedule-section__title
+          span.schedule-section__num 2
+          | NHU CẦU NĂNG LƯỢNG &amp; THỜI GIAN
+
+        .energy-grid
+          .energy-item
+            label.energy-item__label MỨC PIN HIỆN TẠI
+            .energy-item__value
+              strong#currentPinDisplay 20%
+              span.badge.badge--warning#pinWarning Pin yếu
+
+          .energy-item
+            label.energy-item__label MỨC PIN MONG MUỐN
+            select.input-field.energy-item__value#desiredPinSelect
+              option(value="85") 85% - Khuyến dùng
+              option(value="100") 100% - Đầy pin tối đa
+              option(value="80") 80% - Tiết kiệm thời gian
+              option(value="70") 70% - Đủ dùng
+
+          .energy-item
+            label.energy-item__label CỔNG SẠC
+            .energy-item__value
+              select#chargingType.input-field()
+                option(value="AC") AC
+                option(value="DC") DC
+
+          .energy-item
+            label.energy-item__label NGÀY SẠC
+            .energy-item__value
+              input#chargingDate.input-field(type="date")
+
+          .energy-item
+            label.energy-item__label KHUNG GIỜ BẮT ĐẦU
+            .energy-item__value
+              input#chargingTime.input-field(type="time", value="08:00")
+
+        // Duration
+        .duration
+          span.duration__label THỜI LƯỢNG SẠC DỰ KIẾN
+          .duration__options
+            input#duration45(type="radio", name="duration", value="45", checked, hidden)
+            label.duration-btn.active(for="duration45" time=45) 45 phút
+            
+            input#duration60(type="radio", name="duration", value="60", hidden)
+            label.duration-btn(for="duration60" time=60) 1 giờ
+            
+            input#duration120(type="radio", name="duration", value="120", hidden)
+            label.duration-btn(for="duration120" time=120) 2 giờ
+
+      // ---------- SECTION 3 ----------
+      .schedule-section
+        h2.schedule-section__title
+          span.schedule-section__num 3
+          | CHỌN HUB &amp; PHƯƠNG ÁN SẠC
+
+        .hub-label
+          strong Mobility Hub đã chọn
+          select#hubSelect(name="hub")
+            each hub in hubList
+              option(value=hub._id) #{hub.name} - #{hub.address}
+
+        .time-slots
+          .time-slots__header
+            span Các lựa chọn thời điểm sạc phù hợp
+          label.time-slot.time-slot--selected
+            input(type="radio", name="timeslot", checked)
+            .time-slot__time
+              strong#summaryTimeSlot 08:00 - 08:45
+
+    // ================= RIGHT: Summary =================
+    aside.schedule-charging__summary
+      h2.summary__label TÓM TẮT YÊU CẦU SẠC
+
+      .summary__vehicle
+        .summary__vehicle-icon
+          i.fa-solid.fa-motorcycle
+        .summary__vehicle-info
+          strong#summaryVehicleName.summary__vehicle-name Chưa chọn xe
+          span#summaryVehiclePlate.summary__vehicle-plate ---
+
+      .summary__block
+        span.summary__block-label Trạm & Cổng sạc gán tự động
+        strong#summaryHubName.summary__block-value Chưa chọn Hub
+        span.summary__block-sub Công suất: 3.3 kW
+
+      ul.summary__meta
+        li
+          span Ngày sạc
+          strong#summaryDate --
+        li
+          span Khung giờ
+          strong#summaryTimeRange --
+        li
+          span Mức pin
+          strong#summaryPinRange --
+        li
+          span Thời lượng
+          strong#summaryDuration --
+
+      .summary__cost
+        span.summary__cost-label Chi phí dự kiến
+        strong#summaryCost.summary__cost-value 0 VND
+
+      .summary__warning
+        i.fa-solid.fa-triangle-exclamation
+        p
+          | Cổng sạc sẽ được giữ sau khi bạn xác nhận đăng ký.
+
+      .summary__actions
+        button.btn-outline(type="button") Hủy
+        button#btnConfirmCharging.btn-primary(type="button") Xác nhận
+
+    // ================= MODAL THÊM XE =================
+    .modal-overlay#addVehicleModal
+      .modal-container
+        .modal-header
+          .modal-header__title
+            h2 Thêm phương tiện cá nhân
+          button.modal-close#closeVehicleModalBtn
+            i.fa-solid.fa-xmark
+
+        .modal-body
+          form#create-vehicle-form
+            .form-group
+              label.form-label BIỂN SỐ XE <span class="text-red">*</span>
+              input#license.form-control(type="text", placeholder="VD: 59-P1 123.45", required)
+            
+            .form-row-2
+              .form-group
+                label.form-label LOẠI XE
+                select#type.form-control
+                  option(value="Xe máy điện") Xe máy điện
+                  option(value="Xe đạp điện") Xe đạp điện
+              .form-group
+                label.form-label HÃNG / MODEL
+                input#model.form-control(type="text", placeholder="VinFast Feliz S")
+
+            .form-group
+              label.form-label DUNG LƯỢNG PIN (kWh) <span class="text-red">*</span>
+              input#batteryCapacity.form-control(type="number", step="0.1", placeholder="3.5", required)
+
+        .modal-footer
+          button.btn-cancel#cancelVehicleModalBtn(type="button") Hủy
+          button.btn-submit(type="submit", form="create-vehicle-form") Lưu phương tiện

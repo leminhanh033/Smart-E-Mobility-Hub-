@@ -1,0 +1,98 @@
+extends ../../layouts/user/default.pug
+
+block main
+  main.book-parking
+
+    // ================= LEFT =================
+    section.book-parking__main
+
+      //Tabs
+      .book-parking__tabs
+        a.tab-btn.active(href="/book/parking") Đặt chỗ đỗ
+        a.tab-btn(href="/book/charging/schedule") Lập lịch sạc
+        a.tab-btn(href="/book/charging/demand") Đăng ký nhu cầu sạc
+
+      // Page header
+      .book-parking__header
+        h1.book-parking__title Đặt chỗ đỗ tại Mobility Hub
+        p.book-parking__subtitle Chọn Hub phù hợp với điểm đến của bạn
+
+      // ---------- Điểm đến ----------
+      .book-parking__search-block
+        h2.book-parking__search-label ĐIỂM ĐẾN
+        .book-parking__search
+          i.fa-solid.fa-location-dot.book-parking__search-icon
+          select.book-parking__search-input()
+            each hub in hubList
+              option(value=hub._id selected=(hub._id.toString() === desID ? true : false)
+) #{hub.name} - #{hub.address}
+
+      // ---------- Hub phù hợp ----------
+      .book-parking__list
+        .book-parking__list-header
+          h2.book-parking__list-title Hub phù hợp
+          span.book-parking__list-count #{hubList.length} kết quả
+
+        if hubList && hubList.length > 0
+          each hub, index in hubList
+            //- Tính số chỗ trống = Tổng chỗ - Đã dùng
+            - var availableSlots = Math.max(0, (hub.parkingNumber || 0) - (hub.parkingUsed || 0))
+            //- Nếu chỗ trống ít hơn 5 thì thêm class cảnh báo màu vàng
+            - var isWarning = availableSlots < 5
+            //- Tự động chọn Hub đầu tiên
+            - var isSelected = index === 0
+
+            .parking-card(
+              class=(isSelected ? 'parking-card--selected' : '')
+              data-id=hub._id
+              data-name=hub.name
+              data-address=hub.address
+              data-available=availableSlots
+            )
+              .parking-card__left
+                .parking-card__info
+                  h3.parking-card__name= hub.name
+                  p.parking-card__address
+                    i.fa-solid.fa-location-dot
+                    | #{hub.address}
+              
+              .parking-card__right
+                strong.parking-card__slots(class=(isWarning ? 'parking-card__slots--warning' : '')) #{availableSlots} chỗ trống
+                span.parking-card__usage #{hub.parkingUsed || 0} / #{hub.parkingNumber || 0} đang sử dụng
+        else
+          p.text-center(style="padding: 20px; color: #64748b;") Hiện không có Hub nào khả dụng.
+
+    // ================= RIGHT: Summary =================
+    aside.book-parking__summary
+
+      h2.summary__label CHỖ ĐÃ ĐƯỢC CHỌN
+
+      if hubList && hubList.length > 0
+        //- Lấy Hub đầu tiên làm mặc định ban đầu
+        - var firstHub = hubList[0]
+        
+        .summary__hub
+          h3.summary__hub-name#summaryHubName= firstHub.name
+          p.summary__hub-address#summaryHubAddress= firstHub.address
+
+        .summary__slot
+          span.summary__slot-label Chỗ đã được chọn trống phù hợp
+          strong.summary__slot-code#summarySlotCode D-08
+
+        ul.summary__meta
+          li
+            span Thời gian giữ chỗ
+            strong 5 phút
+          li
+            span Phí đặt chỗ
+            strong Miễn phí
+
+        .summary__warning
+          i.fa-solid.fa-triangle-exclamation
+          p
+            | Sau khi xác nhận, chỗ đỗ được giữ trong 60 phút. Nếu hết thời gian
+            |mà bạn chưa sử dụng, lệnh đặt sẽ tự động hết hiệu lực.
+
+        .summary__actions
+          button.btn-outline(type="button") Hủy
+          button.btn-primary#btnConfirmParking(type="button", data-id=firstHub._id) Xác nhận đặt chỗ

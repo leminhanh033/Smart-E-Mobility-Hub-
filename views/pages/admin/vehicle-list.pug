@@ -1,0 +1,292 @@
+extends ../../layouts/admin/default.pug
+
+block titleName
+  h1.dashboard-header__title Quản lý Phương tiện
+
+block main 
+  .vehicle-list.container
+
+    // =========================================
+    // THANH CÔNG CỤ (Tìm kiếm, Bộ lọc, Nút thêm)
+    // =========================================
+    
+    .vehicle-toolbar
+      
+      .vehicle-toolbar__right
+        .search-box
+          i.fa-solid.fa-magnifying-glass
+          input(type="text", placeholder="Tìm theo mã xe, VIN, model...")
+      
+        .filter-selects
+          select.form-select
+            option Tất cả Hub
+            option HUB_METRO
+            option HUB_BK_CS2
+            option HUB_KTX_B
+        .filter-selects
+          select.form-select
+            option Tất cả trạng thái
+            option Sẵn sàng
+            option Đang sử dụng
+            option Bảo trì
+      
+      .vehicle-toolbar__left
+        .action-buttons
+          button.btn-sync(type="button")
+            i.fa-solid.fa-rotate
+            | Đặt lại
+      .add-vehicle
+        button.btn-add-vehicle(type="button")
+          i.fa-solid.fa-plus
+          span Thêm xe mới
+
+    // =========================================
+    // BẢNG DỮ LIỆU PHƯƠNG TIỆN
+    // =========================================
+    .vehicle-table-wrapper
+      .table-header
+        h3.table-title Danh sách phương tiện
+
+      table.vehicle-table
+        thead
+          tr
+            th #
+            th PHƯƠNG TIỆN
+            th VIN
+            th PIN ĐO ĐƯỢC
+            th HUB HIỆN TẠI
+            th TRẠNG THÁI
+            th CẬP NHẬT
+            th THAO TÁC
+
+        tbody
+          if listVehicles && listVehicles.length > 0
+            each vehicle, index in listVehicles
+              tr
+                td #{index + 1}
+                
+                td
+                  .vehicle-info
+                    .vehicle-icon
+                      if vehicle.type === 'bike'
+                        i.fa-solid.fa-bicycle
+                      else
+                        i.fa-solid.fa-motorcycle
+                    .vehicle-text
+                      strong= vehicle.vehicleCode
+                      span= vehicle.model
+                
+                td.vin-code= vehicle.VIN
+                
+                //- 4. Cột Pin (Tự động đổi màu & icon dựa vào %)
+                td
+                  .pin-info
+                    if vehicle.pin < 20
+                      i.fa-solid.fa-battery-quarter.text-red
+                    else if vehicle.pin < 50
+                      i.fa-solid.fa-battery-quarter.text-orange
+                    else
+                      i.fa-solid.fa-battery-three-quarters.text-green
+                    strong #{vehicle.pin}%
+                
+                //- 5. Cột Hub
+                td.hub-id= vehicle.hubName
+                
+                //- 6. Cột Trạng thái (Tự động đổi màu Badge)
+                td
+                  if vehicle.status === 'active'
+                    span.badge.badge--green
+                      i.fa-solid.fa-circle
+                      | Sẵn sàng
+                  else if vehicle.status === 'reserved'
+                    span.badge.badge--blue
+                      i.fa-solid.fa-circle
+                      | Đã đặt
+                  else if vehicle.status === 'used'
+                    span.badge.badge--orange
+                      i.fa-solid.fa-circle
+                      | Đang sử dụng
+                  else if vehicle.status === 'charging'
+                    span.badge.badge--orange
+                      i.fa-solid.fa-circle
+                      | Đang sạc
+                  else if vehicle.status === 'maintenance'
+                    span.badge.badge--red
+                      i.fa-solid.fa-circle
+                      | Bảo trì
+                  else
+                    span.badge.badge--red
+                      i.fa-solid.fa-circle
+                      | Lỗi
+                
+                //- 7. Cột thời gian
+                td.timestamp= vehicle.updatedAtFormat
+                
+                //- 8. Cột Thao tác
+                td
+                  button.btn-detail.btn-edit-vehicle(type="button", data-id=vehicle._id)
+                    i.fa-solid.fa-pen
+                    | Sửa
+          else
+            //- Trường hợp không có dữ liệu
+            tr
+              td(colspan="8", style="text-align: center; padding: 20px;") Không có dữ liệu phương tiện.
+    // =========================================
+    // PHÂN TRANG
+    // =========================================
+    .vehicle-pagination
+      .pagination-info
+        | Hiển thị 1 - 8 / 180 phương tiện 
+      
+      .pagination-controls
+        button.btn-page(type="button", disabled)
+          i.fa-solid.fa-chevron-left
+        
+        button.btn-page.active(type="button") 1
+        button.btn-page(type="button") 2
+        button.btn-page(type="button") 3
+        button.btn-page(type="button") 4
+        button.btn-page(type="button") 5
+        span.page-dots ...
+        button.btn-page(type="button") 23
+
+        .page-jump
+          select.form-select-sm
+            option 10
+            option 20
+            option 50
+          span / trang
+
+        
+        .page-jump-input
+          span Đến trang
+          input(type="number", value="1")
+    
+    // =========================================
+    // MODAL THÊM PHƯƠNG TIỆN MỚI
+    // =========================================
+    .modal-overlay(id="addVehicleModal")
+      .modal-container
+        //- Header
+        .modal-header
+          .modal-header__title
+            h2 Thêm phương tiện điện mới
+          button.modal-close(id="closeVehicleModalBtn")
+            i.fa-solid.fa-xmark
+
+        //- Body (Form)
+        .modal-body
+          form#create-vehicle
+            //- Hàng 1
+            .form-row-2
+              .form-group
+                label.form-label MÃ XE <span class="text-red">*</span>
+                input#vehicleCode.form-control(type="text", placeholder="EV-BK-056")
+              .form-group
+                label.form-label VIN / SỐ KHUNG <span class="text-red">*</span>
+                input#VIN.form-control(type="text", placeholder="RL9XXXXXXXXXXXXX")
+
+            //- Hàng 2
+            .form-row-2
+              .form-group
+                label.form-label LOẠI PHƯƠNG TIỆN <span class="text-red">*</span>
+                select.form-control#type
+                  option(value="motor") Xe máy điện
+                  option(value="bike") Xe đạp điện
+              .form-group
+                label.form-label HÃNG / MODEL
+                input#model.form-control(type="text", placeholder="VinFast Feliz S")
+
+            //- Hàng 3
+            .form-row-2
+              .form-group
+                label.form-label DUNG LƯỢNG PIN TỐI ĐA <span class="text-red">*</span>
+                input#batteryCapacity.form-control(type="number", value="3.5", step="0.1")
+                span.form-hint Đơn vị: kWh (Kilowatt-giờ)
+              .form-group
+                label.form-label HUB QUẢN LÝ MẶC ĐỊNH <span class="text-red">*</span>
+                select#hubID.form-control()
+                  each hub in hubList 
+                    option(value=hub._id) #{hub.name}
+
+            //- Hàng 4 (Full width)
+            .form-row-2
+              .form-group
+                label.form-label TRẠNG THÁI HOẠT ĐỘNG
+                select.form-control#status
+                  option(value="active") Sẵn sàng
+                  option(value="used") Đang sử dụng
+                  option(value="maintenance") Bảo trì
+                  option(value="inactive") Ngừng hoạt động
+              .form-group
+                label.form-label Biển số xe <span class="text-red">*</span>
+                input#license.form-control(type="text")
+
+        //- Footer (Nút bấm)
+        .modal-footer
+          button.btn-cancel(id="cancelVehicleModalBtn", type="button") Hủy
+          button.btn-submit(type="submit", form="create-vehicle") Tạo mới
+    // =========================================
+    // MODAL CHỈNH SỬA PHƯƠNG TIỆN
+    // =========================================
+    .modal-overlay(id="editVehicleModal")
+      .modal-container
+        //- Header
+        .modal-header
+          .modal-header__title
+            h2 Chỉnh sửa phương tiện
+          button.modal-close(id="closeEditVehicleModalBtn")
+            i.fa-solid.fa-xmark
+
+        //- Body (Form)
+        .modal-body
+          form#edit-vehicle
+            //- Hàng 1
+            .form-row-2
+              .form-group
+                label.form-label MÃ XE <span class="text-red">*</span>
+                input#vehicleCode.form-control(type="text")
+              .form-group
+                label.form-label VIN / SỐ KHUNG <span class="text-red">*</span>
+                input#VIN.form-control(type="text")
+
+            //- Hàng 2
+            .form-row-2
+              .form-group
+                label.form-label LOẠI PHƯƠNG TIỆN <span class="text-red">*</span>
+                select#type.form-control
+                  option(value="motor") Xe máy điện
+                  option(value="bike") Xe đạp điện
+              .form-group
+                label.form-label HÃNG / MODEL
+                input#model.form-control(type="text")
+
+            //- Hàng 3
+            .form-row-2
+              .form-group
+                label.form-label DUNG LƯỢNG PIN TỐI ĐA <span class="text-red">*</span>
+                input#batteryCapacity.form-control(type="number", step="0.1")
+                span.form-hint Đơn vị: kWh (Kilowatt-giờ)
+              .form-group
+                label.form-label HUB QUẢN LÝ MẶC ĐỊNH <span class="text-red">*</span>
+                select#hubID.form-control()
+                  each hub in hubList 
+                    option(value=hub._id) #{hub.name}
+
+            //- Hàng 4 (Full width)
+            .form-row-2
+              .form-group
+                label.form-label TRẠNG THÁI HOẠT ĐỘNG
+                select.form-control#status
+                  option(value="active") Sẵn sàng
+                  option(value="used") Đang sử dụng
+                  option(value="maintenance") Bảo trì
+                  option(value="inactive") Ngừng hoạt động
+              .form-group
+                label.form-label Biển số xe <span class="text-red">*</span>
+                input#license.form-control(type="text")
+
+        //- Footer (Nút bấm)
+        .modal-footer
+          button.btn-cancel(id="cancelEditVehicleModalBtn", type="button") Hủy
+          button.btn-submit(type="submit", form="edit-vehicle") Lưu thay đổi

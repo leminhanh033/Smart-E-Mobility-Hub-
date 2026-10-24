@@ -1,0 +1,94 @@
+extends ../../layouts/user/default.pug
+
+
+block main
+  main.confirm-vehicle
+
+    // Nút quay lại
+    a.confirm-vehicle__back(href="/tim-xe")
+      i.fa-solid.fa-arrow-left
+      | Quay lại
+
+    // ================= CARD XÁC NHẬN =================
+    .confirm-vehicle__card
+
+      // ---------- Header ----------
+      .confirm-vehicle__header
+        .confirm-vehicle__title-group
+          span.confirm-vehicle__subtitle XÁC NHẬN ĐẶT XE
+          h1.confirm-vehicle__title VinFast Feliz S
+          span.confirm-vehicle__id Mã định danh: EV-METRO-042
+        .confirm-vehicle__badge
+          i.fa-solid.fa-circle
+          | Sẵn sàng
+
+      // ---------- Details (2 cột) ----------
+      .confirm-vehicle__details
+
+        // Cột trái: Thông tin phương tiện
+        .confirm-vehicle__col
+          h3.confirm-vehicle__col-title THÔNG TIN PHƯƠNG TIỆN
+          ul.confirm-vehicle__info-list
+            li
+              span Pin hiện tại:
+              strong.text-green 88%
+            li
+              span Quãng đường ước tính:
+              strong ~45 km
+            li
+              span Điểm nhận xe:
+              strong HUB_METRO
+            li
+              span Chốt nhận:
+              strong.text-green A-04
+
+        // Cột phải: Hành trình
+        .confirm-vehicle__col
+          h3.confirm-vehicle__col-title HÀNH TRÌNH
+          ul.confirm-vehicle__info-list
+            li
+              span Điểm xuất phát:
+              strong HUB_METRO
+            li
+              span Điểm đến:
+              strong HUB_BK_CS2
+            li
+              span Khoảng cách:
+              strong 1.8 km
+            li
+              span Thời gian dự kiến:
+              strong ~8 phút
+
+      // ---------- Chi phí ----------
+      .confirm-vehicle__cost-section
+        h3.confirm-vehicle__cost-title CHI PHÍ
+        .confirm-vehicle__cost-box
+          ul.confirm-vehicle__cost-list
+            li
+              span Phí mở khóa:
+              strong 2.000 VNĐ
+            li
+              span 30 phút đầu:
+              strong 5.000 VNĐ
+            li
+              span Tiền cọc tạm giữ (Hoàn 100% khi trả xe):
+              strong 20.000 VNĐ
+          
+          .confirm-vehicle__cost-total
+            span Tổng tạm giữ Ví ECO Pay:
+            strong 27.000 VNĐ
+
+      // ---------- Warning ----------
+      .confirm-vehicle__warning
+        i.fa-regular.fa-clock
+        p
+          | Thời hạn nhận xe: 
+          strong 15 phút.
+          |  Vui lòng đến chốt 
+          strong A-04
+          |  để mở khóa trước khi hết giờ.
+
+      // ---------- Actions ----------
+      .confirm-vehicle__actions
+        button.btn-cancel(type="button") Hủy
+        button.btn-primary(type="button") Thanh toán

@@ -1,0 +1,20 @@
+mixin simulationTabs(activeTab)
+  - 
+    var tabs = [
+      { id: 'demand', icon: 'fa-chart-line', text: '1. Nhu cầu tăng', link:"/admin/simulation/demand/surging" },
+      { id: 'parking', icon: 'fa-square-parking', text: '2. Bãi đỗ đầy', link:"/admin/simulation/full/parking"  },
+      { id: 'charging-surge', icon: 'fa-bolt', text: '3. Nhu cầu sạc tăng', link:"/admin/simulation/charging/surge" },
+      { id: 'charging-fail', icon: 'fa-plug-circle-xmark', text: '4. Trụ sạc gặp sự cố', link:"/admin/simulation/charging/point/failure"  },
+      { id: 'concentration', icon: 'fa-users', text: '5. Xe tập trung nhiều', link:"/admin/simulation/vehicle/concentration" }
+    ]
+    
+  .simulation-tabs
+    each tab in tabs
+      a.tab-item(
+        href=tab.link
+        type="button",
+        class=(activeTab === tab.id ? 'active' : ''),
+        data-tab=tab.id
+      )
+        i.fa-solid(class=tab.icon)
+        span= tab.text

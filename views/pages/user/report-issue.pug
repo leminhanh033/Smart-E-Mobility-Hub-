@@ -1,0 +1,64 @@
+extends ../../layouts/user/default.pug
+
+block main
+  main.report-issue
+    .container
+
+      // ---------- Header ----------
+      .report-issue__header
+        span.report-issue__subtitle HỖ TRỢ & PHẢN HỒI
+        h1.report-issue__title Báo cáo sự cố
+        p.report-issue__desc Gửi thông tin sự cố kỹ thuật thiết bị hoặc trạm Hub để trung tâm điều hành NOC xử lý kịp thời.
+
+      // ---------- Form ----------
+      form.report-issue__form#report-form
+
+        //- 1. Loại sự cố
+        .form-group
+          label.form-group__label LOẠI SỰ CỐ
+          .select-wrapper
+            select.form-control#type
+              each error in errorList 
+                option(value=error.id) #{error.name}
+
+        //- 3. Vị trí / Hub
+        .form-group
+          label.form-group__label VỊ TRÍ / HUB
+          .input-wrapper
+            i.fa-solid.fa-location-dot.input-wrapper__icon
+            select.form-control#hub(name="") 
+              each hub in hubList
+                option(value=hub._id) #{hub.name}
+            //- input.form-control(type="text", value="", readonly)
+
+        //- 2. Đối tượng
+        .form-group
+          label.form-group__label ĐỐI TƯỢNG
+          .select-wrapper
+            select.form-control#vehicle
+              option VinFast Feliz S — EV-METRO-042 (Đang sử dụng)
+              option VinFast Evo 200 — EV-METRO-015
+              option Không có (Sự cố trạm Hub)
+
+        //- 4. Mô tả chi tiết
+        .form-group
+          label.form-group__label MÔ TẢ CHI TIẾT
+          textarea.form-control.textarea-control#description(
+            rows="4", 
+            placeholder="Nhập mô tả cụ thể sự cố bạn gặp phải (ví dụ: Xe không mở được khóa ngầm, phanh đĩa bị rít)..."
+          )
+
+        //- 5. Đính kèm hình ảnh
+        //- .form-group
+        //-   label.form-group__label ĐÍNH KÈM HÌNH ẢNH (Tùy chọn)
+        //-   .upload-box
+        //-     i.fa-regular.fa-image.upload-box__icon
+        //-     span.upload-box__text + Thêm ảnh hiện trường sự cố
+        //-     input.upload-box__input(type="file", accept="image/*", multiple, hidden)
+
+        //- 6. Buttons
+        .report-issue__actions
+          button.btn-cancel(type="button") Hủy
+          button.btn-submit(type="submit")
+            | Gửi báo cáo
+            i.fa-solid.fa-paper-plane

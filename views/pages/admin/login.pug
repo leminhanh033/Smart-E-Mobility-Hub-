@@ -1,0 +1,28 @@
+extends ../../layouts/admin/account.pug
+
+
+block main 
+  // Bên phải: Form đăng nhập
+  .login 
+    h2.login__title Đăng nhập
+
+    form.form
+      // SĐT / EMAIL
+      .form__group
+        label.form__label SĐT / EMAIL
+        .input-wrapper
+          input.form__input(type="text")
+
+      // Mật khẩu
+      .form__group
+        label.form__label MẬT KHẨU
+        .input-wrapper
+          input.form__input(type="password")
+          i.fa-regular.fa-eye.input-icon-right
+
+      // Quên mật khẩu
+      .form__forgot-password
+        a(href="/admin/reset-password") Quên mật khẩu?
+
+      // Nút xác nhận
+      button.btn-submit(type="submit") Xác nhận

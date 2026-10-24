@@ -1,0 +1,296 @@
+extends ../../layouts/admin/default.pug
+
+block titleName
+  h1.dashboard-header__title NOC Network Control Center
+
+block main 
+  .dashboard-content.container
+
+    // ---- Hàng 1: Thống kê (Stats) ----
+    .stats-grid
+      
+      // Card 1
+      .stat-card
+        .stat-card__header
+          .stat-card__icon.icon--green
+            i.fa-solid.fa-charging-station
+          .stat-card__info
+            span.stat-card__label Trạm đang hoạt động
+            .stat-card__value 6 / 6
+            //- span.stat-card__sub 100% Hoạt động
+      
+      // Card 2
+      .stat-card
+        .stat-card__header
+          .stat-card__icon.icon--blue
+            i.fa-solid.fa-battery-full
+          .stat-card__info
+            span.stat-card__label Pin đang được sạc
+            .stat-card__value 142 / 180
+      
+      // Card 3
+      .stat-card
+        .stat-card__header
+          .stat-card__icon.icon--purple
+            i.fa-solid.fa-bolt
+          .stat-card__info
+            span.stat-card__label Phiên sạc đang hoạt động
+            .stat-card__value 28 / 56
+      
+      // Card 4
+      .stat-card
+        .stat-card__header
+          .stat-card__icon.icon--orange
+            i.fa-solid.fa-triangle-exclamation
+          .stat-card__info
+            span.stat-card__label Cảnh báo
+            .stat-card__value 2
+            //- span.stat-card__sub 1 Sự cố đang xử lý
+
+    // ---- Hàng 2: Grid lớn (Map + Live Control + Alerts) ----
+    .dashboard-grid
+
+      // ===== CỘT TRÁI =====
+      .dashboard-col-left
+        
+        // 1. Bản đồ mạng lưới Hub
+        .section-block.map-section
+          .section-header
+            h2.section-title
+              i.fa-solid.fa-map-location-dot
+              div 
+                div.header Bản đồ mạng lưới Hub
+                span.context Khu đô thị ĐHQG-HCM • Theo dõi trạng thái xe và tài nguyên theo thời gian thực
+            .map-legend
+              span.legend-item
+                span.dot.dot--green
+                | Hoạt động
+              span.legend-item
+                span.dot.dot--orange
+                | Cần chú ý
+              span.legend-item
+                span.dot.dot--red
+                | Sự cố
+          
+          //- .map-canvas
+          //-   .map-bg
+          //-   .map-markers
+          //-     .marker.marker--warning(style="top: 30%; left: 40%;")
+          //-       .marker__label HUB_KTX_B
+          //-       .marker__status
+          //-         strong HUB_KTX_B
+          //-         span (Cảnh báo - 5/10 trống)
+              
+          //-     .marker.marker--warning(style="top: 30%; left: 60%;")
+          //-       .marker__label HUB_UIT_IU
+          //-       .marker__status
+          //-         strong HUB_UIT_IU
+          //-         span (Cảnh báo - 10/20 trống)
+
+          //-     .marker.marker--active(style="top: 50%; left: 48%;")
+          //-       .marker__status.marker__status--active
+          //-         strong HUB_BK_CS2
+          //-         span (Vị trí trung tâm - 12/50 trống)
+
+          //-     .marker.marker--active(style="top: 70%; left: 35%;")
+          //-       .marker__label HUB_METRO
+          //-     .marker.marker--active(style="top: 70%; left: 65%;")
+          //-       .marker__label HUB_METRO
+          //- Khu vực hiển thị bản đồ
+        .map-wrapper(style="position: relative; height: 500px; border-radius: 12px; overflow: hidden;")
+          #hubMap(
+            style="width: 100%; height: 100%; z-index: 1;"
+          )
+
+          //- PANEL CHI TIẾT (Mặc định ẩn đi)
+          #hubDetailPanel.hub-detail-panel
+            .panel-header
+              .panel-title-group
+                .title-row
+                  h2#panelHubName HUB_BK_CS2
+                  span#panelStatusBadge.panel-badge.panel-badge--warning QUÁ TẢI
+                p#panelAddress Trường ĐH Bách Khoa (CS2) • ĐHQG-HCM
+              button#btnClosePanel.btn-close-panel
+                i.fa-solid.fa-xmark
+
+            .panel-body
+              .stat-row
+                span.stat-label Xe hiện có
+                strong#panelVehicles.stat-value 22
+              
+              .stat-row.stat-row--warning
+                span.stat-label Chỗ đỗ
+                strong#panelParkingUsed.stat-value 22 / 27
+              
+              .stat-row
+                span.stat-label Chỗ trống
+                strong#panelParkingEmpty.stat-value.text-green 5
+              
+              .stat-row
+                span.stat-label Cổng sạc AC
+                strong#panelAC.stat-value 10
+              
+              .stat-row
+                span.stat-label Cổng sạc DC
+                strong#panelDC.stat-value 2
+              
+              .stat-row.stat-row--danger
+                span.stat-label Xe pin thấp (<20%)
+                strong#panelLowBat.stat-value 3
+
+            .panel-footer
+              button.btn-action.btn-dispatch(type="button") 
+                i.fa-solid.fa-arrows-rotate
+                | Điều phối xe
+              button.btn-action.btn-incident(type="button")
+                i.fa-solid.fa-triangle-exclamation
+                | Xử lý sự cố
+
+        // 2. Hiệu suất vận hành
+        .section-block.performance-section
+          .section-header
+            h2.section-title
+              i.fa-solid.fa-chart-line
+              | Hiệu suất vận hành mạng lưới
+            .time-toggle
+              button.time-toggle__btn.active(type="button") 24h
+              button.time-toggle__btn(type="button") 7 ngày
+              button.time-toggle__btn(type="button") 30 ngày
+          
+          .performance-grid
+            .perf-item
+              span.perf-label Tỷ lệ sử dụng
+              strong.perf-value 78%
+              span.perf-trend.text-green
+                i.fa-solid.fa-arrow-up
+                |  12%
+            .perf-item
+              span.perf-label Tỷ lệ lấp đầy chỗ
+              strong.perf-value 57%
+              span.perf-trend.text-green
+                i.fa-solid.fa-arrow-up
+                | 8%
+            .perf-item
+              span.perf-label Công suất sạc trung bình
+              strong.perf-value 56%
+              span.perf-trend.text-green
+                i.fa-solid.fa-arrow-up
+                | 5%
+            .perf-item
+              span.perf-label Lưu lượng di chuyển (lượt/giờ)
+              strong.perf-value 1.248
+              span.perf-trend.text-green
+                i.fa-solid.fa-arrow-up
+                | 15%
+
+      // ===== CỘT PHẢI =====
+      .dashboard-col-right
+        
+        // =========================================
+        // KHỐI 1: DỮ LIỆU VẬN HÀNH TRỰC TUYẾN
+        // =========================================
+        .live-section
+            
+            // Header
+            .live-section__header
+                h2.live-section__title
+                    i.fa-solid.fa-tower-broadcast
+                    | Dữ liệu vận hành trực tuyến
+                span.live-section__badge
+                    span.dot
+                    | LIVE
+
+            // Tabs
+            .live-section__tabs
+                button.tab-btn.active(type="button") Hoạt động gần đây
+                button.tab-btn(type="button") Trạng thái xe
+                button.tab-btn(type="button") Trạng thái sạc
+
+            // Danh sách hoạt động
+            .live-section__list
+                // Item 1
+                .live-item
+                    .live-item__icon.icon--green
+                        i.fa-solid.fa-bicycle
+                    .live-item__info
+                        strong.live-item__name Check-in xe đang chung
+                        span.live-item__desc HUB_BK_CS2 &bull; 14:31
+                    span.live-item__status.status--in Vào
+                    
+                // Item 2
+                .live-item
+                    .live-item__icon.icon--red
+                        i.fa-solid.fa-arrow-right-from-bracket
+                    .live-item__info
+                        strong.live-item__name Check-out xe đang chung
+                        span.live-item__desc HUB_METRO &bull; 14:28
+                    span.live-item__status.status--out Ra
+
+                // Item 3
+                .live-item
+                    .live-item__icon.icon--blue
+                        i.fa-solid.fa-bolt
+                    .live-item__info
+                        strong.live-item__name Bắt đầu phiên sạc
+                        span.live-item__desc HUB_UIT_IU &bull; 14:25
+                    span.live-item__status.status--charge Sạc
+
+            // Thanh tiến trình pin
+            .live-section__progress
+                .progress-header
+                    span Tình trạng pin xe toàn hệ thống
+                    span.progress-value Trung bình 68%
+                .progress-bar
+                    .progress-bar__segment.bg--green(style="width: 40%")
+                    .progress-bar__segment.bg--dark(style="width: 28%")
+                    .progress-bar__segment.bg--yellow(style="width: 15%")
+                    .progress-bar__segment.bg--red(style="width: 17%")
+
+            // Các nút hành động
+            .live-section__actions
+                button.action-btn.active(type="button")
+                    i.fa-solid.fa-shuffle
+                    | Điều phối xe
+                button.action-btn(type="button")
+                    i.fa-solid.fa-charging-station
+                    | Quản lý sạc
+                button.action-btn(type="button")
+                    i.fa-solid.fa-triangle-exclamation
+                    | Xử lý sự cố
+                button.action-btn(type="button")
+                    i.fa-solid.fa-chart-pie
+                    | Xem báo cáo
+
+
+        // =========================================
+        // KHỐI 2: CẢNH BÁO HỆ THỐNG
+        // =========================================
+        .alert-section
+
+            // Header
+            .alert-section__header
+                i.fa-solid.fa-circle-exclamation
+                h2.alert-section__title Cảnh báo hệ thống:
+
+            // Danh sách cảnh báo
+            .alert-section__list
+                
+                // Cảnh báo 1
+                .alert-item
+                    p.alert-item__text
+                        strong 14:27 
+                        strong HUB_BK_CS2 
+                        | - Tỷ lệ lấp đầy chỗ đỗ đạt 81%
+                    span.alert-item__tag.tag--warning Quá tải nhẹ
+
+                // Cảnh báo 2
+                .alert-item
+                    p.alert-item__text
+                        strong 14:12 
+                        | Cổng sạc CH-03 tại HUB_UIT_IU ngoại tuyến
+                    span.alert-item__tag.tag--danger Cần xử lý
+
+            // Nút Footer
+            .alert-section__actions
+                button.btn-dispatch(type="button") Điều phối xe
+                button.btn-resolve(type="button") Xử lý sự cố

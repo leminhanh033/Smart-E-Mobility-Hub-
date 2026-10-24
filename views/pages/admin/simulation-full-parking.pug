@@ -1,0 +1,143 @@
+extends ../../layouts/admin/default.pug
+
+block titleName
+  h1.dashboard-header__title Phân hệ Mô phỏng Kịch bản (What-If Simulation Suite)
+
+block main 
+  .simulation-page.container
+    
+    // =========================================
+    // THANH TAB CHỌN KỊCH BẢN
+    // =========================================
+    include ../../mixins/admin/simulation-tabs.pug
+    //- Gọi mixin với id 'parking' (tương ứng tab số 2)
+    +simulationTabs('parking')
+
+    // =========================================
+    // KHU VỰC CHÍNH (2 CỘT)
+    // =========================================
+    .simulation-layout
+      
+      // ================= CỘT TRÁI: FORM THIẾT LẬP =================
+      .simulation-left
+        .card.settings-card
+          .card-header
+            h2.card-title
+              i.fa-solid.fa-sliders.text-green
+              | THIẾT LẬP KỊCH BẢN
+
+          .card-body
+            .form-group
+              label.form-label MOBILITY HUB
+              select.form-control
+                option HUB_BK_CS2 (ĐH Bách Khoa CS2)
+                option HUB_METRO (Ga Metro ĐHQG)
+                option HUB_UIT_IU (ĐH CNTT - Quốc Tế)
+            
+            .form-group
+              label.form-label CỔNG SẠC KHẢ DỤNG
+              .form-control.readonly 8 cổng (10 AC / 2 DC)
+            
+            .form-group
+              label.form-label NHU CẦU SẠC HIỆN TẠI
+              .form-control.readonly 6 xe đang sạc
+            
+            .form-group
+              label.form-label NHU CẦU SẠC GIẢ ĐỊNH
+              input.form-control(type="text", value="17 xe chờ sạc (+183%)")
+            
+            .form-group
+              label.form-label KHUNG GIỜ MÔ PHỎNG
+              .form-control.readonly 16:30 - 17:30
+
+          .card-footer
+            button.btn-run(type="button")
+              i.fa-solid.fa-play
+              | Chạy mô phỏng kịch bản
+
+      // ================= CỘT PHẢI: KẾT QUẢ MÔ PHỎNG =================
+      .simulation-right
+        .simulation-result-wrapper
+          
+          //- KHỐI 1: SO SÁNH TRẠNG THÁI
+          .simulation-section
+            h3.section-label SO SÁNH TRẠNG THÁI
+            
+            .status-compare-grid
+              //- Box Trạng thái hiện tại
+              .status-box.status-box--current
+                .status-box__title TRẠNG THÁI HIỆN TẠI
+                .status-box__list
+                  .status-row
+                    span Sức chứa bãi đỗ:
+                    strong 25 chỗ
+                  .status-row
+                    span Đang sử dụng:
+                    strong.text-orange 20 chỗ (80%)
+                  .status-row
+                    span Chỗ trống thực tế:
+                    strong.text-green Đáp ứng 5 chỗ
+                    
+              //- Box Trạng thái mô phỏng
+              .status-box.status-box--simulated
+                .status-box__title TRẠNG THÁI MÔ PHỎNG
+                .status-box__list
+                  .status-row
+                    span Nhu cầu vào Hub:
+                    strong 12 xe
+                  .status-row
+                    span Mức vượt sức chứa:
+                    strong.text-red +7 xe quá tải
+                  .status-row
+                    span Cảnh báo:
+                    strong.text-red Từ chối gửi xe / Tràn bãi
+
+          //- KHỐI 2: KẾT QUẢ ĐÁNH GIÁ
+          .simulation-section
+            h3.section-label KẾT QUẢ ĐÁNH GIÁ
+            
+            .evaluation-grid
+              //- Thẻ Xanh (Bình thường)
+              .eval-card.eval-card--green
+                span.eval-card__label Chỗ trống hiện tại
+                .eval-card__value 5 chỗ
+                span.eval-card__sub HUB_BK_CS2
+                
+              //- Thẻ Cam (Cảnh báo)
+              .eval-card.eval-card--orange
+                span.eval-card__label Nhu cầu xe vào Hub
+                .eval-card__value 12 xe
+                span.eval-card__sub Không giữ tủi
+                
+              //- Thẻ Đỏ (Nguy hiểm)
+              .eval-card.eval-card--red
+                span.eval-card__label Không thể tiếp nhận
+                .eval-card__value 7 xe
+                span.eval-card__sub Tràn bãi đỗ
+
+          //- KHỐI 3: KHUYẾN NGHỊ VẬN HÀNH
+          .recommendation-card
+            .recommendation-header
+              .recommendation-header__title-group
+                i.fa-regular.fa-lightbulb.text-green
+                h3 KHUYẾN NGHỊ VẬN HÀNH
+              span.recommendation-header__badge Vehicle Redistribution &amp; Route Hub
+              
+            .recommendation-body
+              .recommendation-content
+                h4 Điều phối giải tỏa xe &amp; Điều hướng trạm lân cận
+                p
+                  | Điều chuyển 
+                  strong 8 xe khả dụng
+                  |  ra khỏi HUB_BK_CS2 sang trạm thuê xe (
+                  strong HUB_UIT_IU
+                  | ) để giải phóng chỗ đỗ.
+                p.recommendation-alternative
+                  | Alternative Hub: Gợi ý người dùng trên App di chuyển trả xe tại 
+                  strong HUB_KTX_A
+                  |  (còn 10 chỗ trống).
+
+            .recommendation-footer
+              button.btn-action(type="button")
+                | Xem phương án điều phối
+                i.fa-solid.fa-arrow-right

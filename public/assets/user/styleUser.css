@@ -1,0 +1,5224 @@
+/* =========================================
+   1. BIẾN TOÀN CỤC & RESET
+   ========================================= */
+:root {
+  --primary-color: #00d67d;
+  --primary-hover: #00b86b;
+  --bg-color: #f4f7f9;
+  --card-bg: #ffffff;
+  --text-main: #1a202c;
+  --text-muted: #718096;
+  --text-light: #a0aec0;
+  --border-color: #edf2f7;
+  --input-bg: #f8fafc;
+  --radius-lg: 16px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+a, a:hover, select,textarea{
+  text-decoration: none;
+  box-shadow: none;
+  border: none;
+  outline: none;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: block; /* Ghi đè display: flex nếu có từ layout cũ */
+}
+
+/* =========================================
+   2. HEADER (NAVBAR) — Top-level
+   ========================================= */
+.dashboard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--card-bg);
+  height: 64px;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.dashboard__header .header__left {
+  display: flex;
+  align-items: center;
+}
+
+.dashboard__header .header__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.dashboard__header .header__logo i {
+  color: var(--primary-color);
+  font-size: 20px;
+}
+
+.dashboard__header .header__nav {
+  display: flex;
+  gap:10px;
+  background-color: #F1F5F9;
+  border-radius: 14px;
+  padding:4px;
+}
+
+.dashboard__header .header__nav .nav__link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color 0.2s;
+  padding:10px 14px;
+}
+
+.dashboard__header .header__nav .nav__link:hover,
+.dashboard__header .header__nav .nav__link.active {
+  color: var(--primary-color);
+  background-color: #FFFFFF;
+  border-radius: 10px;
+}
+
+.dashboard__header .header__right {
+  display: flex;
+  align-items: center;
+}
+
+.dashboard__header .header__right .user-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+/* =========================================
+   3. DASHBOARD (MAIN) & CONTAINER
+   ========================================= */
+.dashboard {
+  padding: 32px 0;
+}
+
+.dashboard .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* =========================================
+   4. HERO SECTION
+   ========================================= */
+.dashboard .hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  background: linear-gradient(135deg, #e6fdf3 0%, #f0fdf4 100%);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  margin-bottom: 40px;
+}
+
+.dashboard .hero .hero__content {
+  max-width: 600px;
+}
+
+.dashboard .hero .hero__content .hero__subtitle {
+  font-size: 11px;
+  font-weight: 800;
+  color: #00a862;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.dashboard .hero .hero__content .hero__title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+}
+
+.dashboard .hero .hero__content .hero__desc {
+  font-size: 14px;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.dashboard .hero .hero__status {
+  flex-shrink: 0;
+}
+
+.dashboard .hero .hero__status .status-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #d1fae5;
+}
+
+.dashboard .hero .hero__status .status-badge i {
+  color: var(--primary-color);
+  font-size: 20px;
+  background: #D1FAE5B2;
+  padding:11px;
+  border-radius: 12px;
+}
+
+.dashboard .hero .hero__status .status-badge .status-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard .hero .hero__status .status-badge .status-text span {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.dashboard .hero .hero__status .status-badge .status-text strong {
+  font-size: 14px;
+  font-weight: 800;
+  color: #047857;
+}
+
+/* =========================================
+   5. SECTION HEADER CHUNG
+   ========================================= */
+.dashboard .section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.dashboard .section-header .section-header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dashboard .section-header .section-header__left .section-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.2px;
+}
+
+.dashboard .section-header .section-header__left .section-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.dashboard .section-header .section-link {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-color);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.2s;
+}
+
+.dashboard .section-header .section-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* =========================================
+   6. DỊCH VỤ CHÍNH (SERVICES)
+   ========================================= */
+.dashboard .services {
+  margin-bottom: 40px;
+}
+
+.dashboard .services .services__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* ---------- Service Card ---------- */
+.dashboard .services .services__grid .service-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard .services .services__grid .service-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+  border-color: #d1fae5;
+}
+
+/* Top row: icon + badge */
+.dashboard .services .services__grid .service-card .service-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+/* Icon */
+.dashboard .services .services__grid .service-card .service-card__top .service-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.dashboard .services .services__grid .service-card .service-card__top .service-card__icon.icon--green {
+  background-color: #e6fdf3;
+  color: #00a862;
+}
+
+.dashboard .services .services__grid .service-card .service-card__top .service-card__icon.icon--blue {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.dashboard .services .services__grid .service-card .service-card__top .service-card__icon.icon--purple {
+  background-color: #f3e8ff;
+  color: #9333ea;
+}
+
+.dashboard .services .services__grid .service-card .service-card__top .service-card__icon.icon--orange {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+/* Badge trong card */
+.dashboard .services .services__grid .service-card .service-card__top .service-card__badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.dashboard .services .services__grid .service-card .service-card__top .service-card__badge.badge--green {
+  background-color: #e6fdf3;
+  color: #00a862;
+}
+
+.dashboard .services .services__grid .service-card .service-card__top .service-card__badge.badge--blue {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.dashboard .services .services__grid .service-card .service-card__top .service-card__badge.badge--purple {
+  background-color: #f3e8ff;
+  color: #9333ea;
+}
+
+.dashboard .services .services__grid .service-card .service-card__top .service-card__badge.badge--orange {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+/* Title + Desc + Link */
+.dashboard .services .services__grid .service-card .service-card__title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.dashboard .services .services__grid .service-card .service-card__desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.dashboard .services .services__grid .service-card .service-card__link {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-color);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: gap 0.2s;
+}
+
+.dashboard .services .services__grid .service-card .service-card__link:hover {
+  gap: 10px;
+}
+
+.dashboard .services .services__grid .service-card .service-card__link i {
+  font-size: 10px;
+}
+
+/* =========================================
+   7. ĐẶT CHỖ HIỆN TẠI (CURRENT BOOKINGS)
+   ========================================= */
+.dashboard .current-bookings {
+  margin-bottom: 40px;
+}
+
+.dashboard .current-bookings .booking-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--primary-color);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+/* ---- Left ---- */
+.dashboard .current-bookings .booking-card .booking-card__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__icon {
+  width: 48px;
+  height: 48px;
+  background-color: #e6fdf3;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00a862;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* Badges */
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info .booking-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info .booking-card__badges .badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info .booking-card__badges .badge.badge--warning {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info .booking-card__badges .badge.badge--warning i {
+  font-size: 9px;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info .booking-card__badges .badge.badge--gray {
+  background-color: #f1f5f9;
+  color: var(--text-muted);
+}
+
+/* Title */
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info .booking-card__title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info .booking-card__title .booking-card__code {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+/* Route */
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info .booking-card__route {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info .booking-card__route strong {
+  color: #111827;
+  font-weight: 700;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__left .booking-card__info .booking-card__route i {
+  color: var(--text-light);
+  font-size: 11px;
+}
+
+/* ---- Right (buttons) ---- */
+.dashboard .current-bookings .booking-card .booking-card__right {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__right .btn-outline,
+.dashboard .current-bookings .booking-card .booking-card__right .btn-primary {
+  height: 38px;
+  padding: 0 20px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__right .btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.dashboard .current-bookings .booking-card .booking-card__right .btn-outline:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__right .btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+  color: #ffffff;
+}
+
+.dashboard .current-bookings .booking-card .booking-card__right .btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+/* =========================================
+   8. RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+  .dashboard .services .services__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 850px) {
+  /* Header */
+  .dashboard__header {
+    flex-direction: column;
+    height: auto;
+    padding: 16px 20px;
+    gap: 16px;
+  }
+
+  .dashboard__header .header__nav {
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Hero */
+  .dashboard .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 28px;
+  }
+
+  .dashboard .hero .hero__content .hero__title {
+    font-size: 26px;
+  }
+
+  /* Section header */
+  .dashboard .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* Booking card */
+  .dashboard .current-bookings .booking-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .dashboard .current-bookings .booking-card .booking-card__right {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard {
+    padding: 20px 0;
+  }
+
+  .dashboard .container {
+    padding: 0 16px;
+  }
+
+  .dashboard .services .services__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard .hero {
+    padding: 24px;
+  }
+
+  .dashboard .hero .hero__content .hero__title {
+    font-size: 22px;
+  }
+
+  .dashboard .current-bookings .booking-card .booking-card__right {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .dashboard .current-bookings .booking-card .booking-card__right .btn-outline,
+  .dashboard .current-bookings .booking-card .booking-card__right .btn-primary {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   BOOK SHARED VEHICLE PAGE
+   ========================================= */
+
+/* Layout tổng: sidebar + map */
+.book-shared-vehicle {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  height: calc(100vh - 64px); 
+  overflow: hidden; 
+}
+
+/* =========================================
+   1. SIDEBAR (Bên trái)
+   ========================================= */
+.book-shared-vehicle .book-shared-vehicle__sidebar {
+  background-color: var(--card-bg);
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .sidebar-section {
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .sidebar-section:last-child {
+  border-bottom: none;
+}
+.book-shared-vehicle .book-shared-vehicle__sidebar .section-row{
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom:10px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .sidebar-section__title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom:5px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .section-row .sidebar-section__title{
+  margin-bottom: 0;
+}
+
+/* ---------- Tuyến đường ---------- */
+.book-shared-vehicle .book-shared-vehicle__sidebar .route-point {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 5px 0;
+  position: relative;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .route-point + .route-point::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: -14px;
+  width: 2px;
+  height: 20px;
+  background-image: linear-gradient(to bottom, #cbd5e1 50%, transparent 50%);
+  background-size: 2px 6px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .route-point__dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 1px #cbd5e1;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .route-point__dot--start {
+  background-color: #00d67d;
+  box-shadow: 0 0 0 1px #00d67d;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .route-point__dot--end {
+  background-color: #f59e0b;
+  box-shadow: 0 0 0 1px #f59e0b;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .route-point__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .route-point__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .route-point__desc {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+/* ---------- Filter ---------- */
+.book-shared-vehicle .book-shared-vehicle__sidebar .filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .filter-tab {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .filter-tab:hover {
+  background-color: #e6fdf3;
+  border-color: #d1fae5;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .filter-tab.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .filter-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .filter-sort__select {
+  flex: 1;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  font-size: 12px;
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+}
+
+/* ---------- Danh sách xe ---------- */
+.book-shared-vehicle .book-shared-vehicle__sidebar .sidebar-section--scroll {
+  flex: 1;
+  padding: 12px 20px 20px;
+  overflow-y: auto;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  transition: all 0.2s;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item:hover {
+  border-color: #d1fae5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background-color: #e6fdf3;
+  color: #00a862;
+  letter-spacing: 0.3px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__specs {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin-bottom: 12px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__specs li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__specs li i {
+  color: var(--text-light);
+  font-size: 10px;
+  width: 12px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__price {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__price span {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__price small {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__link {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .vehicle-item__link:hover {
+  color: var(--primary-color);
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .btn-book {
+  height: 30px;
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--primary-color);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.book-shared-vehicle .book-shared-vehicle__sidebar .btn-book:hover {
+  background-color: var(--primary-hover);
+}
+
+/* =========================================
+   2. MAP AREA (Bên phải)
+   ========================================= */
+.book-shared-vehicle .book-shared-vehicle__map {
+  position: relative;
+  overflow: hidden;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map #map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Nút zoom nằm trên map */
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10;
+  /* ... phần còn lại giữ nguyên */
+}
+/* ---------- Route Info Card ---------- */
+.book-shared-vehicle .book-shared-vehicle__map .route-info {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+  min-width: 230px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info__label {
+  position: absolute;
+  top: -8px;
+  left: 14px;
+  background-color: #ffffff;
+  padding: 0 6px;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info__distance {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info__time {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info__time i {
+  color: var(--primary-color);
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info__icon {
+  width: 40px;
+  height: 40px;
+  background-color: #e6fdf3;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00a862;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* ---------- Map Marker ---------- */
+.book-shared-vehicle .book-shared-vehicle__map .map-marker {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 5;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-marker--start {
+  top: 30%;
+  left: 42%;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-marker--end {
+  top: 65%;
+  left: 68%;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-marker__pin {
+  width: 34px;
+  height: 34px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-marker__pin i {
+  transform: rotate(45deg);
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-marker__pin--start {
+  background-color: #00d67d;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-marker__pin--end {
+  background-color: #f59e0b;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-marker__label {
+  background-color: #ffffff;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 200px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-marker__label strong {
+  font-size: 12px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-marker__label span {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ---------- Zoom Buttons ---------- */
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom__btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background-color: transparent;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom__btn:first-child {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom__btn:hover {
+  background-color: #f8fafc;
+}
+
+/* =========================================
+   3. RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+  .book-shared-vehicle {
+    grid-template-columns: 320px 1fr;
+  }
+}
+
+@media (max-width: 850px) {
+  .book-shared-vehicle {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    height: auto;
+  }
+
+  .book-shared-vehicle .book-shared-vehicle__sidebar {
+    order: 2;
+    border-right: none;
+    border-top: 1px solid var(--border-color);
+    max-height: 60vh;
+  }
+
+  .book-shared-vehicle .book-shared-vehicle__map {
+    order: 1;
+    height: 50vh;
+  }
+}
+
+@media (max-width: 600px) {
+  .book-shared-vehicle .book-shared-vehicle__map .route-info {
+    top: 12px;
+    right: 12px;
+    padding: 10px 14px;
+    min-width: 180px;
+  }
+
+  .book-shared-vehicle .book-shared-vehicle__map .route-info__distance {
+    font-size: 15px;
+  }
+
+  .book-shared-vehicle .book-shared-vehicle__map .map-marker__label {
+    min-width: 160px;
+    padding: 4px 8px;
+  }
+
+  .book-shared-vehicle .book-shared-vehicle__map .map-marker__label strong {
+    font-size: 11px;
+  }
+
+  .book-shared-vehicle .book-shared-vehicle__map .map-marker__label span {
+    font-size: 9px;
+  }
+}
+
+/* =========================================
+   VEHICLE DETAIL PAGE
+   Layout: sidebar trái + map phải
+   ========================================= */
+
+/* ---------- Layout tổng ---------- */
+.book-shared-vehicle {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+/* =========================================
+   1. SIDEBAR (Bên trái)
+   ========================================= */
+.book-shared-vehicle .shared-vehicle-detail__sidebar {
+  background-color: var(--card-bg);
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 16px;
+}
+
+/* ---------- Nút quay lại ---------- */
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  align-self: flex-start;
+  transition: color 0.2s;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__back:hover {
+  color: var(--primary-color);
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__back i {
+  font-size: 12px;
+}
+
+/* ---------- Card xe ---------- */
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card {
+  border-radius: var(--radius-lg);
+  overflow: scroll;
+  display:flex;
+  flex-direction: column;
+  gap:20px;
+}
+
+/* ---------- Header xe ---------- */
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background-color: #ECFDF580;
+  border: 1px solid #A7F3D0CC;
+  border-radius:16px;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__header .shared-vehicle-detail__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__header .shared-vehicle-detail__title-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__header .shared-vehicle-detail__name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.2px;
+  margin-bottom: 2px;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__header .shared-vehicle-detail__plate {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__header .shared-vehicle-detail__plate span {
+  color: #00a862;
+  font-weight: 700;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__header .shared-vehicle-detail__badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: #d1fae5;
+  color: #00a862;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---------- Mức pin ---------- */
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__battery {
+  padding: 16px 18px;
+  border: 1px solid #E2E8F0;
+  border-radius:16px;
+  background-color: #fafbfc;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__battery .battery__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__battery .battery__header .battery__label {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__battery .battery__header .battery__percent {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: -0.3px;
+}
+
+/* Thanh tiến độ */
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__battery .battery__bar {
+  width: 100%;
+  height: 10px;
+  background-color: #e5e7eb;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__battery .battery__bar .battery__bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00d67d 0%, #00b86b 100%);
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__battery .battery__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--text-light);
+}
+
+/* ---------- Danh sách info ---------- */
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__info {
+  list-style: none;
+  padding: 6px 18px;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__info li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__info li:last-child {
+  border-bottom: none;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__info li .info__label {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__info li .info__value {
+  color: #111827;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Trạng thái khóa ngầm */
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__info li .info__value.info__value--lock {
+  color: #00a862;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__info li .info__value.info__value--lock i {
+  font-size: 11px;
+}
+
+/* ---------- Nút Đặt xe ngay ---------- */
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__submit {
+  width: 100%;
+  height: 48px;
+  background-color: var(--primary-color);
+  color: #022C22;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  letter-spacing: 0.2px;
+  box-shadow: 0 4px 12px rgba(0, 214, 125, 0.2);
+  margin-top: auto;
+}
+
+.book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__submit:hover {
+  background-color: var(--primary-hover);
+  box-shadow: 0 6px 16px rgba(0, 214, 125, 0.28);
+}
+
+/* =========================================
+   2. MAP AREA (Bên phải)
+   ========================================= */
+.book-shared-vehicle .book-shared-vehicle__map {
+  position: relative;
+  background-color: #eaf4f4;
+  overflow: hidden;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map #map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* ---------- Route Info Card ---------- */
+.book-shared-vehicle .book-shared-vehicle__map .route-info {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+  min-width: 230px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info .route-info__label {
+  position: absolute;
+  top: -8px;
+  left: 14px;
+  background-color: #ffffff;
+  padding: 0 6px;
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info .route-info__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info .route-info__main .route-info__distance {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info .route-info__main .route-info__time {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info .route-info__main .route-info__time i {
+  color: var(--primary-color);
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .route-info .route-info__icon {
+  width: 40px;
+  height: 40px;
+  background-color: #e6fdf3;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00a862;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* ---------- Zoom buttons ---------- */
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom .map-zoom__btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background-color: transparent;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom .map-zoom__btn:first-child {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom .map-zoom__btn:hover {
+  background-color: #f8fafc;
+}
+
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom .map-zoom__btn:disabled,
+.book-shared-vehicle .book-shared-vehicle__map .map-zoom .map-zoom__btn.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   3. RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+  .book-shared-vehicle {
+    grid-template-columns: 360px 1fr;
+  }
+}
+
+@media (max-width: 850px) {
+  .book-shared-vehicle {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    height: auto;
+  }
+
+  .book-shared-vehicle .shared-vehicle-detail__sidebar {
+    order: 2;
+    border-right: none;
+    border-top: 1px solid var(--border-color);
+    max-height: none;
+  }
+
+  .book-shared-vehicle .book-shared-vehicle__map {
+    order: 1;
+    height: 50vh;
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-shared-vehicle .shared-vehicle-detail__sidebar {
+    padding: 16px;
+  }
+
+  .book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__header {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__header .shared-vehicle-detail__name {
+    font-size: 14px;
+  }
+
+  .book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__header .shared-vehicle-detail__icon {
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+  }
+
+  .book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__battery {
+    padding: 14px 16px;
+  }
+
+  .book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__info {
+    padding: 4px 16px;
+  }
+
+  .book-shared-vehicle .shared-vehicle-detail__sidebar .shared-vehicle-detail__card .shared-vehicle-detail__info li {
+    font-size: 11px;
+    gap: 10px;
+  }
+}
+
+/* =========================================
+   BOOK PARKING PAGE
+   (Scope từ .book-parking)
+   ========================================= */
+
+/* .book-parking {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  align-items: flex-start;
+}
+
+/* =========================================
+   1. LEFT — Filters + Parking list
+   ========================================= */
+.book-parking .book-parking__main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+} */
+
+/* ---------- Tabs ---------- */
+.book-parking__tabs {
+  display: inline-flex;
+  background-color: #e6fdf3;
+  border-radius: 50px;
+  padding: 4px;
+  gap: 4px;
+  align-self: flex-start;
+}
+
+.book-parking__tabs .tab-btn {
+  padding: 8px 18px;
+  border: none;
+  background-color: transparent;
+  color: #00a862;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.book-parking__tabs .tab-btn:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.book-parking__tabs .tab-btn.active {
+  background-color: #ffffff;
+  color: var(--primary-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================
+   BOOK PARKING PAGE
+   ========================================= */
+
+.book-parking {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  align-items: flex-start;
+}
+
+/* =========================================
+   1. LEFT — Header + Search + List
+   ========================================= */
+.book-parking .book-parking__main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* ---------- Header ---------- */
+.book-parking .book-parking__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.book-parking .book-parking__header .book-parking__title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.2px;
+}
+
+.book-parking .book-parking__header .book-parking__subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ---------- Search block ---------- */
+.book-parking .book-parking__search-block {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.book-parking .book-parking__search-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.book-parking .book-parking__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.book-parking .book-parking__search .book-parking__search-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-light);
+  font-size: 13px;
+}
+
+.book-parking .book-parking__search .book-parking__search-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 16px 0 38px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--input-bg);
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.book-parking .book-parking__search .book-parking__search-input:focus {
+  border-color: var(--primary-color);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(0, 214, 125, 0.08);
+}
+
+.book-parking .book-parking__search .book-parking__search-input::placeholder {
+  color: var(--text-light);
+}
+
+/* ---------- List ---------- */
+.book-parking .book-parking__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.book-parking .book-parking__list .book-parking__list-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.book-parking .book-parking__list .book-parking__list-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.book-parking .book-parking__list .book-parking__list-count {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ---------- Parking card ---------- */
+.book-parking .book-parking__list .parking-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.book-parking .book-parking__list .parking-card:hover {
+  border-color: #d1fae5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.book-parking .book-parking__list .parking-card.parking-card--selected {
+  border: 2px solid var(--primary-color);
+  background-color: #f4fdf9;
+  box-shadow: 0 4px 16px rgba(0, 214, 125, 0.08);
+}
+
+.book-parking .book-parking__list .parking-card .parking-card__left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.book-parking .book-parking__list .parking-card .parking-card__name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.3px;
+}
+
+.book-parking .book-parking__list .parking-card .parking-card__address {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.book-parking .book-parking__list .parking-card .parking-card__address i {
+  color: var(--text-light);
+  font-size: 10px;
+}
+
+.book-parking .book-parking__list .parking-card .parking-card__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.book-parking .book-parking__list .parking-card .parking-card__slots {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: 0.2px;
+}
+
+.book-parking .book-parking__list .parking-card .parking-card__slots--warning {
+  color: #f59e0b;
+}
+
+.book-parking .book-parking__list .parking-card .parking-card__usage {
+  font-size: 10px;
+  color: var(--text-light);
+  letter-spacing: 0.3px;
+}
+
+/* =========================================
+   2. RIGHT — Summary
+   ========================================= */
+.book-parking .book-parking__summary {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 84px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.book-parking .book-parking__summary .summary__label {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* Hub */
+.book-parking .book-parking__summary .summary__hub {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.book-parking .book-parking__summary .summary__hub-name {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.3px;
+}
+
+.book-parking .book-parking__summary .summary__hub-address {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Slot highlight */
+.book-parking .book-parking__summary .summary__slot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: #e6fdf3;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.book-parking .book-parking__summary .summary__slot-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #00a862;
+  letter-spacing: 0.3px;
+}
+
+.book-parking .book-parking__summary .summary__slot-code {
+  font-size: 24px;
+  font-weight: 800;
+  color: #00a862;
+  letter-spacing: 1px;
+}
+
+/* Meta */
+.book-parking .book-parking__summary .summary__meta {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.book-parking .book-parking__summary .summary__meta li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.book-parking .book-parking__summary .summary__meta li span {
+  color: var(--text-muted);
+}
+
+.book-parking .book-parking__summary .summary__meta li strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Warning */
+.book-parking .book-parking__summary .summary__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.book-parking .book-parking__summary .summary__warning i {
+  color: #f59e0b;
+  font-size: 13px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.book-parking .book-parking__summary .summary__warning p {
+  font-size: 11px;
+  color: #78350f;
+  line-height: 1.5;
+}
+
+/* Actions */
+.book-parking .book-parking__summary .summary__actions {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.book-parking .book-parking__summary .summary__actions .btn-outline,
+.book-parking .book-parking__summary .summary__actions .btn-primary {
+  height: 42px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.book-parking .book-parking__summary .summary__actions .btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.book-parking .book-parking__summary .summary__actions .btn-outline:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.book-parking .book-parking__summary .summary__actions .btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+  color:#022C22;
+;
+}
+
+.book-parking .book-parking__summary .summary__actions .btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+/* =========================================
+   3. RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+  .book-parking {
+    grid-template-columns: 1fr 320px;
+  }
+}
+
+@media (max-width: 850px) {
+  .book-parking {
+    grid-template-columns: 1fr;
+  }
+
+  .book-parking .book-parking__summary {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .book-parking {
+    padding: 20px 16px;
+  }
+
+  .book-parking .book-parking__list .parking-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .book-parking .book-parking__list .parking-card .parking-card__right {
+    align-items: flex-start;
+  }
+}
+
+/* =========================================
+   SCHEDULE CHARGING PAGE
+   (Scope từ .schedule-charging)
+   ========================================= */
+
+.schedule-charging {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  align-items: flex-start;
+}
+
+/* =========================================
+   1. LEFT
+   ========================================= */
+.schedule-charging .schedule-charging__main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* ---------- Header ---------- */
+.schedule-charging .schedule-charging__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.schedule-charging .schedule-charging__header .schedule-charging__title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.schedule-charging .schedule-charging__header .schedule-charging__subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ---------- Section chung ---------- */
+.schedule-charging .schedule-section {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.schedule-charging .schedule-section .schedule-section__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.schedule-charging .schedule-section .schedule-section__num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ---------- 1. Vehicle Picker ---------- */
+.schedule-charging .schedule-section .vehicle-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.schedule-charging .schedule-section .vehicle-picker .vehicle-pick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--card-bg);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.schedule-charging .schedule-section .vehicle-picker .vehicle-pick:hover {
+  border-color: #d1fae5;
+  background-color: #f7fffb;
+}
+
+.schedule-charging .schedule-section .vehicle-picker .vehicle-pick--selected {
+  border: 2px solid var(--primary-color);
+  background-color: #f4fdf9;
+}
+
+.schedule-charging .schedule-section .vehicle-picker .vehicle-pick__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e6fdf3;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.schedule-charging .schedule-section .vehicle-picker .vehicle-pick__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.schedule-charging .schedule-section .vehicle-picker .vehicle-pick__name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.schedule-charging .schedule-section .vehicle-picker .vehicle-pick__plate {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+.schedule-charging .schedule-section .vehicle-picker .vehicle-pick__pin {
+  font-size: 10px;
+  color: var(--text-light);
+}
+
+.schedule-charging .schedule-section .vehicle-picker .vehicle-pick__check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: var(--primary-color);
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.schedule-charging .schedule-section .vehicle-picker .vehicle-pick--selected .vehicle-pick__check {
+  opacity: 1;
+}
+
+/* ---------- 2. Energy Grid ---------- */
+.schedule-charging .schedule-section .energy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+
+.schedule-charging .schedule-section .energy-grid .energy-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.schedule-charging .schedule-section .energy-grid .energy-item__label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.schedule-charging .schedule-section .energy-grid .energy-item__value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.schedule-charging .schedule-section .energy-grid .energy-item__value strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.schedule-charging .schedule-section .energy-grid .energy-item__value .badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.schedule-charging .schedule-section .energy-grid .energy-item__value .input-field {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--input-bg);
+  font-size: 12px;
+  color: var(--text-main);
+  outline: none;
+  width: 100%;
+}
+
+.schedule-charging .schedule-section .energy-grid .energy-item__value .input-field:focus {
+  border-color: var(--primary-color);
+}
+
+.input-field {
+  width: 100%;
+  height: 44px;
+  padding: 0 40px 0 16px;   /* chừa chỗ bên phải cho mũi tên */
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background-color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  cursor: pointer;
+  outline: none;
+  appearance: none;          /* ẩn mũi tên mặc định của trình duyệt */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Vẽ mũi tên bằng SVG nền */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px;
+
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-field:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 214, 125, 0.08);
+}
+
+/* ---------- Duration ---------- */
+.schedule-charging .schedule-section .duration {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+}
+
+.schedule-charging .schedule-section .duration .duration__label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.schedule-charging .schedule-section .duration .duration__options {
+  display: flex;
+  gap: 10px;
+}
+
+.schedule-charging .schedule-section .duration .duration__options .duration-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 50px;
+  background-color: var(--input-bg);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.schedule-charging .schedule-section .duration .duration__options .duration-btn:hover {
+  background-color: #e6fdf3;
+  border-color: #d1fae5;
+}
+
+.schedule-charging .schedule-section .duration .duration__options .duration-btn.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.schedule-charging .schedule-section .duration .duration__options .duration-btn i {
+  font-size: 10px;
+}
+
+/* ---------- 3. Hub + Time slots ---------- */
+.schedule-charging .schedule-section .hub-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.schedule-charging .schedule-section .hub-label strong {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.schedule-charging .schedule-section .hub-label select {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  padding:12px 15px;
+  border: 1px solid #CBD5E1;
+  border-radius: 12px;
+}
+
+.schedule-charging .schedule-section .time-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.schedule-charging .schedule-section .time-slots .time-slots__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.schedule-charging .schedule-section .time-slots .time-slots__header span:first-child {
+  font-weight: 700;
+  color: #111827;
+}
+
+.schedule-charging .schedule-section .time-slots .time-slots__header .time-slots__hint {
+  font-size: 11px;
+  color: var(--text-light);
+  text-align: right;
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot {
+  display: grid;
+  grid-template-columns: 32px 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--card-bg);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot:hover {
+  border-color: #d1fae5;
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot--selected {
+  border: 2px solid var(--primary-color);
+  background-color: #f4fdf9;
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot input[type="radio"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot input[type="radio"]:checked {
+  border-color: var(--primary-color);
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot .time-slot__time {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot .time-slot__time strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot .time-slot__time span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot .time-slot__meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.schedule-charging .schedule-section .time-slots .time-slot .time-slot__hub {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: 0.3px;
+  padding: 4px 10px;
+  background-color: #e6fdf3;
+  border-radius: 4px;
+}
+
+/* =========================================
+   2. RIGHT — Summary
+   ========================================= */
+.schedule-charging .schedule-charging__summary {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 84px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.schedule-charging .schedule-charging__summary .summary__label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.schedule-charging .schedule-charging__summary .summary__vehicle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.schedule-charging .schedule-charging__summary .summary__vehicle-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #e6fdf3;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.schedule-charging .schedule-charging__summary .summary__vehicle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.schedule-charging .schedule-charging__summary .summary__vehicle-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.schedule-charging .schedule-charging__summary .summary__vehicle-plate {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Block highlight */
+.schedule-charging .schedule-charging__summary .summary__block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: #e6fdf3;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.schedule-charging .schedule-charging__summary .summary__block-label {
+  font-size: 10px;
+  font-weight: 600;
+  color:#64748B;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.schedule-charging .schedule-charging__summary .summary__block-value {
+  font-size: 14px;
+  font-weight: 800;
+  color:#047857;
+}
+
+.schedule-charging .schedule-charging__summary .summary__block-sub {
+  font-size: 11px;
+  color: #475569;
+}
+
+/* Meta */
+.schedule-charging .schedule-charging__summary .summary__meta {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.schedule-charging .schedule-charging__summary .summary__meta li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  height:35px;
+}
+
+.schedule-charging .schedule-charging__summary .summary__meta li span {
+  color: var(--text-muted);
+}
+
+.schedule-charging .schedule-charging__summary .summary__meta li strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Cost */
+.schedule-charging .schedule-charging__summary .summary__cost {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.schedule-charging .schedule-charging__summary .summary__cost-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.schedule-charging .schedule-charging__summary .summary__cost-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+/* Warning */
+.schedule-charging .schedule-charging__summary .summary__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.schedule-charging .schedule-charging__summary .summary__warning i {
+  color: #f59e0b;
+  font-size: 14px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.schedule-charging .schedule-charging__summary .summary__warning p {
+  font-size: 11px;
+  color: #78350f;
+  line-height: 1.5;
+}
+
+/* Actions */
+.schedule-charging .schedule-charging__summary .summary__actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.schedule-charging .schedule-charging__summary .summary__actions .btn-outline,
+.schedule-charging .schedule-charging__summary .summary__actions .btn-primary {
+  height: 44px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.schedule-charging .schedule-charging__summary .summary__actions .btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.schedule-charging .schedule-charging__summary .summary__actions .btn-outline:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.schedule-charging .schedule-charging__summary .summary__actions .btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+  color:#022C22;
+}
+
+.schedule-charging .schedule-charging__summary .summary__actions .btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+/* =========================================
+   3. RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+  .schedule-charging {
+    grid-template-columns: 1fr 340px;
+  }
+}
+
+@media (max-width: 850px) {
+  .schedule-charging {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-charging .schedule-charging__summary {
+    position: static;
+  }
+
+  .schedule-charging .schedule-charging__tabs {
+    flex-wrap: wrap;
+  }
+
+  .schedule-charging .schedule-section .time-slots .time-slot {
+    grid-template-columns: 32px 1fr;
+    row-gap: 8px;
+  }
+
+  .schedule-charging .schedule-section .time-slots .time-slot .time-slot__meta,
+  .schedule-charging .schedule-section .time-slots .time-slot .time-slot__hub {
+    grid-column: 2 / -1;
+    text-align: left;
+  }
+}
+
+@media (max-width: 600px) {
+  .schedule-charging {
+    padding: 20px 16px;
+  }
+
+  .schedule-charging .schedule-section .vehicle-picker,
+  .schedule-charging .schedule-section .energy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-charging .schedule-section .duration .duration__options {
+    flex-wrap: wrap;
+  }
+}
+
+/* =========================================
+   START CHARGING PAGE
+   (Scope từ .start-charging)
+   ========================================= */
+
+.start-charging {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  align-items: flex-start;
+}
+
+/* =========================================
+   1. LEFT
+   ========================================= */
+.start-charging .start-charging__main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* ---------- Header ---------- */
+.start-charging .start-charging__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.start-charging .start-charging__header .start-charging__title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.start-charging .start-charging__header .start-charging__subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ---------- Section chung ---------- */
+.start-charging .charging-section {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.start-charging .charging-section .charging-section__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.start-charging .charging-section .charging-section__num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ---------- 1. Info section ---------- */
+.start-charging .charging-section .info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.start-charging .charging-section .info-row .info-row__label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.start-charging .charging-section .info-row .info-row__value strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  display: block;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.start-charging .charging-section .info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+
+.start-charging .charging-section .info-grid .info-item,
+.start-charging .charging-section .info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.start-charging .charging-section .info-item .info-item__label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.start-charging .charging-section .info-item .info-item__value .input-field {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--input-bg);
+  font-size: 13px;
+  font-weight:700;
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.start-charging .charging-section .info-item .info-item__value .input-field:focus {
+  border-color: var(--primary-color);
+}
+
+/* ---------- 2. Plan list ---------- */
+.start-charging .charging-section .plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.start-charging .charging-section .plan-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--card-bg);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.start-charging .charging-section .plan-card:hover {
+  border-color: #d1fae5;
+}
+
+.start-charging .charging-section .plan-card.plan-card--selected {
+  border: 2px solid var(--primary-color);
+  background-color: #f4fdf9;
+  box-shadow: 0 4px 16px rgba(0, 214, 125, 0.08);
+}
+
+.start-charging .charging-section .plan-card .plan-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.start-charging .charging-section .plan-card .plan-card__header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.start-charging .charging-section .plan-card .plan-card__check {
+  color: #cbd5e1;
+  font-size: 18px;
+  transition: color 0.2s;
+}
+
+.start-charging .charging-section .plan-card--selected .plan-card__check {
+  color: var(--primary-color);
+}
+
+.start-charging .charging-section .plan-card .plan-card__name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.start-charging .charging-section .plan-card .plan-card__badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background-color: #e6fdf3;
+  color: #00a862;
+  letter-spacing: 0.3px;
+}
+
+.start-charging .charging-section .plan-card .plan-card__badge--hidden {
+  visibility: hidden;
+}
+
+/* Specs grid */
+.start-charging .charging-section .plan-card .plan-card__specs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+
+}
+
+.start-charging .charging-section .plan-card .plan-card__specs .plan-card__spec {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  padding:10px;
+}
+
+.start-charging .charging-section .plan-card .plan-card__specs .plan-card__spec-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.start-charging .charging-section .plan-card .plan-card__specs .plan-card__spec-value {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: 0.5px;
+}
+
+/* Footer */
+.start-charging .charging-section .plan-card .plan-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.start-charging .charging-section .plan-card .plan-card__footer .plan-card__time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.start-charging .charging-section .plan-card .plan-card__footer .plan-card__time::before {
+  content: "\f017";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 400;
+  color: var(--text-light);
+  font-size: 11px;
+}
+
+.start-charging .charging-section .plan-card .plan-card__footer .plan-card__pin {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.start-charging .charging-section .plan-card .plan-card__footer .plan-card__pin strong {
+  font-size: 12px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.start-charging .charging-section .plan-card .plan-card__footer .plan-card__pin span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* =========================================
+   2. RIGHT — Summary
+   ========================================= */
+.start-charging .start-charging__summary {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 84px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.start-charging .start-charging__summary .summary__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.start-charging .start-charging__summary .summary__label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.start-charging .start-charging__summary .summary__id {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+
+/* Countdown */
+.start-charging .start-charging__summary .summary__countdown {
+  background-color: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.start-charging .start-charging__summary .summary__countdown-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #dc2626;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.start-charging .start-charging__summary .summary__countdown-time {
+  font-size: 22px;
+  font-weight: 800;
+  color: #dc2626;
+  letter-spacing: 1px;
+}
+
+.start-charging .start-charging__summary .summary__countdown-hint {
+  font-size: 11px;
+  color: #b91c1c;
+  line-height: 1.4;
+}
+
+/* Hub info */
+.start-charging .start-charging__summary .summary__hub {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #e6fdf3;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  position: relative;
+}
+
+.start-charging .start-charging__summary .summary__hub-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.start-charging .start-charging__summary .summary__hub-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.start-charging .start-charging__summary .summary__hub-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #00a862;
+}
+
+.start-charging .start-charging__summary .summary__hub-address {
+  font-size: 11px;
+  color: #059669;
+}
+
+.start-charging .start-charging__summary .summary__hub-mark {
+  color: #00a862;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* Meta */
+.start-charging .start-charging__summary .summary__meta {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.start-charging .start-charging__summary .summary__meta li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.start-charging .start-charging__summary .summary__meta li span {
+  color: var(--text-muted);
+}
+
+.start-charging .start-charging__summary .summary__meta li strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Total */
+.start-charging .start-charging__summary .summary__total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.start-charging .start-charging__summary .summary__total-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.start-charging .start-charging__summary .summary__total-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+}
+
+/* Warning */
+.start-charging .start-charging__summary .summary__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.start-charging .start-charging__summary .summary__warning i {
+  color: #f59e0b;
+  font-size: 14px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.start-charging .start-charging__summary .summary__warning p {
+  font-size: 11px;
+  color: #78350f;
+  line-height: 1.5;
+}
+
+/* Actions */
+.start-charging .start-charging__summary .summary__actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.start-charging .start-charging__summary .summary__actions .btn-outline,
+.start-charging .start-charging__summary .summary__actions .btn-primary {
+  height: 44px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.start-charging .start-charging__summary .summary__actions .btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.start-charging .start-charging__summary .summary__actions .btn-outline:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.start-charging .start-charging__summary .summary__actions .btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+  color:#022C22;
+}
+
+.start-charging .start-charging__summary .summary__actions .btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+/* =========================================
+   3. RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+  .start-charging {
+    grid-template-columns: 1fr 340px;
+  }
+}
+
+@media (max-width: 850px) {
+  .start-charging {
+    grid-template-columns: 1fr;
+  }
+
+  .start-charging .start-charging__summary {
+    position: static;
+  }
+
+  .start-charging .start-charging__tabs {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .start-charging {
+    padding: 20px 16px;
+  }
+
+  .start-charging .charging-section .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .start-charging .charging-section .plan-card .plan-card__specs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .start-charging .charging-section .plan-card .plan-card__footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .start-charging .charging-section .plan-card .plan-card__footer .plan-card__pin {
+    align-items: flex-start;
+  }
+}
+
+/* =========================================
+   ACTIVITY PAGE
+   (Scope từ .activity-page)
+   ========================================= */
+
+.activity-page {
+  padding: 40px 0;
+  min-height: calc(100vh - 64px);
+  background-color:  var(--bg-color);
+}
+
+.activity-page .container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* =========================================
+   1. Header
+   ========================================= */
+.activity-page .activity-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.activity-page .activity-page__header .activity-page__subtitle {
+  font-size: 11px;
+  font-weight: 800;
+  color: #00a862;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.activity-page .activity-page__header .activity-page__title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+.activity-page .activity-page__header .activity-page__desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+
+/* =========================================
+   3. Activity List & Card
+   ========================================= */
+.activity-page .activity-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.activity-page .activity-page__list .activity-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s;
+}
+
+.activity-page .activity-page__list .activity-card:hover {
+  border-color: #d1fae5;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* ---------- Card Left (Info) ---------- */
+.activity-page .activity-page__list .activity-card .activity-card__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__icon.icon--green {
+  background-color: #e6fdf3;
+  color: #00a862;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__icon.icon--blue {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__title-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__title-group .activity-card__title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__title-group .activity-card__tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__title-group .activity-card__tag.tag--green {
+  background-color: #e6fdf3;
+  color: #00a862;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__title-group .activity-card__tag.tag--orange {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Card Right (Timer & Actions) ---------- */
+.activity-page .activity-page__list .activity-card .activity-card__right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__timer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__timer .timer-digits {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums; /* Căn đều số */
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__timer .timer-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ---------- Buttons ---------- */
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__actions .btn-extend,
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__actions .btn-cancel {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Nút Gia hạn (Xanh) */
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__actions .btn-extend {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__actions .btn-extend:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Nút Hủy (Đỏ) */
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__actions .btn-cancel {
+  background-color: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #ffe4e6;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__actions .btn-cancel:hover {
+  background-color: #ffe4e6;
+}
+
+/* =========================================
+   CARD "ĐANG SỬ DỤNG"
+   ========================================= */
+
+/* Cụm nút bấm bên trái (dưới địa chỉ) */
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* Định dạng chung cho 2 nút */
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__actions button {
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  border: none;
+}
+
+/* Nút "Trả xe" (Nền xanh, chữ trắng) */
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__actions .btn-return {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__actions .btn-return:hover {
+  background-color: var(--primary-hover);
+}
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__actions .btn-return i {
+  font-size: 11px;
+}
+
+/* Nút "Báo sự cố" (Nền xám, chữ xám đậm) */
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__actions .btn-report {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+.activity-page .activity-page__list .activity-card .activity-card__left .activity-card__info .activity-card__actions .btn-report:hover {
+  background-color: #e2e8f0;
+}
+
+/* Đồng hồ đếm ngược (Màu xanh, cỡ chữ to hơn) */
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__timer .used {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--primary-color); /* Chuyển sang màu xanh lá */
+  letter-spacing: 2px;
+}
+
+/* Căn phải cho label thời gian */
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__timer .timer-label {
+  text-align: right;
+}
+
+/* Dòng thông tin cước phí & pin */
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__stats {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__stats strong {
+  color: #111827;
+  font-weight: 800;
+}
+
+.activity-page .activity-page__list .activity-card .activity-card__right .activity-card__stats .stats-divider {
+  margin: 0 4px;
+  color: #cbd5e1;
+}
+
+/* =========================================
+   4. Responsive
+   ========================================= */
+@media (max-width: 768px) {
+  .activity-page .activity-page__list .activity-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .activity-page .activity-page__list .activity-card .activity-card__right {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .activity-page {
+    padding: 24px 0;
+  }
+
+  .activity-page .activity-page__header .activity-page__title {
+    font-size: 24px;
+  }
+
+  .activity-page .activity-page__list .activity-card {
+    padding: 16px;
+  }
+
+  .activity-page .activity-page__list .activity-card .activity-card__right {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .activity-page .activity-page__list .activity-card .activity-card__right .activity-card__timer {
+    align-items: flex-start;
+    flex-direction: row;
+    gap: 8px;
+    align-items: baseline;
+  }
+
+  .activity-page .activity-page__list .activity-card .activity-card__right .activity-card__actions {
+    width: 100%;
+  }
+
+  .activity-page .activity-page__list .activity-card .activity-card__right .activity-card__actions button {
+    flex: 1;
+  }
+}
+
+/* =========================================
+   CONFIRM VEHICLE PAGE
+   (Scope từ .confirm-vehicle)
+   ========================================= */
+
+.confirm-vehicle {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Nút quay lại ---------- */
+.confirm-vehicle .confirm-vehicle__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  align-self: flex-start;
+  transition: color 0.2s;
+}
+
+.confirm-vehicle .confirm-vehicle__back:hover {
+  color: var(--primary-color);
+}
+
+/* ---------- Card chính ---------- */
+.confirm-vehicle .confirm-vehicle__card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* =========================================
+   1. Header
+   ========================================= */
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__header .confirm-vehicle__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__header .confirm-vehicle__subtitle {
+  font-size: 11px;
+  font-weight: 800;
+  color: #00a862;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__header .confirm-vehicle__title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__header .confirm-vehicle__id {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__header .confirm-vehicle__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #e6fdf3;
+  color: #00a862;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__header .confirm-vehicle__badge i {
+  font-size: 8px;
+}
+
+/* =========================================
+   2. Details (2 cột)
+   ========================================= */
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__details .confirm-vehicle__col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__details .confirm-vehicle__col-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__details .confirm-vehicle__col .confirm-vehicle__info-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid #F1F5F9;
+  border-radius: 16px;
+  background-color: #F8FAFC;
+  padding:12px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__details .confirm-vehicle__col .confirm-vehicle__info-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__details .confirm-vehicle__col .confirm-vehicle__info-list li span {
+  color: var(--text-muted);
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__details .confirm-vehicle__col .confirm-vehicle__info-list li strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__details .confirm-vehicle__col .confirm-vehicle__info-list li strong.text-green {
+  color: #00a862;
+}
+
+/* =========================================
+   3. Chi phí
+   ========================================= */
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__cost-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__cost-section .confirm-vehicle__cost-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__cost-section .confirm-vehicle__cost-box {
+  background-color: #f8fafc;
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__cost-section .confirm-vehicle__cost-box .confirm-vehicle__cost-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__cost-section .confirm-vehicle__cost-box .confirm-vehicle__cost-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__cost-section .confirm-vehicle__cost-box .confirm-vehicle__cost-list li span {
+  color: var(--text-muted);
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__cost-section .confirm-vehicle__cost-box .confirm-vehicle__cost-list li strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Tổng cộng */
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__cost-section .confirm-vehicle__cost-box .confirm-vehicle__cost-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid #cbd5e1;
+  margin-top: 4px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__cost-section .confirm-vehicle__cost-box .confirm-vehicle__cost-total span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__cost-section .confirm-vehicle__cost-box .confirm-vehicle__cost-total strong {
+  font-size: 16px;
+  font-weight: 800;
+  color: #00a862;
+}
+
+/* =========================================
+   4. Warning
+   ========================================= */
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__warning i {
+  color: #d97706;
+  font-size: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__warning p {
+  font-size: 12px;
+  color: #78350f;
+  line-height: 1.5;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__warning p strong {
+  font-weight: 800;
+}
+
+/* =========================================
+   5. Actions (Buttons)
+   ========================================= */
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__actions .btn-cancel,
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__actions .btn-primary {
+  height: 48px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__actions .btn-cancel {
+  background-color: #f1f5f9;
+  border: none;
+  color: #475569;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__actions .btn-cancel:hover {
+  background-color: #e2e8f0;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__actions .btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+  color: #022C22;
+}
+
+.confirm-vehicle .confirm-vehicle__card .confirm-vehicle__actions .btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+/* =========================================
+   6. Responsive
+   ========================================= */
+@media (max-width: 600px) {
+  .confirm-vehicle .confirm-vehicle__card {
+    padding: 24px 20px;
+  }
+
+  .confirm-vehicle .confirm-vehicle__card .confirm-vehicle__header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .confirm-vehicle .confirm-vehicle__card .confirm-vehicle__details {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .confirm-vehicle .confirm-vehicle__card .confirm-vehicle__actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================
+   CONFIRM RETURN PAGE
+   (Scope từ .confirm-return)
+   ========================================= */
+
+.confirm-return {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---------- Nút quay lại ---------- */
+.confirm-return .confirm-return__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  align-self: flex-start;
+  transition: color 0.2s;
+}
+
+.confirm-return .confirm-return__back:hover {
+  color: var(--primary-color);
+}
+
+/* ---------- Header ---------- */
+.confirm-return .confirm-return__header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.confirm-return .confirm-return__header .confirm-return__subtitle {
+  font-size: 11px;
+  font-weight: 800;
+  color: #00a862;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.confirm-return .confirm-return__header .confirm-return__title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+.confirm-return .confirm-return__header .confirm-return__desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* =========================================
+   CARD CHÍNH
+   ========================================= */
+.confirm-return .confirm-return__card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Thông tin xe ---------- */
+.confirm-return .confirm-return__card .confirm-return__vehicle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.confirm-return .confirm-return__card .confirm-return__vehicle .confirm-return__vehicle-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.confirm-return .confirm-return__card .confirm-return__vehicle .confirm-return__vehicle-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: #e6fdf3;
+  color: #00a862;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.confirm-return .confirm-return__card .confirm-return__vehicle .confirm-return__vehicle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.confirm-return .confirm-return__card .confirm-return__vehicle .confirm-return__vehicle-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.confirm-return .confirm-return__card .confirm-return__vehicle .confirm-return__vehicle-id {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.confirm-return .confirm-return__card .confirm-return__vehicle .confirm-return__vehicle-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #e6fdf3;
+  color: #00a862;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.confirm-return .confirm-return__card .confirm-return__vehicle .confirm-return__vehicle-status i {
+  font-size: 8px;
+}
+
+/* ---------- Grid Details ---------- */
+.confirm-return .confirm-return__card .confirm-return__details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col {
+  background-color: #f8fafc;
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+/* ---------- Cột trái: Lộ trình ---------- */
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--trip .trip-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--trip .trip-timeline__point {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+  z-index: 2;
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--trip .trip-timeline__label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--trip .trip-timeline__value {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111827;
+}
+
+/* Đường nối nét đứt */
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--trip .trip-timeline__dash {
+  height: 28px;
+  width: 2px;
+  background-image: linear-gradient(to bottom, #cbd5e1 50%, transparent 50%);
+  background-size: 2px 6px;
+  margin: 4px 0 4px 8px; /* Căn lề trái một chút */
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--trip .trip-duration {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto; /* Đẩy xuống đáy */
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--trip .trip-duration__label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--trip .trip-duration__value {
+  font-size: 14px;
+  font-weight: 800;
+  color: #111827;
+}
+
+/* ---------- Cột phải: Thanh toán ---------- */
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--payment .payment-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--payment .payment-row span {
+  color: var(--text-muted);
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--payment .payment-row strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--payment .payment-divider {
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 4px 0;
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--payment .payment-row--success span {
+  color: #00a862;
+  font-weight: 600;
+}
+
+.confirm-return .confirm-return__card .confirm-return__details .confirm-return__col--payment .payment-row--success strong {
+  color: #00a862;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* ---------- Thông báo (Notice) ---------- */
+.confirm-return .confirm-return__card .confirm-return__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: #f0fdf4;
+  border: 1px solid #d1fae5;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.confirm-return .confirm-return__card .confirm-return__notice i {
+  color: #00a862;
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.confirm-return .confirm-return__card .confirm-return__notice p {
+  font-size: 12px;
+  color: #065f46;
+  line-height: 1.5;
+}
+
+/* ---------- Nút bấm ---------- */
+.confirm-return .confirm-return__card .confirm-return__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.confirm-return .confirm-return__card .confirm-return__actions .btn-cancel,
+.confirm-return .confirm-return__card .confirm-return__actions .btn-confirm {
+  height: 44px;
+  padding: 0 24px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Nút Hủy */
+.confirm-return .confirm-return__card .confirm-return__actions .btn-cancel {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.confirm-return .confirm-return__card .confirm-return__actions .btn-cancel:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+/* Nút Xác nhận */
+.confirm-return .confirm-return__card .confirm-return__actions .btn-confirm {
+  background-color: var(--primary-color);
+  border: none;
+  color:#022C22;
+}
+
+.confirm-return .confirm-return__card .confirm-return__actions .btn-confirm:hover {
+  background-color: var(--primary-hover);
+}
+
+.confirm-return .confirm-return__card .confirm-return__actions .btn-confirm i {
+  font-size: 16px;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 600px) {
+  .confirm-return .confirm-return__card {
+    padding: 20px;
+  }
+
+  .confirm-return .confirm-return__card .confirm-return__vehicle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .confirm-return .confirm-return__card .confirm-return__details {
+    grid-template-columns: 1fr;
+  }
+
+  .confirm-return .confirm-return__card .confirm-return__actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .confirm-return .confirm-return__card .confirm-return__actions .btn-cancel,
+  .confirm-return .confirm-return__card .confirm-return__actions .btn-confirm {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   REPORT ISSUE PAGE
+   (Scope từ .report-issue)
+   ========================================= */
+
+.report-issue {
+  padding: 40px 0;
+  background-color: var(--bg-color);
+  min-height: calc(100vh - 64px);
+}
+
+.report-issue .container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* =========================================
+   1. Header
+   ========================================= */
+.report-issue .report-issue__header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.report-issue .report-issue__header .report-issue__subtitle {
+  font-size: 11px;
+  font-weight: 800;
+  color: #00a862;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.report-issue .report-issue__header .report-issue__title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+.report-issue .report-issue__header .report-issue__desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* =========================================
+   2. Form chính
+   ========================================= */
+.report-issue .report-issue__form {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Form Group chung ---------- */
+.report-issue .report-issue__form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.report-issue .report-issue__form .form-group .form-group__label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ---------- Input & Select chung ---------- */
+.report-issue .report-issue__form .form-group .select-wrapper .form-control {
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--input-bg);
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.report-issue .report-issue__form .form-group .form-control:focus {
+  border-color: var(--primary-color);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(0, 214, 125, 0.08);
+}
+
+/* ---------- Custom Select ---------- */
+.report-issue .report-issue__form .form-group .select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.report-issue .report-issue__form .form-group .select-wrapper select.form-control {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 40px;
+  cursor: pointer;
+  width:100%
+}
+
+/* Mũi tên mũi nhọn cho Select */
+.report-issue .report-issue__form .form-group .select-wrapper::after {
+  content: "\f078"; /* FontAwesome chevron-down */
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* ---------- Input có icon (Vị trí / Hub) ---------- */
+.report-issue .report-issue__form .form-group .input-wrapper {
+  position: relative;
+  width: 100%;
+  display:flex;
+  gap:8px;
+  align-items: center;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--input-bg);
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.report-issue .report-issue__form .form-group .input-wrapper .input-wrapper__icon {
+  color: var(--text-muted); 
+  font-size: 14px;
+}
+
+.report-issue .report-issue__form .form-group .input-wrapper .form-control {
+  cursor: default;
+  background-color: var(--input-bg);
+  width:100%
+
+}
+
+/* Trạng thái readonly/disabled cho ô Vị trí */
+.report-issue .report-issue__form .form-group .input-wrapper input.form-control[readonly] {
+  background-color: #f1f5f9;
+  color: var(--text-muted);
+}
+
+/* ---------- Textarea ---------- */
+.report-issue .report-issue__form .form-group .textarea-control {
+  height: auto;
+  padding: 12px 16px;
+  resize: none;
+  line-height: 1.5;
+  font-weight: 400; /* Chữ mô tả thường không cần quá đậm */
+  border-radius:12px;
+  border: 1px solid #E2E8F0;
+}
+
+.report-issue .report-issue__form .form-group .textarea-control::placeholder {
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* ---------- Upload Box ---------- */
+.report-issue .report-issue__form .form-group .upload-box {
+  border: 1.5px dashed #cbd5e1;
+  border-radius: var(--radius-md);
+  background-color: var(--input-bg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.report-issue .report-issue__form .form-group .upload-box:hover {
+  background-color: #f0fdf4;
+  border-color: var(--primary-color);
+}
+
+.report-issue .report-issue__form .form-group .upload-box .upload-box__icon {
+  font-size: 20px;
+  color: var(--text-muted);
+}
+
+.report-issue .report-issue__form .form-group .upload-box .upload-box__text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.report-issue .report-issue__form .form-group .upload-box:hover .upload-box__icon,
+.report-issue .report-issue__form .form-group .upload-box:hover .upload-box__text {
+  color: var(--primary-color);
+}
+
+/* =========================================
+   3. Actions (Buttons)
+   ========================================= */
+.report-issue .report-issue__form .report-issue__actions {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.report-issue .report-issue__form .report-issue__actions .btn-cancel,
+.report-issue .report-issue__form .report-issue__actions .btn-submit {
+  height: 46px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.report-issue .report-issue__form .report-issue__actions .btn-cancel {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.report-issue .report-issue__form .report-issue__actions .btn-cancel:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.report-issue .report-issue__form .report-issue__actions .btn-submit {
+  background-color: var(--primary-color);
+  border: none;
+  color: #022C22;
+}
+
+.report-issue .report-issue__form .report-issue__actions .btn-submit:hover {
+  background-color: var(--primary-hover);
+}
+
+.report-issue .report-issue__form .report-issue__actions .btn-submit i {
+  font-size: 14px;
+}
+
+/* =========================================
+   4. Responsive
+   ========================================= */
+@media (max-width: 600px) {
+  .report-issue {
+    padding: 24px 0;
+  }
+
+  .report-issue .report-issue__form {
+    padding: 20px;
+  }
+
+  .report-issue .report-issue__form .report-issue__actions {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* =========================================
+   ACTIVITY HISTORY PAGE
+   (Scope từ .activity-history)
+   ========================================= */
+
+.activity-history {
+  padding: 32px 0 60px;
+  background-color: var(--bg-color);
+  min-height: calc(100vh - 64px);
+}
+
+.activity-history .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* =========================================
+   1. Header & Search
+   ========================================= */
+.activity-history .activity-history__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.activity-history .activity-history__header .activity-history__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.activity-history .activity-history__header .activity-history__title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+.activity-history .activity-history__header .activity-history__desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Thanh tìm kiếm */
+.activity-history .activity-history__header .activity-history__search {
+  position: relative;
+  width: 320px;
+  display: flex;
+  align-items: center;
+}
+
+.activity-history .activity-history__header .activity-history__search i {
+  position: absolute;
+  left: 14px;
+  color: var(--text-light);
+  font-size: 13px;
+}
+
+.activity-history .activity-history__header .activity-history__search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px 0 36px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--card-bg);
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.activity-history .activity-history__header .activity-history__search input:focus {
+  border-color: var(--primary-color);
+}
+
+/* =========================================
+   2. Toggle (Đang hoạt động / Lịch sử)
+   ========================================= */
+ .activity-history__toggle {
+  display: inline-flex;
+  background-color: #e2e8f0; /* Nền xám nhạt */
+  border-radius: 50px;
+  padding: 4px;
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+.toggle-btn {
+  padding: 8px 24px;
+  border: none;
+  background-color: transparent;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+ .toggle-btn:hover {
+  color: #111827;
+}
+
+.toggle-btn.active {
+  background-color: #ffffff;
+  color: #00a862;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================================
+   3. Bộ lọc (Filters)
+   ========================================= */
+.activity-history .activity-history__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.activity-history .activity-history__filters .filter-pill {
+  padding: 6px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 50px;
+  background-color: var(--card-bg);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.activity-history .activity-history__filters .filter-pill:hover {
+  background-color: #f8fafc;
+}
+
+.activity-history .activity-history__filters .filter-pill.active {
+  background-color: #e6fdf3;
+  color: #00a862;
+  border-color: #e6fdf3;
+}
+
+/* =========================================
+   4. Danh sách dạng bảng (List)
+   ========================================= */
+.activity-history .activity-history__list {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+/* Header của bảng */
+.activity-history .activity-history__list .list-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #fafbfc;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.activity-history .activity-history__list .list-header .list-header__col {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-right: 16px;
+}
+
+/* Từng dòng dữ liệu */
+.activity-history .activity-history__list .list-row {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s;
+}
+
+.activity-history .activity-history__list .list-row:last-child {
+  border-bottom: none;
+}
+
+.activity-history .activity-history__list .list-row:hover {
+  background-color: #f8fafc;
+}
+
+.activity-history .activity-history__list .list-row .list-row__col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 16px;
+  font-size: 13px;
+}
+
+/* Cột 1: Hành động (Icon + Text) */
+.activity-history .activity-history__list .list-row .list-row__col:first-child {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.activity-history .activity-history__list .list-row .cell-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.activity-history .activity-history__list .list-row .cell-icon.icon--green { background-color: #e6fdf3; color: #00a862; }
+.activity-history .activity-history__list .list-row .cell-icon.icon--blue { background-color: #e0f2fe; color: #0284c7; }
+.activity-history .activity-history__list .list-row .cell-icon.icon--purple { 
+  background-color: var(--color-grey-96-4, #FFF7ED);
+ }
+
+.activity-history .activity-history__list .list-row .cell-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Định dạng chữ chung cho các cột */
+.activity-history .activity-history__list .list-row .list-row__col strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+.activity-history .activity-history__list .list-row .list-row__col span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Badge trạng thái */
+.activity-history .activity-history__list .list-row .list-row__col .badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.activity-history .activity-history__list .list-row .list-row__col .badge.badge--green {
+  background-color: #e6fdf3;
+  color: #00a862;
+}
+
+.activity-history .activity-history__list .list-row .list-row__col .badge.badge--gray {
+  background-color: #f1f5f9;
+  color: var(--text-muted);
+}
+
+.activity-history .activity-history__list .list-row .list-row__col .badge.badge--red {
+  background-color: #fff1f2;
+  color: #e11d48;
+}
+
+/* ---------- Bổ sung cho dòng Báo sự cố ---------- */
+
+/* Icon màu xám */
+.activity-history .activity-history__list .list-row .cell-icon.icon--gray {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+/* Badge màu cam (Đang xử lý) */
+.activity-history .activity-history__list .list-row .list-row__col .badge.badge--orange {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+/* Khối bao gồm Badge và Nút bấm */
+.activity-history .activity-history__list .list-row .list-row__col .status-action-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+
+/* =========================================
+   PAGINATION (Phân trang)
+   ========================================= */
+.activity-history .container .activity-history__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Căn lề phải */
+  gap: 24px; /* Khoảng cách giữa cụm nút và ô nhập */
+  margin-top: 24px; /* Cách xa bảng bên trên */
+  padding-bottom: 20px;
+}
+
+/* ---------- Cụm nút chuyển trang ---------- */
+.activity-history .container .activity-history__pagination .pagination__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Style chung cho các nút */
+.activity-history .container .activity-history__pagination .pagination__controls .pagination__btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+/* Icon bên trong nút (mũi tên trái/phải) */
+.activity-history .container .activity-history__pagination .pagination__controls .pagination__btn i {
+  font-size: 11px;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+/* Hover (khi nút không bị disabled và không phải nút active) */
+.activity-history .container .activity-history__pagination .pagination__controls .pagination__btn:hover:not(:disabled):not(.active) {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+}
+
+.activity-history .container .activity-history__pagination .pagination__controls .pagination__btn:hover:not(:disabled):not(.active) i {
+  color: var(--text-main);
+}
+
+/* Trạng thái Active (Trang hiện tại) */
+.activity-history .container .activity-history__pagination .pagination__controls .pagination__btn.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #ffffff;
+}
+
+/* Trạng thái Disabled (Nút bị vô hiệu hóa) */
+.activity-history .container .activity-history__pagination .pagination__controls .pagination__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #f1f5f9;
+}
+
+/* ---------- Ô nhập số trang muốn tới ---------- */
+.activity-history .container .activity-history__pagination .pagination__jump {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Label "Đến trang" */
+.activity-history .container .activity-history__pagination .pagination__jump .pagination__jump-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Ô input nhập số */
+.activity-history .container .activity-history__pagination .pagination__jump .pagination__jump-input {
+  width: 56px;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Focus vào ô input */
+.activity-history .container .activity-history__pagination .pagination__jump .pagination__jump-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 214, 125, 0.1);
+}
+
+/* Placeholder của input */
+.activity-history .container .activity-history__pagination .pagination__jump .pagination__jump-input::placeholder {
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* Ẩn mũi tên tăng/giảm mặc định của trình duyệt đối với type="number" */
+.activity-history .container .activity-history__pagination .pagination__jump .pagination__jump-input::-webkit-outer-spin-button,
+.activity-history .container .activity-history__pagination .pagination__jump .pagination__jump-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.activity-history .container .activity-history__pagination .pagination__jump .pagination__jump-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .activity-history .container .activity-history__pagination {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+  }
+}
+
+
+/* =========================================
+   5. Responsive
+   ========================================= */
+@media (max-width: 1024px) {
+  .activity-history .activity-history__list {
+    overflow-x: auto;
+  }
+  
+  .activity-history .activity-history__list .list-header,
+  .activity-history .activity-history__list .list-row {
+    min-width: 900px; /* Giữ cho bảng không bị bóp méo, cho phép cuộn ngang */
+  }
+}
+
+@media (max-width: 768px) {
+  .activity-history .activity-history__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .activity-history .activity-history__header .activity-history__search {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   MODAL THÊM XE CÁ NHÂN
+   ========================================= */
+.schedule-charging .modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.schedule-charging .modal-overlay.is-open {
+  display: flex;
+  opacity: 1;
+}
+
+.schedule-charging .modal-overlay .modal-container {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.schedule-charging .modal-overlay.is-open .modal-container {
+  transform: translateY(0);
+}
+
+.schedule-charging .modal-overlay .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.schedule-charging .modal-overlay .modal-header h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0;
+}
+
+.schedule-charging .modal-overlay .modal-header .modal-close {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: #718096;
+  cursor: pointer;
+}
+
+.schedule-charging .modal-overlay .modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.schedule-charging .modal-overlay .form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.schedule-charging .modal-overlay .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.schedule-charging .modal-overlay .form-group .form-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4a5568;
+}
+
+.schedule-charging .modal-overlay .form-group .text-red {
+  color: #ef4444;
+}
+
+.schedule-charging .modal-overlay .form-group .form-control {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1a202c;
+  outline: none;
+  background-color: #ffffff;
+  transition: border-color 0.2s;
+}
+
+.schedule-charging .modal-overlay .form-group .form-control:focus {
+  border-color: #00d67d;
+}
+
+.schedule-charging .modal-overlay .modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #edf2f7;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: #fafbfc;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.schedule-charging .modal-overlay .modal-footer button {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.schedule-charging .modal-overlay .modal-footer .btn-cancel {
+  background-color: #ffffff;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+}
+
+.schedule-charging .modal-overlay .modal-footer .btn-submit {
+  background-color: #00d67d;
+  color: #ffffff;
+  border: none;
+}
+
+.schedule-charging .modal-overlay .modal-footer .btn-submit:hover {
+  background-color: #00b86b;
+}
+
+@media (max-width: 600px) {
+  .schedule-charging .modal-overlay .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+

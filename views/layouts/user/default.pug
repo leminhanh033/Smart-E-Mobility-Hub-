@@ -1,0 +1,51 @@
+doctype html
+html(lang="vi")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title}
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css")
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+    link(rel="stylesheet", href="/assets/user/styleUser.css")
+  body
+    // ================= HEADER (NAVBAR) =================
+    header.dashboard__header
+      .header__left
+        a.header__logo(href="/")
+          i.fa-solid.fa-bolt
+          span EcoHub Mobility
+
+      nav.header__nav
+        a.nav__link(
+          href="/",
+          class=(activePage === 'home' ? 'active' : '')
+        ) Trang chủ
+        a.nav__link(
+          href="/shared-vehicle/book",
+          class=(activePage === 'find-vehicle' ? 'active' : '')
+        ) Tìm xe &amp; Hub
+        a.nav__link(
+          href="/book/parking",
+          class=(activePage === 'book' ? 'active' : '')
+        ) Chỗ đỗ &amp; Lịch sạc
+        a.nav__link(
+          href="/activity/active",
+          class=(activePage === 'activity' ? 'active' : '')
+        ) Hoạt động
+        a.nav__link(
+          href="/report/issue",
+          class=(activePage === 'report' ? 'active' : '')
+        ) Báo sự cố
+
+      .header__right
+        .user-profile
+          span #{account.fullname}
+
+    // ================= MAIN CONTENT =================
+    block main
+    script(src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js")
+    script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+    script(src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js")
+    script(src="/assets/user/map.js")
+    script(src="/assets/user/script.js")

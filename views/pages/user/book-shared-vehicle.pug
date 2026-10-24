@@ -1,0 +1,128 @@
+extends ../../layouts/user/default.pug
+
+
+block main
+  main.book-shared-vehicle
+    // ---------- SIDEBAR (Bên trái) ----------
+    aside.book-shared-vehicle__sidebar
+
+      // Tuyến đường
+      .sidebar-section
+        h3.sidebar-section__title TÌM ĐƯỜNG &amp; HÀNH TRÌNH
+
+        .route-point
+          span.route-point__dot.route-point__dot--start
+          .route-point__info
+            select#selectStart.route-point__name 
+              option(value="") Chọn vị trí hiện tại
+              if(hubList&&hubList.length>0)
+                each hub in hubList 
+                  option(value=hub.id lat=hub.lat lng=hub.lng name=hub.name) #{hub.name}
+            span.route-point__desc Vị trí hiện tại
+
+        .route-point
+          span.route-point__dot.route-point__dot--end
+          .route-point__info
+            select#selectEnd.route-point__name 
+              option(value="") Chọn điểm đến
+              if(hubList&&hubList.length>0)
+                each hub in hubList 
+                  option(value=hub.id lat=hub.lat lng=hub.lng name=hub.name) #{hub.name}
+            span.route-point__desc
+
+      // Bộ lọc
+      .sidebar-section
+        div.section-row
+          h3.sidebar-section__title PHƯƠNG TIỆN KHẢ DỤNG
+          .filter-sort
+            span Sắp xếp:
+            select.filter-sort__select
+              option Gần nhất
+              option Pin nhiều nhất
+              option Giá thấp nhất
+
+        .filter-tabs
+          button.filter-tab.active(type="button") Tất cả (20)
+          button.filter-tab(type="button") Pin &gt; 70%
+          button.filter-tab(type="button") Xe máy điện
+          button.filter-tab(type="button") Xe đạp điện
+
+      // Danh sách xe
+      .sidebar-section.sidebar-section--scroll
+        .vehicle-list
+          if listVehicles && listVehicles.length > 0
+            each vehicle in listVehicles
+              .vehicle-item
+                .vehicle-item__header
+                  //- Hiển thị tên xe (Model)
+                  h4.vehicle-item__name= vehicle.model || "Chưa cập nhật"
+                  
+                  //- Tự động đổi màu Badge dựa vào trạng thái
+                  if vehicle.status === 'active'
+                    span.vehicle-item__badge Sẵn sàng
+                  else if vehicle.status === 'maintenance'
+                    span.vehicle-item__badge(style="background-color: #fffbeb; color: #d97706;") Bảo trì
+                  else if vehicle.status === 'charging'
+                    span.vehicle-item__badge(style="background-color: #e0f2fe; color: #0284c7;") Đang sạc
+                  else
+                    span.vehicle-item__badge(style="background-color: #f1f5f9; color: #64748b;")= vehicle.status
+
+                ul.vehicle-item__specs
+                  //- Hiển thị Mã xe / Biển số
+                  li
+                    i.fa-solid.fa-motorcycle
+                    | #{vehicle.vehicleCode} - #{vehicle.license}
+                  
+                  //- Hiển thị Loại xe & Số khung
+                  li
+                    i.fa-solid.fa-id-card
+                    | #{vehicle.type=="motor"?"Xe máy điện":"Xe đạp điện"}
+                  
+                  //- Hiển thị Dung lượng pin
+                  li
+                    i.fa-solid.fa-bolt
+                    | Dung lượng: #{vehicle.batteryCapacity} kWh
+                  
+                  //- Tự động đổi icon và màu sắc dựa vào % Pin thực tế
+                  li
+                    if vehicle.pin < 20
+                      i.fa-solid.fa-battery-quarter.text-red
+                    else if vehicle.pin < 50
+                      i.fa-solid.fa-battery-quarter.text-orange
+                    else
+                      i.fa-solid.fa-battery-full.text-green
+                    | Pin: #{vehicle.pin || 0}%
+
+                .vehicle-item__footer
+                  a.vehicle-item__link(
+                    href="javascript:void(0)"
+                    data-url="/shared-vehicle/detail"
+                    data-id=vehicle._id 
+                  ) Xem chi tiết
+                  button.shared-vehicle-detail__submit.btn-book#btnBookVehicle(type="button", data-id=vehicle._id) Đặt xe
+          else
+            //- Nếu không có xe nào
+            p.text-center(style="padding: 20px; color: #64748b; width: 100%;") Không có phương tiện nào khả dụng.
+
+    // ---------- MAP AREA (Bên phải) ----------
+    // ---------- MAP AREA (Bên phải) ----------
+    section.book-shared-vehicle__map
+
+      // Info card (Lộ trình đã chọn)
+      .route-info
+        span.route-info__label LỘ TRÌNH ĐÃ CHỌN
+        .route-info__main
+          strong.route-info__distance Đang tính...
+          span.route-info__time
+            i.fa-solid.fa-clock
+            | Đang tính...
+        .route-info__icon
+          i.fa-solid.fa-motorcycle
+
+      // Bản đồ thật (Leaflet sẽ render vào đây)
+      #map.map-canvas
+
+      // Nút zoom — phải nằm NGOÀI #map
+      .map-zoom
+        button.map-zoom__btn(type="button", data-zoom="in") +
+        button.map-zoom__btn(type="button", data-zoom="out") −

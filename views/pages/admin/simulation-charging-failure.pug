@@ -1,0 +1,139 @@
+extends ../../layouts/admin/default.pug
+
+block titleName
+  h1.dashboard-header__title Phân hệ Mô phỏng Kịch bản (What-If Simulation Suite)
+
+block main 
+  .simulation-page.container
+    
+    // =========================================
+    // THANH TAB CHỌN KỊCH BẢN
+    // =========================================
+    include ../../mixins/admin/simulation-tabs.pug
+    //- Gọi mixin với id của tab 4 (VD: 'charging-fail')
+    +simulationTabs('charging-fail')
+
+    // =========================================
+    // KHU VỰC CHÍNH (2 CỘT)
+    // =========================================
+    .simulation-layout
+      
+      // ================= CỘT TRÁI: FORM THIẾT LẬP =================
+      .simulation-left
+        .card.settings-card
+          .card-header
+            h2.card-title
+              i.fa-solid.fa-sliders.text-green
+              | THIẾT LẬP KỊCH BẢN
+
+          .card-body
+            .form-group
+              label.form-label MOBILITY HUB
+              select.form-control
+                option HUB_UIT_IU (ĐH CNTT - Quốc Tế)
+                option HUB_BK_CS2 (ĐH Bách Khoa CS2)
+                option HUB_METRO (Ga Metro ĐHQG)
+            
+            .form-group
+              label.form-label TỔNG CỔNG SẠC HIỆN CÓ
+              .form-control.readonly 8 cổng AC (100% hoạt động)
+            
+            .form-group
+              label.form-label SỐ CỔNG GIẢ ĐỊNH BỊ HỎNG / NGẮT KẾT NỐI
+              input.form-control(type="text", value="3 cổng (Mất tín hiệu IoT / Sự cố)")
+            
+            .form-group
+              label.form-label NHU CẦU SẠC TẠI TRẠM
+              .form-control.readonly 7 xe cần sạc
+
+          .card-footer
+            button.btn-run(type="button")
+              i.fa-solid.fa-play
+              | Chạy mô phỏng kịch bản
+
+      // ================= CỘT PHẢI: KẾT QUẢ MÔ PHỎNG =================
+      .simulation-right
+        .simulation-result-wrapper
+          
+          //- KHỐI 1: SO SÁNH TRẠNG THÁI
+          .simulation-section
+            h3.section-label SO SÁNH TRẠNG THÁI
+            
+            .status-compare-grid
+              //- Box Trạng thái hiện tại
+              .status-box.status-box--current
+                .status-box__title TRẠNG THÁI HIỆN TẠI
+                .status-box__list
+                  .status-row
+                    span Tổng công sạc:
+                    strong 8 / 8 cổng hoạt động
+                  .status-row
+                    span Nhu cầu sạc:
+                    strong 7 xe cần sạc
+                  .status-row
+                    span Khả năng phục vụ:
+                    strong.text-green Đủ công suất (100%)
+                    
+              //- Box Trạng thái mô phỏng
+              .status-box.status-box--simulated
+                .status-box__title TRẠNG THÁI MÔ PHỎNG
+                .status-box__list
+                  .status-row
+                    span Cổng sạc bị hỏng:
+                    strong.text-red -3 cổng (Ngoại tuyến)
+                  .status-row
+                    span Cổng sạc còn lại:
+                    strong 5 / 8 cổng
+                  .status-row
+                    span Cảnh báo:
+                    strong.text-red Sụt giảm công suất sạc
+
+          //- KHỐI 2: KẾT QUẢ ĐÁNH GIÁ
+          .simulation-section
+            h3.section-label KẾT QUẢ ĐÁNH GIÁ
+            
+            .evaluation-grid
+              //- Thẻ Xám/Trắng (Cổng sạc)
+              .eval-card.eval-card--gray
+                span.eval-card__label Cổng sạc có hoạt động
+                .eval-card__value 5 / 8 cổng
+                span.eval-card__sub.text-red 3 cổng mất khả năng phục vụ
+                
+              //- Thẻ Cam (Nhu cầu)
+              .eval-card.eval-card--orange
+                span.eval-card__label Nhu cầu sạc tại trạm
+                .eval-card__value 7 xe
+                span.eval-card__sub Cần duy trì hệ thống
+                
+              //- Thẻ Đỏ (Thiếu hụt)
+              .eval-card.eval-card--red
+                span.eval-card__label Chưa thể phục vụ
+                .eval-card__value 2 xe
+                span.eval-card__sub Cần điều chỉnh / Chuyển trạm
+
+          //- KHỐI 3: KHUYẾN NGHỊ VẬN HÀNH
+          .recommendation-card
+            .recommendation-header
+              .recommendation-header__title-group
+                i.fa-regular.fa-lightbulb.text-green
+                h3 KHUYẾN NGHỊ VẬN HÀNH
+              span.recommendation-header__badge Charging Scheduling &amp; Alternative Hub
+              
+            .recommendation-body
+              .recommendation-content
+                h4 Tái phân bổ Lịch sạc &amp; Kích hoạt Ticket sửa chữa sự cố
+                p
+                  | Tái xếp lịch nội tiếp cho 5 xe có Mức Pin thấp nhất (&lt;15%) trên 5 cổng sạc còn hoạt động. Điều hướng 
+                  strong 2 xe
+                  |  còn lại sang trạm lân cận (
+                  strong HUB_BK_CS2
+                  | ).
+                p.recommendation-alternative
+                  | Maintenance Ticket: Tạo ticket xử lý kỹ thuật khẩn cấp 
+                  strong #MT-2026-041
+                  |  cử Kỹ thuật viên kiểm tra 3 trụ sạc bị mất tín hiệu IoT.
+
+            .recommendation-footer
+              button.btn-action(type="button")
+                i.fa-solid.fa-calendar-days
+                | Thiết lập Lịch sạc thông minh / Điều phối xe

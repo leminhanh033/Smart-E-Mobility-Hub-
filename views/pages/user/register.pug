@@ -1,0 +1,77 @@
+extends ../../layouts/user/account.pug
+
+
+block main 
+  // Bên phải: Form đăng ký
+  .register 
+    a.btn-back(href="#")
+      i.fa-solid.fa-arrow-left
+      span Quay lại
+
+    h2.card__title Tạo tài khoản mới
+
+    form.form#register-form
+      // Họ và tên
+      .form__group
+        label.form__label HỌ VÀ TÊN
+        .input-wrapper
+          i.fa-regular.fa-user.input-icon
+          input.form__input#fullname(type="text", placeholder="")
+
+      // Số điện thoại & Email (2 cột)
+      .form__row
+        .form__group
+          label.form__label SỐ ĐIỆN THOẠI
+          .input-wrapper
+            i.fa-solid.fa-phone.input-icon
+            input.form__input#phone(type="tel", placeholder="")
+        
+        .form__group
+          label.form__label EMAIL
+          .input-wrapper
+            i.fa-regular.fa-envelope.input-icon
+            input.form__input#email(type="email", placeholder="")
+
+      // Mật khẩu
+      .form__group
+        label.form__label MẬT KHẨU
+        .input-wrapper
+          i.fa-solid.fa-lock.input-icon
+          input.form__input#password(type="password", placeholder="Tối thiểu 8 ký tự")
+          i.fa-regular.fa-eye.input-icon-right
+
+      // Xác nhận mật khẩu
+      .form__group
+        label.form__label XÁC NHẬN MẬT KHẨU
+        .input-wrapper
+          i.fa-solid.fa-shield.input-icon
+          input.form__input#confirm-password(type="password", placeholder="Nhập lại mật khẩu")
+          i.fa-regular.fa-circle-check.input-icon-right
+
+      // Điều khoản
+      .form__checkbox
+        input#terms(type="checkbox", checked)
+        label(for="terms")
+          | Tôi đồng ý với 
+          a(href="#") Điều khoản dịch vụ
+          |  và 
+          a(href="#") Chính sách bảo mật
+          |  của EcoHub
+
+      // Nút đăng ký
+      button.btn-submit(type="submit") Đăng ký tài khoản
+
+      // Hoặc
+      .divider
+        span HOẶC
+
+      // Đăng ký qua OTP
+      button.btn-otp(type="button")
+        i.fa-regular.fa-comment-dots
+        span Đăng ký nhanh qua mã OTP (SMS/Email)
+
+      // Đăng nhập ngay
+      .form__footer
+        p Đã có tài khoản? 
+          a(href="/login") Đăng nhập ngay
+        small ĐẠI HỌC QUỐC GIA TP.HCM • HỆ THỐNG ECOHUB

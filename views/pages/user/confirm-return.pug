@@ -1,0 +1,82 @@
+extends ../../layouts/user/default.pug
+
+block main
+  main.confirm-return
+
+    // Nút quay lại
+    a.confirm-return__back(href="/hoat-dong")
+      i.fa-solid.fa-arrow-left
+      | Quay lại Hoạt động
+
+    // ---------- Header ----------
+    .confirm-return__header
+      span.confirm-return__subtitle HOÀN TẤT CHUYẾN ĐI
+      h1.confirm-return__title Xác nhận trả xe
+      p.confirm-return__desc Kiểm tra thông tin chuyến đi trước khi xác nhận trả xe.
+
+    // ================= CARD CHÍNH =================
+    .confirm-return__card
+
+      // ---------- Thông tin xe ----------
+      .confirm-return__vehicle
+        .confirm-return__vehicle-left
+          .confirm-return__vehicle-icon
+            i.fa-solid.fa-motorcycle
+          .confirm-return__vehicle-info
+            h2.confirm-return__vehicle-name VinFast Feliz S
+            span.confirm-return__vehicle-id Mã định danh: EV-METRO-042
+        .confirm-return__vehicle-status
+          i.fa-solid.fa-circle
+          | Sẵn sàng trả xe
+
+      // ---------- Grid thông tin chi tiết ----------
+      .confirm-return__details
+
+        // Cột trái: Thông tin chuyến đi
+        .confirm-return__col.confirm-return__col--trip
+          h3.confirm-return__col-title Thông tin chuyến đi
+          
+          .trip-timeline
+            .trip-timeline__point
+              span.trip-timeline__label ĐIỂM XUẤT PHÁT
+              strong.trip-timeline__value HUB_METRO
+            
+            .trip-timeline__dash
+            
+            .trip-timeline__point
+              span.trip-timeline__label ĐIỂM TRẢ XE
+              strong.trip-timeline__value HUB_BK_CS2
+
+          .trip-duration
+            span.trip-duration__label Thời gian sử dụng
+            strong.trip-duration__value 00:22:08
+
+        // Cột phải: Thanh toán
+        .confirm-return__col.confirm-return__col--payment
+          h3.confirm-return__col-title Thanh toán
+          
+          .payment-row
+            span Chi phí chuyến đi
+            strong 7.000 VNĐ
+          
+          .payment-row
+            span Tiền cọc đang giữ
+            strong 20.000 VNĐ
+            
+          .payment-divider
+
+          .payment-row.payment-row--success
+            span Hoàn lại sau khi trả xe
+            strong 20.000 VNĐ
+
+      // ---------- Thông báo ----------
+      .confirm-return__notice
+        i.fa-solid.fa-circle-info
+        p
+          |Sau khi xác nhận trả xe, chuyến đi sẽ được hoàn tất, chi phí thực tế được ghi nhận và tiền cọc sẽ được hoàn lại. Chuyến đi sau đó được lưu vào mục Lịch sử.
+      // ---------- Nút bấm ----------
+      .confirm-return__actions
+        button.btn-cancel(type="button") Hủy
+        button.btn-confirm(type="button")
+          | Xác nhận trả xe
+          i.fa-solid.fa-circle-check

@@ -1,0 +1,141 @@
+extends ../../layouts/admin/default.pug
+
+block titleName
+  h1.dashboard-header__title Phân hệ Mô phỏng Kịch bản (What-If Simulation Suite)
+
+block main 
+  .simulation-page.container
+    
+    // =========================================
+    // THANH TAB CHỌN KỊCH BẢN
+    // =========================================
+    include ../../mixins/admin/simulation-tabs.pug
+    //- Gọi mixin với id của tab 3 (VD: 'charging-surge')
+    +simulationTabs('charging-surge')
+
+    // =========================================
+    // KHU VỰC CHÍNH (2 CỘT)
+    // =========================================
+    .simulation-layout
+      
+      // ================= CỘT TRÁI: FORM THIẾT LẬP =================
+      .simulation-left
+        .card.settings-card
+          .card-header
+            h2.card-title
+              i.fa-solid.fa-sliders.text-green
+              | THIẾT LẬP KỊCH BẢN
+
+          .card-body
+            .form-group
+              label.form-label HUB CHỊU TÁC ĐỘNG
+              select.form-control
+                option HUB_BK_CS2 (ĐH Bách Khoa CS2)
+                option HUB_METRO (Ga Metro ĐHQG)
+                option HUB_UIT_IU (ĐH CNTT - Quốc Tế)
+            
+            .form-group
+              label.form-label CÔNG SẠC KHẢ DỤNG
+              .form-control.readonly 8 cổng
+            
+            .form-group
+              label.form-label NHU CẦU SẠC HIỆN TẠI
+              .form-control.readonly 6 xe đang sạc
+            
+            .form-group
+              label.form-label NHU CẦU SẠC GIẢ ĐỊNH
+              input.form-control(type="text", value="17 xe chờ sạc (+183%)")
+            
+            .form-group
+              label.form-label KHUNG GIỜ MÔ PHỎNG
+              .form-control.readonly 16:30 - 17:30
+
+          .card-footer
+            button.btn-run(type="button")
+              i.fa-solid.fa-play
+              | Chạy mô phỏng kịch bản
+
+      // ================= CỘT PHẢI: KẾT QUẢ MÔ PHỎNG =================
+      .simulation-right
+        .simulation-result-wrapper
+          
+          //- KHỐI 1: SO SÁNH TRẠNG THÁI
+          .simulation-section
+            h3.section-label SO SÁNH TRẠNG THÁI
+            
+            .status-compare-grid
+              //- Box Trạng thái hiện tại
+              .status-box.status-box--current
+                .status-box__title TRẠNG THÁI HIỆN TẠI
+                .status-box__list
+                  .status-row
+                    span Công sạc sẵn sàng:
+                    strong 8 cổng
+                  .status-row
+                    span Nhu cầu sạc nến:
+                    strong 6 xe đang sạc
+                  .status-row
+                    span Trạng thái hàng chờ:
+                    strong.text-green Đáp ứng 100%
+                    
+              //- Box Trạng thái mô phỏng
+              .status-box.status-box--simulated
+                .status-box__title TRẠNG THÁI MÔ PHỎNG
+                .status-box__list
+                  .status-row
+                    span Nhu cầu sạc giả định:
+                    strong 17 xe chờ sạc
+                  .status-row
+                    span Mức quá tải hàng chờ:
+                    strong.text-red +9 xe chờ sạc
+                  .status-row
+                    span Cảnh báo:
+                    strong.text-red Quá tải hệ thống sạc
+
+          //- KHỐI 2: KẾT QUẢ ĐÁNH GIÁ
+          .simulation-section
+            h3.section-label KẾT QUẢ ĐÁNH GIÁ
+            
+            .evaluation-grid
+              //- Thẻ 1 (Xám/Trắng)
+              .eval-card.eval-card--gray
+                span.eval-card__label Cổng sạc khả dụng
+                .eval-card__value 8 cổng
+                span.eval-card__sub HUB_BK_CS2 (80% công suất)
+                
+              //- Thẻ 2 (Cam)
+              .eval-card.eval-card--orange
+                span.eval-card__label Nhu cầu sạc giả định
+                .eval-card__value 17 xe
+                span.eval-card__sub Trong 2 giờ tới
+                
+              //- Thẻ 3 (Đỏ)
+              .eval-card.eval-card--red
+                span.eval-card__label Chưa thể phục vụ ngay
+                .eval-card__value 9 xe
+                span.eval-card__sub Cần xếp lịch / Điều hướng
+
+          //- KHỐI 3: KHUYẾN NGHỊ VẬN HÀNH
+          .recommendation-card
+            .recommendation-header
+              .recommendation-header__title-group
+                i.fa-regular.fa-lightbulb.text-green
+                h3 KHUYẾN NGHỊ VẬN HÀNH
+              span.recommendation-header__badge Charging Scheduling &amp; Alternative Hub
+              
+            .recommendation-body
+              .recommendation-content
+                h4 Xây dựng Lịch sạc Thông minh &amp; Điều hướng Trạm lân cận
+                p
+                  | Kích hoạt thuật toán ưu tiên sạc cho xe có 
+                  strong Pin &lt;15%
+                  |  hoặc có lịch thuê gấp. Phân bổ các xe còn lại vào các khung giờ sạc nội tiếp.
+                p.recommendation-alternative
+                  | Alternative Hub: Chuyển hướng một số yêu cầu sạc khẩn sang 
+                  strong HUB_KTX_B
+                  |  (cách 800m, còn 4 cổng sạc trống).
+
+            .recommendation-footer
+              button.btn-action(type="button")
+                i.fa-solid.fa-calendar-days
+                | Thiết lập Lịch sạc thông minh

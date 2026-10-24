@@ -1,0 +1,137 @@
+extends ../../layouts/user/default.pug
+
+block main
+  main.activity-page
+    .container
+
+      // ---------- Header ----------
+      .activity-page__header
+        span.activity-page__subtitle HOẠT ĐỘNG
+        h1.activity-page__title Hoạt động của tôi
+        p.activity-page__desc Theo dõi các chỗ đang diễn ra hiện tại và lịch sử các đơn dịch vụ.
+
+      // ---------- Tabs ----------
+      .activity-history__toggle
+        a.toggle-btn.active(href="/activity/active") Đang hoạt động
+        a.toggle-btn(href="/activity/history") Lịch sử
+
+      // ---------- Danh sách hoạt động ----------
+      .activity-page__list
+
+        if activities && activities.length > 0
+          each item in activities
+            //- ==========================================
+            //- 1. KHAI BÁO CÁC BIẾN DỰA VÀO LOẠI HOẠT ĐỘNG
+            //- ==========================================
+            - var iconClass = 'fa-motorcycle'
+            - var iconColor = 'icon--green'
+            - var cardTitle = ''
+            - var tagText = ''
+            - var tagClass = 'tag--green'
+            - var subText = ''
+            - var isCountdown = false
+            - var timerTarget = item.startTime
+            - var timerLabel = ''
+            - var costLabel = 'Chi phí: '
+            - var costValue = '0 VNĐ'
+            - var showBattery = false
+
+            //- XỬ LÝ LOGIC TỪNG LOẠI
+            if item.type === 'rental'
+              - cardTitle = item.vehicleID ? item.vehicleID.model : "Xe đã xóa"
+              
+              //- Kiểm tra xem xe đã được nhận chưa (có endTime chưa)
+              if item.endTime
+                - tagText = 'Đang sử dụng'
+                - timerLabel = 'thời gian sử dụng'
+                - showBattery = true
+              else
+                - tagText = 'Đang giữ xe'
+                - isCountdown = true
+                - timerTarget = item.holdTime
+                - timerLabel = 'còn giữ chỗ'
+                
+              - subText = (item.startHubID ? item.startHubID.name : "N/A") + (item.endHubID ? ' → ' + item.endHubID.name : '')
+              - costLabel = 'Cước hiện tại: '
+              - costValue = (item.cost || 0).toLocaleString('vi-VN') + ' VNĐ'
+
+            else if item.type === 'parking'
+              - iconClass = 'fa-square-parking'
+              - iconColor = 'icon--blue'
+              - cardTitle = 'Đặt chỗ đỗ ' + (item.hubID ? item.hubID.name : '')
+              - tagText = 'Đang giữ chỗ'
+              - tagClass = 'tag--orange'
+              - subText = 'Vị trí đỗ ' + item.slotCode
+              - isCountdown = true
+              //- Giả lập giữ chỗ 60 phút kể từ startTime
+              - timerTarget = new Date(new Date(item.startTime).getTime() + 60*60000).toISOString()
+              - timerLabel = 'còn giữ chỗ'
+              - costLabel = 'Phí đặt chỗ: '
+              - costValue = 'Miễn phí'
+
+            else if item.type === 'charging'
+              - iconClass = 'fa-bolt'
+              - iconColor = 'icon--purple'
+              - cardTitle = 'Sạc điện tại ' + (item.hubID ? item.hubID.name : '')
+              - tagText = 'Đang sạc'
+              - tagClass = 'tag--orange'
+              - subText = 'Cổng ' + item.portType + ' • Mục tiêu ' + item.desiredPin + '%'
+              - timerLabel = 'thời gian sạc'
+              - costLabel = 'Chi phí: '
+              - costValue = (item.cost || 0).toLocaleString('vi-VN') + ' VNĐ'
+
+
+            //- ==========================================
+            //- 2. RENDER HTML DÙNG CHUNG (CHỈ VIẾT 1 LẦN)
+            //- ==========================================
+            .activity-card
+              .activity-card__left
+                .activity-card__icon(class=iconColor)
+                  i.fa-solid(class=iconClass)
+                
+                .activity-card__info
+                  .activity-card__title-group
+                    h3.activity-card__title= cardTitle
+                    span.activity-card__tag(class=tagClass)= tagText
+                  
+                  p.activity-card__sub= subText
+                  
+                  //- ==========================================
+                  //- CỤM NÚT BẤM (Đã gắn data-id và data-type)
+                  //- ==========================================
+                  .activity-card__actions
+                    if item.type === 'rental' && item.endTime
+                      button.btn-return(data-id=item._id, data-type=item.type, type="button") Trả xe
+                      button.btn-report(data-id=item._id, data-type=item.type, type="button") Báo sự cố
+                      
+                    else if item.type === 'rental' && !item.endTime
+                      button.btn-extend(data-id=item._id, data-type=item.type, type="button") Gia hạn
+                      button.btn-cancel(data-id=item._id, data-type=item.type, type="button") Hủy
+                      
+                    else if item.type === 'parking'
+                      button.btn-cancel(data-id=item._id, data-type=item.type, type="button") Hủy
+                      
+                    else if item.type === 'charging'
+                      button.btn-cancel(data-id=item._id, data-type=item.type, type="button") Dừng sạc
+
+              .activity-card__right
+                //- Đồng hồ (Tự động đếm ngược hoặc đếm tiến)
+                .activity-card__timer(data-target-time=timerTarget, data-mode=(isCountdown ? 'countdown' : 'countup'))
+                  .timer-digits(class=(!isCountdown ? 'used' : '')) 00 : 00
+                  .timer-label= timerLabel
+                
+                //- Thống kê chi phí & pin
+                .activity-card__stats
+                  span= costLabel
+                  strong= costValue
+                  
+                  if showBattery
+                    span.stats-divider &bull;
+                    span Pin: 
+                    strong= (item.vehicleID ? item.vehicleID.pin : 0) + "%"
+
+        else
+          .empty-state(style="text-align: center; padding: 40px; color: #64748b;")
+            i.fa-regular.fa-folder-open(style="font-size: 40px; margin-bottom: 16px;")
+            h3 Bạn không có hoạt động nào đang diễn ra.
+            p Hãy tìm và đặt một chiếc xe mới!

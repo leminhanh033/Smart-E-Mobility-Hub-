@@ -1,0 +1,194 @@
+extends ../../layouts/admin/default.pug
+
+block titleName
+  h1.dashboard-header__title Quản lý Sự cố & Bảo trì Thiết bị
+
+block main 
+  .incident-wrapper.container
+    
+    // =========================================
+    // HÀNG 1: THỐNG KÊ (STATS)
+    // =========================================
+    .stats-grid
+      //- Card 1
+      .stat-card
+        .stat-card__header
+          .stat-card__info
+            span.stat-card__label PHIẾU SỰ CỐ ĐANG MỞ
+            .stat-card__value 03 &nbsp; Phiếu
+            span.stat-card__sub.text-red
+              i.fa-solid.fa-triangle-exclamation
+              | 1 Urgent &bull; 1 Medium &bull; 1 Low
+          .stat-card__icon.bg-red-light
+            i.fa-regular.fa-clock
+      
+      //- Card 2
+      .stat-card
+        .stat-card__header
+          .stat-card__info
+            span.stat-card__label THIẾT BỊ ĐANG BẢO TRÌ
+            .stat-card__value 02 &nbsp; Trụ sạc / 01 Xe
+            span.stat-card__sub.text-orange
+              i.fa-solid.fa-circle
+              | Power Isolated
+          .stat-card__icon.bg-orange-light
+            i.fa-solid.fa-screwdriver-wrench
+
+      //- Card 3
+      .stat-card
+        .stat-card__header
+          .stat-card__info
+            span.stat-card__label THỜI GIAN XỬ LÝ TB (SLA)
+            .stat-card__value 14.2 &nbsp; Phút
+            span.stat-card__sub.text-green
+              i.fa-solid.fa-check
+              | Đạt mục tiêu < 20 phút
+          .stat-card__icon.bg-green-light
+            i.fa-solid.fa-stopwatch
+
+      //- Card 4
+      .stat-card
+        .stat-card__header
+          .stat-card__info
+            span.stat-card__label ĐÃ KHẮC PHỤC HÔM NAY
+            .stat-card__value 12 &nbsp; Phiếu
+            span.stat-card__sub.text-green
+              i.fa-solid.fa-check-double
+              | 100% đã xác nhận
+          .stat-card__icon.bg-green-light
+            i.fa-regular.fa-circle-check
+
+    // =========================================
+    // HÀNG 2: LAYOUT CHÍNH (TRÁI: BẢNG, PHẢI: CHI TIẾT)
+    // =========================================
+    .incident-layout
+      
+      // ---- CỘT TRÁI: DANH SÁCH ----
+      .incident-left
+        .card
+          .card-header
+            h2.card-title Danh sách Cảnh báo & Sự cố Hạ tầng
+          
+          //- Tabs
+          .tabs-container
+            button.tab-btn.active(type="button") Tất cả (3)
+            button.tab-btn(type="button") Cảm biến Dock
+            button.tab-btn(type="button") Trụ sạc IoT
+            button.tab-btn(type="button") User Report
+
+          //- Bảng
+          .table-responsive
+            table.data-table
+              thead
+                tr
+                  th #
+                  th MÃ TICKET
+                  th THIẾT BỊ
+                  th VỊ TRÍ HUB
+                  th LOẠI SỰ CỐ
+                  th NGUỒN PHÁT HIỆN
+                  th THỜI GIAN
+                  th MỨC ĐỘ
+              tbody
+                //- Dòng 1 (Active)
+                tr.incident-row.active
+                  td 1
+                  td.font-bold #ERR-8821
+                  td
+                    strong VinFast Feliz S
+                    span.text-muted (EV-042)
+                  td HUB_METRO
+                  td.text-red Khóa ngầm vật lý không nảy
+                  td
+                    strong Dock Sensor
+                    span.text-muted #04
+                  td
+                    strong 14:29:18
+                    span.text-muted (3m ago)
+                  td
+                    span.badge.badge--red Urgent
+                
+                //- Dòng 2
+                tr.incident-row
+                  td 2
+                  td.font-bold #ERR-8822
+                  td
+                    strong Trụ sạc AC-02
+                    span.text-muted (Cổng #02)
+                  td HUB_BK_CS2
+                  td Mất kết nối Internet IoT
+                  td
+                    strong Heartbeat
+                    span.text-muted Timeout
+                  td
+                    strong 14:15:10
+                    span.text-muted (17m ago)
+                  td
+                    span.badge.badge--orange Medium
+
+                //- Dòng 3
+                tr.incident-row
+                  td 3
+                  td.font-bold #ERR-8823
+                  td
+                    strong EcoBike #105
+                    span.text-muted
+                  td HUB_KTX_B
+                  td Lốp xe sau xì hơi
+                  td
+                    strong App 
+                    span.text-muted Sinh viên
+                  td
+                    strong 13:50:00
+                    span.text-muted (42m ago)
+                  td
+                    span.badge.badge--gray Low
+
+          .history-link-wrapper
+            a.history-link(href="#")
+              | Xem lịch sử sự cố đã khắc phục
+              i.fa-solid.fa-arrow-right
+            
+      // ---- CỘT PHẢI: CHI TIẾT ----
+      .incident-right
+        .card.detail-card
+          .card-header.detail-header
+            h2.card-title
+              i.fa-regular.fa-clipboard.text-red
+              | Chi tiết Ticket #ERR-8821 & Thao tác xử lý
+            span.badge.badge--red Urgent
+
+          .card-body
+            //- Hộp thông tin xám
+            .info-box
+              .info-row
+                span.info-label Thiết bị:
+                strong.info-value Xe Feliz S (EV-042)
+              .info-row
+                span.info-label Trạm Hub:
+                strong.info-value HUB_METRO (Chốt A-04)
+              .info-row
+                span.info-label Cảm biến báo lỗi:
+                strong.info-value.text-red Lock_Failed=TRUE
+              .info-row
+                span.info-label Pin:
+                strong.info-value 42%
+              .info-row
+                span.info-label Thời gian ghi nhận:
+                strong.info-value 14:29:18
+          //- Khối điều khiển từ xa
+          .remote-control-section
+            h3.remote-control-title THAO TÁC BỔ SUNG / ĐIỀU KHIỂN TỪ XA
+            
+            .remote-control-actions
+              button.remote-btn(type="button")
+                i.fa-solid.fa-rotate
+                span Khởi động lại ngầm khóa IoT
+                
+              button.remote-btn(type="button")
+                i.fa-solid.fa-lock
+                span Khóa chốt A-04
+
+          .card-footer.detail-footer
+            button.btn-primary-full(type="button") Xác nhận sự cố & Yêu cầu sửa chữa
+            button.btn-secondary-full(type="button") Bỏ qua cảnh báo

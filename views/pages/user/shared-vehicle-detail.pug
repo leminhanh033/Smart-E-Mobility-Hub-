@@ -1,0 +1,101 @@
+extends ../../layouts/user/default.pug
+
+block main
+  main.book-shared-vehicle
+
+    // ---------- SIDEBAR (Bên trái) ----------
+    aside.shared-vehicle-detail__sidebar
+
+      // Nút quay lại
+      a.shared-vehicle-detail__back(href="/shared-vehicle/book")
+        i.fa-solid.fa-arrow-left
+        | Quay lại danh sách xe
+
+      // ================= CARD XE =================
+      .shared-vehicle-detail__card
+
+        // ---------- Header xe ----------
+        .shared-vehicle-detail__header
+          .shared-vehicle-detail__icon
+            //- Tự động đổi icon nếu là xe đạp
+            if vehicle.type === 'Xe đạp điện'
+              i.fa-solid.fa-bicycle
+            else
+              i.fa-solid.fa-motorcycle
+              
+          .shared-vehicle-detail__title-group
+            h1.shared-vehicle-detail__name= vehicle.model
+            p.shared-vehicle-detail__plate
+              | Mã xe: 
+              span= vehicle.vehicleCode
+              
+          //- Badge trạng thái động
+          if vehicle.status === 'active' || vehicle.status === 'available'
+            span.shared-vehicle-detail__badge(style="background-color: #e6fdf3; color: #00a862;") SẴN SÀNG
+          else if vehicle.status === 'maintenance'
+            span.shared-vehicle-detail__badge(style="background-color: #fffbeb; color: #d97706;") BẢO TRÌ
+          else
+            span.shared-vehicle-detail__badge(style="background-color: #f1f5f9; color: #64748b;")= vehicle.status
+
+        // ---------- Mức pin ----------
+        .shared-vehicle-detail__battery
+          .battery__header
+            span.battery__label MỨC PIN HIỆN TẠI (TELEMETRY)
+            strong.battery__percent #{vehicle.pin}%
+
+          .battery__bar
+            //- Thanh tiến trình tự co giãn theo % pin
+            .battery__bar-fill(style=`width: ${vehicle.pin}%`)
+
+          .battery__meta
+            span Dung lượng: #{vehicle.batteryCapacity} kWh
+            span Tết (100% SOH)
+
+        // ---------- Thông tin chi tiết ----------
+        ul.shared-vehicle-detail__info
+          li
+            span.info__label Quãng đường ước tính
+            strong.info__value ~#{vehicle.estimatedRange} km
+            
+          li
+            span.info__label Mobility Hub hiện tại
+            strong.info__value= hub?hub.name:""
+            
+          li
+            span.info__label Biển số xe
+            strong.info__value= vehicle.license
+            
+          li
+            span.info__label Khoảng cách từ vị trí của bạn
+            strong.info__value= vehicle.distanceToUser
+            
+          li
+            span.info__label Trạng thái khóa ngầm
+            strong.info__value.info__value--lock
+              i.fa-solid.fa-lock
+              | Đang khóa an toàn
+
+      // ================= NÚT ĐẶT XE =================
+      button.shared-vehicle-detail__submit#btnBookVehicle(type="button", data-id=vehicle._id) Đặt xe ngay
+
+    // ---------- MAP AREA (Bên phải) ----------
+    section.book-shared-vehicle__map
+
+      // Info card (Lộ trình đã chọn)
+      .route-info
+        span.route-info__label LỘ TRÌNH ĐÃ CHỌN
+        .route-info__main
+          strong.route-info__distance Đang tính...
+          span.route-info__time
+            i.fa-solid.fa-clock
+            | Đang tính...
+        .route-info__icon
+          i.fa-solid.fa-motorcycle
+
+      // Bản đồ thật (Leaflet sẽ render vào đây)
+      #map.map-canvas
+
+      // Nút zoom — phải nằm NGOÀI #map
+      .map-zoom
+        button.map-zoom__btn(type="button", data-zoom="in") +
+        button.map-zoom__btn(type="button", data-zoom="out") −

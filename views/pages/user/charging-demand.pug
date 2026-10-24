@@ -1,0 +1,167 @@
+extends ../../layouts/user/default.pug
+
+
+block main
+  main.start-charging
+
+    // ================= LEFT =================
+    section.start-charging__main
+
+      // Tabs
+      .book-parking__tabs
+        a.tab-btn(href="/book/parking") Đặt chỗ đỗ
+        a.tab-btn(href="/book/charging/schedule") Lập lịch sạc
+        a.tab-btn.active(href="/book/charging/demand") Đăng ký nhu cầu sạc
+
+      // Page title
+      .start-charging__header
+        h1.start-charging__title Chọn điểm sạc &amp; Bắt đầu sạc ngay
+        p.start-charging__subtitle Đặt đồng thời vị trí đỗ và cổng sạc để đảm bảo tài nguyên sẵn sàng khi bạn đến Mobility Hub.
+
+      // ---------- SECTION 1: Thông tin đổ sạc ----------
+      .charging-section
+        h2.charging-section__title
+          span.charging-section__num 1
+          | THÔNG TIN CHỖ SẠC
+
+        .info-row
+          label.info-row__label MOBILITY HUB / ĐIỂM ĐẾN
+          .info-row__value
+            strong HUB_BK_CS2 - ĐH Bách Khoa CS2
+
+        .info-grid
+          .info-item
+            label.info-item__label THỜI ĐIỂM ĐẾN
+            .info-item__value
+              input.input-field(type="text", value="16:30 PM")
+
+          .info-item
+            label.info-item__label THỜI ĐIỂM RỜI HUB
+            .info-item__value
+              input.input-field(type="text", value="18:00 PM")
+
+        .info-item
+          label.info-item__label Mức pin mong muốn
+          .info-item__value
+            select.input-field
+              option 85% (Bảo vệ pin tối ưu)
+              option 100% (Đầy pin)
+              option 70% (Đủ dùng)
+
+      // ---------- SECTION 2: Các phương án khả dụng ----------
+      .charging-section
+        h2.charging-section__title
+          span.charging-section__num 2
+          | CÁC PHƯƠNG ÁN KHẢ DỤNG
+
+        .plan-list
+
+          // Plan 1 (selected)
+          .plan-card.plan-card--selected
+            .plan-card__header
+              .plan-card__header-left
+                i.fa-solid.fa-circle-check.plan-card__check
+                strong.plan-card__name Phương án 1
+              span.plan-card__badge Đề xuất
+
+            .plan-card__specs
+              .plan-card__spec
+                span.plan-card__spec-label Vị trí đỗ
+                strong.plan-card__spec-value D-08
+              .plan-card__spec
+                span.plan-card__spec-label Cổng sạc
+                strong.plan-card__spec-value CH-02
+              .plan-card__spec
+                span.plan-card__spec-label Công suất
+                strong.plan-card__spec-value AC 3.3kW
+
+            .plan-card__footer
+              span.plan-card__time 16:30 - 18:00
+              span.plan-card__pin
+                strong Pin dự kiến: 22% &rarr; 80%
+                span (1 giờ 40 phút sạc)
+
+          // Plan 2
+          .plan-card
+            .plan-card__header
+              .plan-card__header-left
+                i.fa-regular.fa-circle.plan-card__check
+                strong.plan-card__name Phương án 2
+              span.plan-card__badge.plan-card__badge--hidden Trống
+
+            .plan-card__specs
+              .plan-card__spec
+                span.plan-card__spec-label Vị trí đỗ
+                strong.plan-card__spec-value D-11
+              .plan-card__spec
+                span.plan-card__spec-label Cổng sạc
+                strong.plan-card__spec-value CH-05
+              .plan-card__spec
+                span.plan-card__spec-label Công suất
+                strong.plan-card__spec-value AC 3.3kW
+
+            .plan-card__footer
+              span.plan-card__time 16:45 - 18:15
+              span.plan-card__pin
+                strong Pin dự kiến: 22% &rarr; 85%
+
+    // ================= RIGHT: Xác nhận =================
+    aside.start-charging__summary
+
+      .summary__header
+        h2.summary__label XÁC NHẬN BẮT ĐẦU
+        span.summary__id ID: BK-1015
+
+      // Countdown warning
+      .summary__countdown
+        .summary__countdown-label
+          i.fa-solid.fa-triangle-exclamation
+          | THỜI GIAN GIỮ CHỖ SẮP HẾT
+        .summary__countdown-time 04:59
+        p.summary__countdown-hint Hãy đến trong thời gian giữ chỗ để không mất giữ chỗ
+
+      // Hub info
+      .summary__hub
+        .summary__hub-icon
+          i.fa-solid.fa-location-dot
+        .summary__hub-info
+          strong.summary__hub-name HUB_BK_CS2
+          span.summary__hub-address ĐH Bách Khoa CS2
+        i.fa-solid.fa-location-dot.summary__hub-mark
+
+      // Meta list
+      ul.summary__meta
+        li
+          span Vị trí đỗ
+          strong D-08
+        li
+          span Cổng sạc
+          strong CH-02
+        li
+          span Khung giờ
+          strong 16:30 - 18:00
+        li
+          span Phí giữ chỗ
+          strong 5.000 VND
+        li
+          span Sạc dự kiến
+          strong 17.200 VND
+
+      // Total
+      .summary__total
+        span.summary__total-label Tổng tiền:
+        strong.summary__total-value 22.200 VND
+
+      // Warning
+      .summary__warning
+        i.fa-solid.fa-triangle-exclamation
+        p
+          | Nếu hết 5 phút hoặc thanh toán thất bại, vị trí D-08 và cổng CH-02 sẽ tự
+          |động được giải phóng.
+
+      // Actions
+      .summary__actions
+        button.btn-outline(type="button") Đổi vị trí
+        button.btn-primary(type="button")
+          i.fa-solid.fa-credit-card
+          | Thanh toán & Xác nhận

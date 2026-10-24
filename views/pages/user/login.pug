@@ -1,0 +1,37 @@
+extends ../../layouts/user/account.pug
+
+
+block main 
+  // Bên phải: Form đăng nhập
+  .login 
+    h2.login__title Đăng nhập
+
+    form.form#login-form
+      // SĐT / EMAIL
+      .form__group
+        label.form__label EMAIL
+        .input-wrapper
+          input.form__input#email(type="text")
+
+      // Mật khẩu
+      .form__group
+        label.form__label MẬT KHẨU
+        .input-wrapper
+          input.form__input#password(type="password")
+          i.fa-regular.fa-eye.input-icon-right
+
+      // Quên mật khẩu
+      .form__forgot-password
+        a(href="/reset-password") Quên mật khẩu?
+
+      // Nút xác nhận
+      button.btn-submit(type="submit") Xác nhận
+
+      // Hoặc
+      .divider
+        span hoặc
+
+      // Đăng ký ngay
+      .form__footer
+        p Chưa có tài khoản? 
+          a(href="/register") Đăng ký ngay
