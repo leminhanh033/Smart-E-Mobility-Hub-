@@ -7,7 +7,7 @@ router.get('/book', async (req, res) => {
   const hubList = await hubmodel.find({
     turnOn: true,
   })
-  let listVehicle=[]
+  let listVehicle=[];
   if(req.query.fromID){
     listVehicle=await vehiclemodel.find({
       hubID:req.query.fromID,

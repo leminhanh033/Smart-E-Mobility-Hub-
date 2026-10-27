@@ -10,31 +10,28 @@ block main
     // HÀNG 1: THỐNG KÊ (STATS)
     // =========================================
     .stats-grid
-      //- Card 1
       .stat-card
         .stat-card__header
           .stat-card__info
             span.stat-card__label PHIẾU SỰ CỐ ĐANG MỞ
-            .stat-card__value 03 &nbsp; Phiếu
+            .stat-card__value #{stats.openCount || 0} &nbsp; Phiếu
             span.stat-card__sub.text-red
               i.fa-solid.fa-triangle-exclamation
-              | 1 Urgent &bull; 1 Medium &bull; 1 Low
+              | Cần xử lý ngay
           .stat-card__icon.bg-red-light
             i.fa-regular.fa-clock
       
-      //- Card 2
       .stat-card
         .stat-card__header
           .stat-card__info
             span.stat-card__label THIẾT BỊ ĐANG BẢO TRÌ
-            .stat-card__value 02 &nbsp; Trụ sạc / 01 Xe
+            .stat-card__value #{stats.maintenanceCount || 0} &nbsp; Thiết bị
             span.stat-card__sub.text-orange
               i.fa-solid.fa-circle
-              | Power Isolated
+              | Đang cô lập điện
           .stat-card__icon.bg-orange-light
             i.fa-solid.fa-screwdriver-wrench
 
-      //- Card 3
       .stat-card
         .stat-card__header
           .stat-card__info
@@ -46,12 +43,11 @@ block main
           .stat-card__icon.bg-green-light
             i.fa-solid.fa-stopwatch
 
-      //- Card 4
       .stat-card
         .stat-card__header
           .stat-card__info
             span.stat-card__label ĐÃ KHẮC PHỤC HÔM NAY
-            .stat-card__value 12 &nbsp; Phiếu
+            .stat-card__value #{stats.resolvedCount || 0} &nbsp; Phiếu
             span.stat-card__sub.text-green
               i.fa-solid.fa-check-double
               | 100% đã xác nhận
@@ -59,7 +55,7 @@ block main
             i.fa-regular.fa-circle-check
 
     // =========================================
-    // HÀNG 2: LAYOUT CHÍNH (TRÁI: BẢNG, PHẢI: CHI TIẾT)
+    // HÀNG 2: LAYOUT CHÍNH
     // =========================================
     .incident-layout
       
@@ -69,14 +65,6 @@ block main
           .card-header
             h2.card-title Danh sách Cảnh báo & Sự cố Hạ tầng
           
-          //- Tabs
-          .tabs-container
-            button.tab-btn.active(type="button") Tất cả (3)
-            button.tab-btn(type="button") Cảm biến Dock
-            button.tab-btn(type="button") Trụ sạc IoT
-            button.tab-btn(type="button") User Report
-
-          //- Bảng
           .table-responsive
             table.data-table
               thead
@@ -90,59 +78,43 @@ block main
                   th THỜI GIAN
                   th MỨC ĐỘ
               tbody
-                //- Dòng 1 (Active)
-                tr.incident-row.active
-                  td 1
-                  td.font-bold #ERR-8821
-                  td
-                    strong VinFast Feliz S
-                    span.text-muted (EV-042)
-                  td HUB_METRO
-                  td.text-red Khóa ngầm vật lý không nảy
-                  td
-                    strong Dock Sensor
-                    span.text-muted #04
-                  td
-                    strong 14:29:18
-                    span.text-muted (3m ago)
-                  td
-                    span.badge.badge--red Urgent
-                
-                //- Dòng 2
-                tr.incident-row
-                  td 2
-                  td.font-bold #ERR-8822
-                  td
-                    strong Trụ sạc AC-02
-                    span.text-muted (Cổng #02)
-                  td HUB_BK_CS2
-                  td Mất kết nối Internet IoT
-                  td
-                    strong Heartbeat
-                    span.text-muted Timeout
-                  td
-                    strong 14:15:10
-                    span.text-muted (17m ago)
-                  td
-                    span.badge.badge--orange Medium
-
-                //- Dòng 3
-                tr.incident-row
-                  td 3
-                  td.font-bold #ERR-8823
-                  td
-                    strong EcoBike #105
-                    span.text-muted
-                  td HUB_KTX_B
-                  td Lốp xe sau xì hơi
-                  td
-                    strong App 
-                    span.text-muted Sinh viên
-                  td
-                    strong 13:50:00
-                    span.text-muted (42m ago)
-                  td
-                    span.badge.badge--gray Low
+                if reports && reports.length > 0
+                  each report, index in reports
+                    //- Gắn data-status để JS đọc trạng thái
+                    tr.incident-row(
+                      data-id=report._id
+                      data-ticket=report.ticketCode
+                      data-vehicle=report.vehicle
+                      data-hub=report.hubName
+                      data-type=report.typeLabel
+                      data-createdby=report.creatorName
+                      data-time=report.timeFormatted
+                      data-status=report.status
+                    )
+                      td= index + 1
+                      td.font-bold= report.ticketCode
+                      td
+                        strong= report.vehicle
+                      td= report.hubName
+                      td.text-red= report.typeLabel
+                      td
+                        strong= report.creatorName
+                      td
+                        strong= report.timeFormatted
+                      td
+                        if report.status === 'Urgent'
+                          span.badge.badge--red Urgent
+                        else if report.status === 'Medium'
+                          span.badge.badge--orange Medium
+                        else if report.status === 'Resolved'
+                          span.badge.badge--green Resolved
+                        else if report.status === 'In Progress'
+                          span.badge.badge--blue Đang xử lý
+                        else
+                          span.badge.badge--gray Low
+                else
+                  tr
+                    td(colspan="8", style="text-align: center; padding: 20px;") Không có sự cố nào cần xử lý.
 
           .history-link-wrapper
             a.history-link(href="#")
@@ -151,44 +123,48 @@ block main
             
       // ---- CỘT PHẢI: CHI TIẾT ----
       .incident-right
-        .card.detail-card
+        //- Trạng thái trống
+        #emptyDetailState.card.detail-card(style="display: flex; justify-content: center; align-items: center; flex-direction: column; min-height: 400px; color: #999;")
+          i.fa-regular.fa-hand-pointer(style="font-size: 48px; margin-bottom: 16px;")
+          p Chọn một dòng sự cố bên trái để xem chi tiết.
+
+        //- Khung chi tiết (ẩn mặc định)
+        #detailCard.card.detail-card(style="display: none;")
           .card-header.detail-header
             h2.card-title
               i.fa-regular.fa-clipboard.text-red
-              | Chi tiết Ticket #ERR-8821 & Thao tác xử lý
-            span.badge.badge--red Urgent
+              span#detailTicketCode Chi tiết Ticket
+            span#detailBadge.badge.badge--red --
 
           .card-body
-            //- Hộp thông tin xám
             .info-box
               .info-row
                 span.info-label Thiết bị:
-                strong.info-value Xe Feliz S (EV-042)
+                strong.info-value#detailVehicle --
               .info-row
                 span.info-label Trạm Hub:
-                strong.info-value HUB_METRO (Chốt A-04)
+                strong.info-value#detailHub --
               .info-row
-                span.info-label Cảm biến báo lỗi:
-                strong.info-value.text-red Lock_Failed=TRUE
+                span.info-label Loại sự cố:
+                strong.info-value.text-red#detailType --
               .info-row
-                span.info-label Pin:
-                strong.info-value 42%
+                span.info-label Nguồn phát hiện:
+                strong.info-value#detailCreatedBy --
               .info-row
                 span.info-label Thời gian ghi nhận:
-                strong.info-value 14:29:18
-          //- Khối điều khiển từ xa
+                strong.info-value#detailTime --
+
           .remote-control-section
             h3.remote-control-title THAO TÁC BỔ SUNG / ĐIỀU KHIỂN TỪ XA
-            
             .remote-control-actions
               button.remote-btn(type="button")
                 i.fa-solid.fa-rotate
                 span Khởi động lại ngầm khóa IoT
-                
               button.remote-btn(type="button")
                 i.fa-solid.fa-lock
-                span Khóa chốt A-04
+                span Khóa chốt khẩn cấp
 
-          .card-footer.detail-footer
-            button.btn-primary-full(type="button") Xác nhận sự cố & Yêu cầu sửa chữa
-            button.btn-secondary-full(type="button") Bỏ qua cảnh báo
+          //- ID detailFooter để JS điều khiển ẩn/hiện nút
+          .card-footer.detail-footer#detailFooter
+            button#btnConfirmTicket.btn-primary-full(type="button") Xác nhận sự cố & Yêu cầu sửa chữa
+            button#btnIgnoreTicket.btn-secondary-full(type="button") Bỏ qua cảnh báo

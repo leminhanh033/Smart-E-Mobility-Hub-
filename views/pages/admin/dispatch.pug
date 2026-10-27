@@ -24,9 +24,9 @@ block main
                 | HUB NGUỒN 
                 span.text-red *
               .select-wrapper
-                select.form-control
-                  option HUB_BK_CS2 (Đỗ 22/27 — Quá tải 81%)
-              p.form-hint.green 12 xe khả dụng sẵn sàng để chuyển
+                select#dispatchFromHub.form-control
+                  //- JS sẽ đổ dữ liệu vào
+              p.form-hint.green#hintFromHub Đang tải...
 
             //- 2. Hub Đích
             .form-group
@@ -34,9 +34,9 @@ block main
                 | HUB ĐÍCH 
                 span.text-red *
               .select-wrapper
-                select.form-control
-                  option HUB_UIT_IU (Đỗ 5/22 — Thiếu xe 23%)
-              p.form-hint Còn trống 17 chỗ để tiếp nhận
+                select#dispatchToHub.form-control
+                  //- JS sẽ đổ dữ liệu vào
+              p.form-hint#hintToHub Đang tải...
 
             //- 3. Chọn phương tiện
             .form-group.vehicle-selection
@@ -44,63 +44,25 @@ block main
                 label.form-label
                   | CHỌN PHƯƠNG TIỆN CỤ THỂ 
                   span.text-red *
-                span.selection-count 3 / 12 đã chọn
+                span.selection-count#selectionCount 0 / 0 đã chọn
 
-              .vehicle-list
-                //- Xe 1
-                label.vehicle-item
-                  input(type="checkbox", checked)
-                  .vehicle-info
-                    strong.vehicle-id EV-BK-021
-                    span.vehicle-name VinFast Feliz S
-                  .vehicle-meta
-                    span.pin-text Pin 84%
-                    span.badge-status Sẵn sàng
-
-                //- Xe 2
-                label.vehicle-item
-                  input(type="checkbox", checked)
-                  .vehicle-info
-                    strong.vehicle-id EV-BK-028
-                    span.vehicle-name VinFast Evo 200
-                  .vehicle-meta
-                    span.pin-text Pin 10%
-                    span.badge-status.text-red Không sẵn sàng
-
-                //- Xe 3
-                label.vehicle-item
-                  input(type="checkbox", checked)
-                  .vehicle-info
-                    strong.vehicle-id EV-BK-031
-                    span.vehicle-name VinFast Feliz S
-                  .vehicle-meta
-                    span.pin-text Pin 91%
-                    span.badge-status Sẵn sàng
-
-                //- Xe 4
-                label.vehicle-item
-                  input(type="checkbox")
-                  .vehicle-info
-                    strong.vehicle-id EV-BK-034
-                    span.vehicle-name EcoBike Sport
-                  .vehicle-meta
-                    span.pin-text.text-orange Pin 68%
-                    span.badge-status Sẵn sàng
+              .vehicle-list#vehicleList
+                p.text-muted(style="padding: 12px; text-align: center;") Đang tải danh sách xe...
 
             //- 4. Mức độ ưu tiên
             .form-group
               label.form-label MỨC ĐỘ ƯU TIÊN
               .radio-group
                 label.radio-label
-                  input(type="radio", name="priority", checked)
+                  input(type="radio", name="priority", value="normal", checked)
                   | Bình thường
                 label.radio-label
-                  input(type="radio", name="priority")
+                  input(type="radio", name="priority", value="urgent")
                   | Khẩn cấp
                   i.fa-solid.fa-fire.text-red
 
           .card-footer
-            button.btn-submit(type="button")
+            button#btnDispatch.btn-submit(type="button", disabled)
               i.fa-solid.fa-paper-plane
               | Phát Lệnh Điều Phối Ngay
 
@@ -122,17 +84,17 @@ block main
               .node-icon
                 i.fa-solid.fa-box
               .node-info
-                strong HUB_BK_CS2
-                span.text-orange Quá tải (Đỗ 22/27 - Dư +12 xe)
+                strong#alertFromHub --
+                span.text-orange#alertFromDesc --
             
             .alert-center
-              span.alert-text 12 xe cần chuyển
+              span.alert-text#alertAmount -- xe cần chuyển
               i.fa-solid.fa-arrow-right-long
             
             .alert-node
               .node-info.text-right
-                strong HUB_UIT_IU
-                span.text-red Thiếu xe (Đỗ 5/22 - Thiếu -12 xe)
+                strong#alertToHub --
+                span.text-red#alertToDesc --
               .node-icon.bg-red-light
                 i.fa-solid.fa-box
 
@@ -140,7 +102,7 @@ block main
         .card.table-card
           .card-header
             h2.card-title Lệnh điều phối đang hoạt động & lịch sử
-            span.total-text Tổng cộng: 6 lệnh
+            span.total-text#totalDispatch Tổng cộng: 0 lệnh
           
           .table-responsive
             table.data-table
@@ -152,63 +114,4 @@ block main
                   th SỐ LƯỢNG
                   th THỜI GIAN
                   th TRẠNG THÁI
-              tbody
-                //- Dòng 1
-                tr
-                  td 1
-                  td.font-bold DISP-00124
-                  td
-                    span.hub-source HUB_BK_CS2
-                    i.fa-solid.fa-arrow-right.text-muted
-                    span.hub-dest HUB_UIT_IU
-                  td 3 xe
-                  td 14:18
-                  td
-                    span.status-badge.bg-blue
-                      i.fa-solid.fa-circle
-                      | Đang di chuyển
-                
-                //- Dòng 2
-                tr
-                  td 2
-                  td.font-bold DISP-00123
-                  td
-                    span.hub-source HUB_METRO
-                    i.fa-solid.fa-arrow-right.text-muted
-                    span.hub-dest HUB_KTX_B
-                  td 2 xe
-                  td 13:30
-                  td
-                    span.status-badge.bg-green
-                      i.fa-solid.fa-circle
-                      | Đã hoàn thành
-
-                //- Dòng 3
-                tr
-                  td 3
-                  td.font-bold DISP-00122
-                  td
-                    span.hub-source HUB_KTX_A
-                    i.fa-solid.fa-arrow-right.text-muted
-                    span.hub-dest HUB_BK_CS2
-                  td 4 xe
-                  td 12:45
-                  td
-                    span.status-badge.bg-green
-                      i.fa-solid.fa-circle
-                      | Đã hoàn thành
-
-                //- Dòng 4
-                tr
-                  td 4
-                  td.font-bold DISP-00121
-                  td
-                    span.hub-source HUB_UIT_IU
-                    i.fa-solid.fa-arrow-right.text-muted
-                    span.hub-dest HUB_LIB_NVHSV
-                  td 2 xe
-                  td 11:20
-                  td
-                    span.status-badge.bg-green
-                      i.fa-solid.fa-circle
-                      | Đã hoàn thành
+              tbody#dispatchHistory

@@ -6,7 +6,7 @@ const bookingSchema = new Schema({
   vehicleID: { type: Schema.Types.ObjectId, ref: 'vehicle', required: true },
   startHubID: { type: Schema.Types.ObjectId, ref: 'hub' }, // Lấy xe ở đâu
   endHubID: { type: Schema.Types.ObjectId, ref: 'hub' },   // Trả xe ở đâu (nếu đã trả)
-  startTime: { type: Date, default: Date.now },
+  startTime: { type: Date},
   endTime: { type: Date }, // Nếu null nghĩa là đang chạy
   holdTime: { type: Date }, // Thời gian giữ chỗ (15 phút)
   cost: { type: Number, default: 0 },

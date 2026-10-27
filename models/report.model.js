@@ -7,7 +7,11 @@ const report = new Schema({
   vehicle:String,
   image:String,
   createdBy:String,
-  status:String,
+  status:{
+    type: String,
+    enum: ['Urgent', 'Medium', 'Low', 'In Progress', 'Resolved'], 
+    default: 'Low' 
+  },
 },{
   timestamps:true,
 });

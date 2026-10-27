@@ -3512,7 +3512,6 @@ html, body {
 .simulation-result-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 24px;
   font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
 }
 
@@ -3525,6 +3524,7 @@ html, body {
   border: 1px solid #E2E8F0E5;
   border-radius: 16px;
   padding:16px;
+  margin-top:20px;
 }
 
 .simulation-result-wrapper .section-label {
@@ -3672,6 +3672,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-top:20px;
 }
 
 /* Header */
@@ -5052,4 +5053,135 @@ html, body {
   .charging-port-list .modal-overlay#addPortModal .modal-body .form-row-2 { grid-template-columns: 1fr; }
 }
 
+/* Layout 2 cột */
+.simulation-layout {
+  display: grid;
+  grid-template-columns: 400px 1fr; /* Cột trái cố định 400px, cột phải tự giãn */
+  gap: 24px;
+  align-items: start;
+}
 
+@media (max-width: 992px) {
+  .simulation-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* CSS cho Empty State (Giống hình ảnh) */
+.custom-marker-wrapper {
+  pointer-events: none !important; 
+  background: transparent !important;
+  border: none !important;
+}
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 500px;
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  text-align: center;
+  padding: 40px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.empty-icon-box {
+  width: 64px;
+  height: 64px;
+  background: #f8f9fa;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.empty-icon-box i {
+  font-size: 28px;
+  color: #888;
+}
+
+.empty-state__title {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.empty-state__desc {
+  font-size: 14px;
+  color: #888;
+  max-width: 350px;
+  line-height: 1.5;
+}
+
+/* Khung bao ngoài Marker: Không chặn sự kiện chuột (để kéo map) */
+.custom-marker-wrapper {
+  pointer-events: none !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Chỉ nhãn chữ mới nhận click chuột */
+.custom-marker-label {
+  pointer-events: auto !important; 
+  background-color: white;
+  border: 2px solid #00d67d;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1a202c;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.custom-marker-label:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  z-index: 1000;
+}
+
+/* Xóa viền trắng mặc định của Leaflet */
+.leaflet-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* CSS cho Panel chi tiết (nếu file CSS gốc của bạn chưa chuẩn) */
+.hub-detail-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 320px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 550px;
+  min-height: 550px; /* Ép chiều cao tối thiểu */
+  min-width: 300px;  /* Ép chiều rộng tối thiểu */
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#hubMap {
+  width: 100%;
+  height: 100%;
+  min-height: 550px;
+  min-width: 300px;
+}

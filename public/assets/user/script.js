@@ -286,66 +286,65 @@ if (btnBookVehicle) {
   });
 }
 
+// =========================================================
+// Đổi dropdown → thẻ card bên dưới active theo
+// =========================================================
+const hubSelectParking = document.getElementById("hubSelect");
+const parkingCards = document.querySelectorAll(".parking-card");
 
-//Nhảy số đồng hồ trong activity-active
-const timers = document.querySelectorAll(".activity-card__timer");
-if (timers.length > 0) {
-  timers.forEach((timer) => {
-    const targetTimeStr = timer.getAttribute("data-target-time");
-    const mode = timer.getAttribute("data-mode");
-    const digitsEl = timer.querySelector(".timer-digits");
+if (hubSelectParking) {
+  hubSelectParking.addEventListener("change", function () {
+    const hubId = this.value;
 
-    if (!targetTimeStr) return;
-
-    const targetTime = new Date(targetTimeStr).getTime();
-
-    // Hàm cập nhật đồng hồ mỗi giây
-    const updateTimer = () => {
-      const now = new Date().getTime();
-      let distance;
-
-      if (mode === "countdown") {
-        // Đếm ngược (Giữ chỗ)
-        distance = targetTime - now;
-        if (distance < 0) {
-          digitsEl.innerText = "Hết hạn";
-          digitsEl.style.color = "#ef4444"; // Đổi màu đỏ
-          return;
+    // Đổi thẻ active
+    if (parkingCards.length > 0) {
+      parkingCards.forEach((card) => {
+        if (card.getAttribute("data-id") === hubId) {
+          card.classList.add("parking-card--selected");
+        } else {
+          card.classList.remove("parking-card--selected");
         }
-      } else {
-        // Đếm tiến (Đang sử dụng)
-        distance = now - targetTime;
+      });
+    }
+
+    // Cập nhật summary
+    const selectedCard = document.querySelector(`.parking-card[data-id="${hubId}"]`);
+    if (selectedCard) {
+      const summaryHubName = document.getElementById("summaryHubName");
+      const summaryHubAddress = document.getElementById("summaryHubAddress");
+
+      if (summaryHubName) {
+        summaryHubName.innerText = selectedCard.getAttribute("data-name");
       }
-
-      // Tính giờ, phút, giây
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      // Format hiển thị
-      if (mode === "countdown") {
-        // Format: 14 : 59
-        digitsEl.innerText =
-          String(minutes).padStart(2, "0") + " : " +
-          String(seconds).padStart(2, "0");
-      } else {
-        // Format: 00 : 08 : 42
-        digitsEl.innerText =
-          String(hours).padStart(2, "0") + " : " +
-          String(minutes).padStart(2, "0") + " : " +
-          String(seconds).padStart(2, "0");
+      if (summaryHubAddress) {
+        summaryHubAddress.innerText = selectedCard.getAttribute("data-address");
       }
-    };
+    }
 
-    // Chạy lần đầu và lặp lại mỗi giây
-    updateTimer();
-    setInterval(updateTimer, 1000);
+    // Cập nhật data-id cho nút xác nhận
+    const btnConfirmParking = document.getElementById("btnConfirmParking");
+    if (btnConfirmParking) {
+      btnConfirmParking.setAttribute("data-id", hubId);
+    }
+  });
+}
+
+// =========================================================
+// Click vào card → dropdown cũng đổi theo
+// =========================================================
+if (parkingCards.length > 0) {
+  parkingCards.forEach((card) => {
+    card.addEventListener("click", function () {
+      const hubId = this.getAttribute("data-id");
+      if (hubSelectParking) {
+        hubSelectParking.value = hubId;
+        hubSelectParking.dispatchEvent(new Event("change"));
+      }
+    });
   });
 }
 
 //Lấy thông tin hub trong trang đặt chỗ đỗ
-const parkingCards = document.querySelectorAll(".book-parking__list .parking-card");
 const summaryHubName = document.getElementById("summaryHubName");
 const summaryHubAddress = document.getElementById("summaryHubAddress");
 const summarySlotCode = document.getElementById("summarySlotCode");
@@ -510,167 +509,252 @@ if (createVehicleForm) {
 }
 
 // ==========================================
-// 2. XỬ LÝ CHỌN XE & CẬP NHẬT SUMMARY
+// XỬ LÝ ĐẶT LỊCH SẠC (trang /book/charging/schedule)
 // ==========================================
-const desiredPinSelect = document.getElementById("desiredPinSelect");
-const chargingDate = document.getElementById("chargingDate");
-const chargingTime = document.getElementById("chargingTime");
-const hubSelect = document.getElementById("hubSelect");
-const chargingTypeSelect = document.getElementById("chargingType"); // Lấy thẻ chọn AC/DC
-const durationRadios = document.querySelectorAll('input[name="duration"]');
+(function initChargingSchedule() {
+  const page = document.querySelector(".schedule-charging");
+  if (!page) return;
 
-// Set ngày mặc định hôm nay
-if (chargingDate) chargingDate.value = new Date().toISOString().split('T')[0];
+  // ---------- Elements ----------
+  const desiredPinSelect   = page.querySelector("#desiredPinSelect");
+  const chargingDateInput  = page.querySelector("#chargingDate");
+  const chargingTimeInput  = page.querySelector("#chargingTime");
+  const hubSelectInput     = page.querySelector("#hubSelect");
+  const chargingTypeSelect = page.querySelector("#chargingType");
+  const durationRadios     = page.querySelectorAll('input[name="duration"]');
+  const btnConfirmCharging = page.querySelector("#btnConfirmCharging");
 
-function updateSummary() {
-  const selectedVehicle = document.querySelector(".vehicle-pick--selected");
-  if (!selectedVehicle) return; // Chưa chọn xe thì không tính
+  if (!hubSelectInput) {
+    console.warn("[schedule-charging] Không tìm thấy #hubSelect");
+  }
 
-  const vehicleName = selectedVehicle.getAttribute("data-name");
-  const vehiclePlate = selectedVehicle.getAttribute("data-plate");
-  const startPin = parseInt(selectedVehicle.getAttribute("data-pin"));
+  // Set ngày mặc định hôm nay
+  if (chargingDateInput && !chargingDateInput.value) {
+    chargingDateInput.value = new Date().toISOString().split("T")[0];
+  }
 
-  const desiredPin = parseInt(desiredPinSelect.value);
-  const dateVal = chargingDate.value;
-  const timeVal = chargingTime.value;
-  const hubText = hubSelect.options[hubSelect.selectedIndex].text;
+  const fmt = (n) => Number(n).toLocaleString("vi-VN");
 
-  // Lấy loại cổng sạc đang chọn
-  const portType = chargingTypeSelect ? chargingTypeSelect.value : "AC";
+  // Lấy duration từ radio đang checked
+  function getSelectedDuration() {
+    const checked = page.querySelector('input[name="duration"]:checked');
+    return checked ? parseInt(checked.value) : 45;
+  }
 
-  // Lấy thời lượng từ radio button
-  const selectedDuration = document.querySelector('.schedule-charging .schedule-section .duration .duration__options .duration-btn.active').getAttribute("time");
+  // ---------- UPDATE SUMMARY ----------
+  function updateSummary() {
+    const selectedVehicle = page.querySelector(".vehicle-pick--selected:not(.vehicle-pick--add)");
+    if (!selectedVehicle) return;
 
-  // Cập nhật giao diện cột trái
-  document.getElementById("currentPinDisplay").innerText = startPin + "%";
+    const vehicleName  = selectedVehicle.getAttribute("data-name") || "";
+    const vehiclePlate = selectedVehicle.getAttribute("data-plate") || "";
+    const startPin     = parseInt(selectedVehicle.getAttribute("data-pin")) || 20;
 
-  // Cập nhật cột Summary bên phải
-  document.getElementById("summaryVehicleName").innerText = vehicleName;
-  document.getElementById("summaryVehiclePlate").innerText = "Biển số: " + vehiclePlate;
+    const desiredPin = desiredPinSelect ? parseInt(desiredPinSelect.value) : 85;
+    const dateVal    = chargingDateInput ? chargingDateInput.value : "";
+    const timeVal    = chargingTimeInput ? chargingTimeInput.value : "08:00";
 
-  // Tính thời gian kết thúc
-  const [hours, minutes] = timeVal.split(":").map(Number);
-  const startDate = new Date();
-  startDate.setHours(hours, minutes, 0);
-  const endDate = new Date(startDate.getTime() + parseInt(selectedDuration) * 60000);
-  const endTimeStr = String(endDate.getHours()).padStart(2, '0') + ":" + String(endDate.getMinutes()).padStart(2, '0');
+    let hubText = "Chưa chọn Hub";
+    if (hubSelectInput && hubSelectInput.selectedIndex >= 0) {
+      hubText = hubSelectInput.options[hubSelectInput.selectedIndex].text;
+    }
 
-  document.getElementById("summaryTimeRange").innerText = `${timeVal} - ${endTimeStr}`;
-  document.getElementById("summaryTimeSlot").innerText = `${timeVal} - ${endTimeStr}`;
-  document.getElementById("summaryPinRange").innerHTML = `${startPin}% &rarr; ${desiredPin}%`;
-  document.getElementById("summaryDuration").innerText = `~${selectedDuration} phút`;
-  document.getElementById("summaryHubName").innerText = hubText;
-  // document.getElementById("summaryHubSlot").innerText = hubText.split(' - ')[0];
+    const portType = chargingTypeSelect ? chargingTypeSelect.value : "AC";
+    const durationMin = getSelectedDuration();
 
-  // Cập nhật hiển thị Loại cổng (AC/DC) và Công suất vào Summary
-  const summaryBlockSub = document.querySelector(".summary__block-sub");
-  if (summaryBlockSub) {
-    if (portType === "DC") {
-      summaryBlockSub.innerText = "Công suất: 30 kW (DC Fast Charging)";
-    } else {
-      summaryBlockSub.innerText = "Công suất: 3.3 kW (AC Standard)";
+    // ---- Left ----
+    const elCurrentPin = document.getElementById("currentPinDisplay");
+    if (elCurrentPin) elCurrentPin.innerText = startPin + "%";
+
+    // ---- Summary ----
+    const elVName = document.getElementById("summaryVehicleName");
+    const elVPlate = document.getElementById("summaryVehiclePlate");
+    if (elVName) elVName.innerText = vehicleName;
+    if (elVPlate) elVPlate.innerText = "Biển số: " + vehiclePlate;
+
+    // Giờ kết thúc
+    let endTimeStr = timeVal;
+    if (timeVal && dateVal) {
+      const startDate = new Date(`${dateVal}T${timeVal}:00`);
+      if (!isNaN(startDate.getTime())) {
+        const endDate = new Date(startDate.getTime() + durationMin * 60000);
+        endTimeStr =
+          String(endDate.getHours()).padStart(2, "0") + ":" +
+          String(endDate.getMinutes()).padStart(2, "0");
+      }
+    }
+
+    const elTimeRange = document.getElementById("summaryTimeRange");
+    const elTimeSlot = document.getElementById("summaryTimeSlot");
+    const elPinRange = document.getElementById("summaryPinRange");
+    const elDur = document.getElementById("summaryDuration");
+    const elHub = document.getElementById("summaryHubName");
+
+    if (elTimeRange) elTimeRange.innerText = `${timeVal} - ${endTimeStr}`;
+    if (elTimeSlot) elTimeSlot.innerText = `${timeVal} - ${endTimeStr}`;
+    if (elPinRange) elPinRange.innerHTML = `${startPin}% &rarr; ${desiredPin}%`;
+    if (elDur) elDur.innerText = `~${durationMin} phút`;
+    if (elHub) elHub.innerText = hubText;
+
+    // Công suất
+    const summaryBlockSub = page.querySelector(".summary__block-sub");
+    if (summaryBlockSub) {
+      summaryBlockSub.innerText = portType === "DC"
+        ? "Công suất: 30 kW (DC Fast Charging)"
+        : "Công suất: 3.3 kW (AC Standard)";
+    }
+
+    const timeSlotMeta = page.querySelector(".time-slot__meta span");
+    if (timeSlotMeta) {
+      timeSlotMeta.innerHTML = `Cổng tự động &bull; Trụ ${portType} Standard`;
+    }
+
+    // ---- Chi phí ----
+    const rate = portType === "DC" ? 800 : 500;
+    const chargingCost = durationMin * rate;
+
+    let minutesUntilStart = 0;
+    if (dateVal && timeVal) {
+      const scheduledStart = new Date(`${dateVal}T${timeVal}:00`);
+      if (!isNaN(scheduledStart.getTime())) {
+        minutesUntilStart = Math.max(0, Math.ceil((scheduledStart - Date.now()) / 60000));
+      }
+    }
+    const reservationFee = minutesUntilStart * 200;
+    const totalCost = chargingCost + reservationFee;
+
+    const elCost = document.getElementById("summaryCost");
+    if (elCost) {
+      elCost.innerHTML =
+        fmt(totalCost) + " VNĐ" +
+        `<br><small style="font-weight:400;color:#64748b;font-size:12px;line-height:1.5;">` +
+        `Sạc: ${fmt(chargingCost)}đ (${durationMin}p × ${fmt(rate)}đ)<br>` +
+        `Giữ cổng: ${fmt(reservationFee)}đ (chờ ${minutesUntilStart}p × 200đ)` +
+        `</small>`;
     }
   }
 
-  // Cập nhật text trong Time Slot
-  const timeSlotMeta = document.querySelector(".time-slot__meta span");
-  if (timeSlotMeta) {
-    timeSlotMeta.innerHTML = `Cổng tự động &bull; Trụ ${portType} Standard`;
-  }
-
-  const cost = parseInt(selectedDuration) * 500;
-  document.getElementById("summaryCost").innerText = cost.toLocaleString('vi-VN') + " VND";
-
-  const [year, month, day] = dateVal.split("-");
-  document.getElementById("summaryDate").innerText = `${day}/${month}/${year}`;
-}
-
-// Gắn sự kiện cho các lựa chọn
-document.querySelectorAll(".vehicle-pick:not(.vehicle-pick--add)").forEach(pick => {
-  pick.addEventListener("click", () => {
-    document.querySelectorAll(".vehicle-pick").forEach(p => p.classList.remove("vehicle-pick--selected"));
-    pick.classList.add("vehicle-pick--selected");
-    updateSummary();
-  });
-});
-
-if (desiredPinSelect) desiredPinSelect.addEventListener("change", updateSummary);
-if (chargingDate) chargingDate.addEventListener("change", updateSummary);
-if (chargingTime) chargingTime.addEventListener("change", updateSummary);
-if (hubSelect) hubSelect.addEventListener("change", updateSummary);
-if (chargingTypeSelect) chargingTypeSelect.addEventListener("change", updateSummary); // Lắng nghe sự kiện đổi AC/DC
-
-if (durationRadios) {
-  durationRadios.forEach(radio => {
-    radio.addEventListener("change", function () {
-      document.querySelectorAll(".duration-btn").forEach(btn => btn.classList.remove("active"));
-      this.nextElementSibling.classList.add("active");
+  // ---------- Sự kiện chọn xe ----------
+  page.querySelectorAll(".vehicle-pick:not(.vehicle-pick--add)").forEach((pick) => {
+    pick.addEventListener("click", () => {
+      page.querySelectorAll(".vehicle-pick").forEach((p) =>
+        p.classList.remove("vehicle-pick--selected")
+      );
+      pick.classList.add("vehicle-pick--selected");
       updateSummary();
     });
   });
-}
 
-// Chạy lần đầu
-updateSummary();
+  // ---------- Input change ----------
+  if (desiredPinSelect)   desiredPinSelect.addEventListener("change", updateSummary);
+  if (chargingDateInput)  chargingDateInput.addEventListener("change", updateSummary);
+  if (chargingTimeInput)  chargingTimeInput.addEventListener("change", updateSummary);
+  if (hubSelectInput)     hubSelectInput.addEventListener("change", updateSummary);
+  if (chargingTypeSelect) chargingTypeSelect.addEventListener("change", updateSummary);
 
+  // ---------- Duration radios ----------
+  durationRadios.forEach((radio) => {
+    radio.addEventListener("change", function () {
+      if (!this.checked) return;
+      page.querySelectorAll(".duration-btn").forEach((btn) => btn.classList.remove("active"));
+      const label = page.querySelector(`label[for="${this.id}"]`);
+      if (label) label.classList.add("active");
+      updateSummary();
+    });
+  });
 
-// ==========================================
-// 3. XỬ LÝ NÚT XÁC NHẬN ĐẶT LỊCH
-// ==========================================
-const btnConfirmCharging = document.getElementById("btnConfirmCharging");
-if (btnConfirmCharging) {
-  btnConfirmCharging.addEventListener("click", function () {
-    const selectedVehicle = document.querySelector(".vehicle-pick--selected");
-    if (!selectedVehicle) {
-      notyf.error("Vui lòng chọn xe cần sạc!");
-      return;
-    }
+  // ---------- Submit ----------
+  if (btnConfirmCharging) {
+    btnConfirmCharging.addEventListener("click", function () {
+      const selectedVehicle = page.querySelector(
+        ".vehicle-pick--selected:not(.vehicle-pick--add)"
+      );
+      if (!selectedVehicle) {
+        notyf.error("Vui lòng chọn xe cần sạc!");
+        return;
+      }
 
-    const vehicleId = selectedVehicle.getAttribute("data-id");
-    const hubId = hubSelect.value;
-    const desiredPin = desiredPinSelect.value;
-    const date = chargingDate.value;
-    const time = chargingTime.value;
-    const duration = document.querySelector('input[name="duration"]:checked').value;
+      const vehicleId = selectedVehicle.getAttribute("data-id");
+      if (!vehicleId || vehicleId === "undefined") {
+        notyf.error("Không xác định được xe. Vui lòng chọn lại.");
+        console.error("[schedule-charging] data-id rỗng:", selectedVehicle);
+        return;
+      }
 
-    // Lấy loại cổng sạc
-    const portType = chargingTypeSelect ? chargingTypeSelect.value : "AC";
+      const hubId = hubSelectInput ? hubSelectInput.value : "";
+      if (!hubId || hubId === "undefined") {
+        notyf.error("Vui lòng chọn Mobility Hub!");
+        console.error("[schedule-charging] hubSelectInput.value rỗng:", hubSelectInput);
+        return;
+      }
 
-    this.innerText = "Đang xử lý...";
-    this.disabled = true;
+      const desiredPin = desiredPinSelect ? desiredPinSelect.value : "85";
+      const date = chargingDateInput ? chargingDateInput.value : "";
+      const time = chargingTimeInput ? chargingTimeInput.value : "";
+      const duration = getSelectedDuration();
+      const portType = chargingTypeSelect ? chargingTypeSelect.value : "AC";
 
-    fetch("/book/charging/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      // Thêm portType vào body gửi đi
-      body: JSON.stringify({
-        vehicleOwnerID:vehicleId,
+      if (!date || !time) {
+        notyf.error("Vui lòng chọn ngày và giờ sạc!");
+        return;
+      }
+
+      // Compute scheduledStart và gửi kèm để tránh thiếu field ở BE
+      const scheduledStartDate = new Date(`${date}T${time}:00`);
+      if (isNaN(scheduledStartDate.getTime())) {
+        notyf.error("Ngày/giờ không hợp lệ.");
+        return;
+      }
+      if (scheduledStartDate < new Date()) {
+        notyf.error("Không thể đặt lịch trong quá khứ.");
+        return;
+      }
+      const scheduledStart = scheduledStartDate.toISOString();
+
+      const payload = {
+        vehicleOwnerID: vehicleId,
         hubId,
         desiredPin,
         date,
         time,
         duration,
         portType,
+        scheduledStart,
+      };
+      console.log("[schedule-charging] POST /book/charging/create →", payload);
+
+      const originalText = this.innerText;
+      this.innerText = "Đang xử lý...";
+      this.disabled = true;
+
+      fetch("/book/charging/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.code === "success") {
-          notyf.success(data.message);
-          setTimeout(() => { window.location.href = "/activity/active"; }, 1500);
-        } else {
-          notyf.error(data.message);
-          this.innerText = "Xác nhận";
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code === "success") {
+            notyf.success(data.message);
+            setTimeout(() => { window.location.href = "/activity/active"; }, 1500);
+          } else {
+            notyf.error(data.message);
+            this.innerText = originalText;
+            this.disabled = false;
+          }
+        })
+        .catch((err) => {
+          console.error("Lỗi đặt lịch sạc:", err);
+          notyf.error("Lỗi kết nối đến server!");
+          this.innerText = originalText;
           this.disabled = false;
-        }
-      })
-      .catch(() => {
-        notyf.error("Lỗi kết nối!");
-        this.innerText = "Xác nhận";
-        this.disabled = false;
-      });
-  });
-}
+        });
+    });
+  }
+
+  // ---------- Chạy lần đầu ----------
+  updateSummary();
+})();
 
 // ==========================================
 // XỬ LÝ NÚT HỦY (CANCEL)
@@ -717,6 +801,391 @@ if (cancelBtns.length > 0) {
           }
         })
         .catch(error => {
+          console.error("Lỗi:", error);
+          notyf.error("Lỗi kết nối đến server!");
+          this.innerText = originalText;
+          this.disabled = false;
+        });
+    });
+  });
+}
+
+
+//Đăng ký nhu cầu sạc
+(function initChargingDemand() {
+  "use strict";
+
+  // Guard: chỉ chạy khi có nút demand (trang /book/charging/demand)
+  const btnConfirm = document.getElementById("btnConfirmDemand");
+  if (!btnConfirm) return;
+
+  const hubCards        = document.querySelectorAll(".hub-pick");
+  const summaryHubName  = document.getElementById("summaryHubName");
+  const summaryHubAddress = document.getElementById("summaryHubAddress");
+  const btnCancel       = document.getElementById("btnCancelDemand");
+
+  // ---------- Cập nhật summary ----------
+  function updateSummary(hubId) {
+    const radio = document.querySelector(`input[name="hub"][value="${hubId}"]`);
+    if (!radio) return;
+
+    if (summaryHubName)    summaryHubName.textContent = radio.dataset.name || "Chưa chọn Hub";
+    if (summaryHubAddress) summaryHubAddress.textContent = radio.dataset.address || "--";
+
+    hubCards.forEach((card) => {
+      const input = card.querySelector('input[name="hub"]');
+      card.classList.toggle("hub-pick--selected", input && input.value === hubId);
+    });
+  }
+
+  function getSelectedHubId() {
+    const checked = document.querySelector('input[name="hub"]:checked');
+    return checked ? checked.value : null;
+  }
+
+  // ---------- Sự kiện chọn Hub ----------
+  hubCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const input = card.querySelector('input[name="hub"]');
+      if (!input) return;
+      input.checked = true;
+      updateSummary(input.value);
+    });
+    card.setAttribute("tabindex", "0");
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        card.click();
+      }
+    });
+  });
+
+  const initialHubId = getSelectedHubId();
+  if (initialHubId) updateSummary(initialHubId);
+
+  // ---------- Toast ----------
+  function showToast(message, type = "success") {
+    const toast = document.createElement("div");
+    toast.textContent = message;
+    Object.assign(toast.style, {
+      position: "fixed", top: "20px", right: "20px",
+      padding: "12px 18px", borderRadius: "8px",
+      fontSize: "14px", fontWeight: "600", color: "#fff",
+      background: type === "success" ? "#16a34a" : "#dc2626",
+      boxShadow: "0 8px 20px rgba(0,0,0,.15)",
+      zIndex: "9999", opacity: "0",
+      transform: "translateY(-10px)", transition: "all .25s ease",
+    });
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.style.opacity = "1";
+      toast.style.transform = "translateY(0)";
+    });
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      toast.style.transform = "translateY(-10px)";
+      setTimeout(() => toast.remove(), 250);
+    }, 2500);
+  }
+
+  // ---------- Submit ----------
+  btnConfirm.addEventListener("click", async function () {
+    const hubId = getSelectedHubId();
+    if (!hubId) {
+      showToast("Vui lòng chọn Mobility Hub trước khi gửi.", "error");
+      return;
+    }
+
+    btnConfirm.disabled = true;
+    const originalText = btnConfirm.textContent;
+    btnConfirm.textContent = "Đang gửi...";
+
+    try {
+      // Endpoint riêng cho demand — KHÔNG dùng /book/charging/schedule (GET)
+      const res = await fetch("/book/charging/demand", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hubId }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || data.code === "error") {
+        throw new Error(data.message || "Gửi nhu cầu thất bại.");
+      }
+
+      showToast(data.message || "Đã gửi nhu cầu sạc thành công!", "success");
+      btnConfirm.textContent = "Đã gửi";
+    } catch (err) {
+      console.error("[submitChargingDemand]", err);
+      showToast(err.message || "Có lỗi xảy ra.", "error");
+      btnConfirm.disabled = false;
+      btnConfirm.textContent = originalText;
+    }
+  });
+
+  // ---------- Cancel ----------
+  if (btnCancel) {
+    btnCancel.addEventListener("click", () => {
+      if (document.referrer) window.history.back();
+      else window.location.href = "/book/parking";
+    });
+  }
+})();
+
+// =========================================================
+// TIMER + CƯỚC LIVE
+// =========================================================
+const RATE_PER_MINUTE = 500;
+const pad = (n) => String(n).padStart(2, "0");
+
+const timerList = document.querySelectorAll(".activity-card__timer[data-target-time]");
+const liveCosts = document.querySelectorAll('.activity-card__cost[data-mode="live"]');
+
+function tickTimersAndCosts() {
+  const now = Date.now();
+
+  // 1) Đồng hồ
+  if (timerList.length > 0) {
+    timerList.forEach((el) => {
+      const target = new Date(el.getAttribute("data-target-time")).getTime();
+      if (isNaN(target)) return;
+
+      const mode = el.getAttribute("data-mode") || "countdown";
+      const digits = el.querySelector(".timer-digits");
+      if (!digits) return;
+
+      let diff = mode === "countdown" ? target - now : now - target;
+      if (diff < 0) diff = 0;
+
+      if (mode === "countdown" && diff === 0) {
+        digits.classList.add("expired");
+      } else {
+        digits.classList.remove("expired");
+      }
+
+      const totalSec = Math.floor(diff / 1000);
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+
+      digits.textContent =
+        h > 0
+          ? `${pad(h)} : ${pad(m)} : ${pad(s)}`
+          : `${pad(m)} : ${pad(s)}`;
+    });
+  }
+
+  // 2) Cước live — đọc data-unit để biết tính theo phút hay giờ
+  if (liveCosts.length > 0) {
+    liveCosts.forEach((el) => {
+      const start = new Date(el.getAttribute("data-start-time")).getTime();
+      if (isNaN(start)) return;
+
+      const rate = Number(el.getAttribute("data-rate")) || RATE_PER_MINUTE;
+      const unit = el.getAttribute("data-unit") || "minute";
+      const elapsedMs = Math.max(0, now - start);
+
+      let cost;
+      if (unit === "hour") {
+        // 1.000đ/giờ → tỷ lệ thuận, làm tròn lên từng đồng
+        cost = Math.ceil((elapsedMs / 3600000) * rate);
+      } else {
+        // 500đ/phút → làm tròn lên từng phút
+        cost = Math.ceil(elapsedMs / 60000) * rate;
+      }
+
+      el.textContent = cost.toLocaleString("vi-VN") + " VNĐ";
+    });
+  }
+}
+
+setInterval(tickTimersAndCosts, 1000);
+tickTimersAndCosts();
+
+// =========================================================
+// NHẬN XE  → bắt đầu tính giờ
+// =========================================================
+const receiveBtns = document.querySelectorAll(".activity-card .btn-receive");
+
+if (receiveBtns.length > 0) {
+  receiveBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.getAttribute("data-id");
+      const type = this.getAttribute("data-type");
+
+      if (!confirm("Xác nhận nhận xe? Đồng hồ tính cước sẽ bắt đầu ngay.")) {
+        return;
+      }
+
+      const originalText = this.innerText;
+      this.innerText = "Đang xử lý...";
+      this.disabled = true;
+
+      fetch("/activity/receive", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: id, type: type }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code === "success") {
+            notyf.success(data.message || "Đã nhận xe. Bắt đầu tính giờ.");
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } else {
+            notyf.error(data.message || "Không thể nhận xe.");
+            this.innerText = originalText;
+            this.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error("Lỗi:", error);
+          notyf.error("Lỗi kết nối đến server!");
+          this.innerText = originalText;
+          this.disabled = false;
+        });
+    });
+  });
+}
+
+// =========================================================
+// TRẢ XE  → dừng đồng hồ, chốt cước 500đ/phút
+// =========================================================
+const returnBtns = document.querySelectorAll(".activity-card .btn-return");
+
+if (returnBtns.length > 0) {
+  returnBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.getAttribute("data-id");
+      const type = this.getAttribute("data-type");
+
+      if (!confirm("Xác nhận trả xe? Cước sẽ được tính 500đ/phút.")) {
+        return;
+      }
+
+      const originalText = this.innerText;
+      this.innerText = "Đang xử lý...";
+      this.disabled = true;
+
+      fetch("/activity/return", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: id, type: type }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code === "success") {
+            const costText =
+              data.cost != null
+                ? ` Đã trả xe. Tổng cước: ${Number(data.cost).toLocaleString("vi-VN")} VNĐ.`
+                : "";
+            notyf.success((data.message || "Đã trả xe.") + costText);
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } else {
+            notyf.error(data.message || "Không thể trả xe.");
+            this.innerText = originalText;
+            this.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error("Lỗi:", error);
+          notyf.error("Lỗi kết nối đến server!");
+          this.innerText = originalText;
+          this.disabled = false;
+        });
+    });
+  });
+}
+
+// =========================================================
+// GỬI XE (parking checkin)
+// =========================================================
+const parkBtns = document.querySelectorAll(".activity-card .btn-park");
+
+if (parkBtns.length > 0) {
+  parkBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.getAttribute("data-id");
+      const type = this.getAttribute("data-type");
+
+      if (!confirm("Xác nhận đã gửi xe vào vị trí đỗ?")) {
+        return;
+      }
+
+      const originalText = this.innerText;
+      this.innerText = "Đang xử lý...";
+      this.disabled = true;
+
+      fetch("/activity/park/checkin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: id, type: type }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code === "success") {
+            notyf.success(data.message || "Đã gửi xe.");
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } else {
+            notyf.error(data.message || "Không thể gửi xe.");
+            this.innerText = originalText;
+            this.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error("Lỗi:", error);
+          notyf.error("Lỗi kết nối đến server!");
+          this.innerText = originalText;
+          this.disabled = false;
+        });
+    });
+  });
+}
+
+// =========================================================
+// LẤY XE RA (parking checkout)
+// =========================================================
+const checkoutBtns = document.querySelectorAll(".activity-card .btn-checkout");
+
+if (checkoutBtns.length > 0) {
+  checkoutBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.getAttribute("data-id");
+      const type = this.getAttribute("data-type");
+
+      if (!confirm("Xác nhận lấy xe ra khỏi chỗ đỗ?")) {
+        return;
+      }
+
+      const originalText = this.innerText;
+      this.innerText = "Đang xử lý...";
+      this.disabled = true;
+
+      fetch("/activity/park/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: id, type: type }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code === "success") {
+            notyf.success(data.message || "Đã lấy xe ra.");
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } else {
+            notyf.error(data.message || "Không thể lấy xe ra.");
+            this.innerText = originalText;
+            this.disabled = false;
+          }
+        })
+        .catch((error) => {
           console.error("Lỗi:", error);
           notyf.error("Lỗi kết nối đến server!");
           this.innerText = originalText;

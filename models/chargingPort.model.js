@@ -7,7 +7,7 @@ const chargingPort = new Schema({
   type:String,
   power:Number,
   
-  status:String,
+  status:String,//active,charging, maintenance, error, inactive
   vehicleUsed:String,
 },{
   timestamps:true,

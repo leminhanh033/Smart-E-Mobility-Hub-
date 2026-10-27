@@ -22,10 +22,12 @@ block main
         h2.book-parking__search-label ĐIỂM ĐẾN
         .book-parking__search
           i.fa-solid.fa-location-dot.book-parking__search-icon
-          select.book-parking__search-input()
+          select.book-parking__search-input#hubSelect
             each hub in hubList
-              option(value=hub._id selected=(hub._id.toString() === desID ? true : false)
-) #{hub.name} - #{hub.address}
+              option(
+                value=hub._id
+                selected=(hub._id.toString() === desID ? true : false)
+              ) #{hub.name} - #{hub.address}
 
       // ---------- Hub phù hợp ----------
       .book-parking__list
@@ -34,13 +36,13 @@ block main
           span.book-parking__list-count #{hubList.length} kết quả
 
         if hubList && hubList.length > 0
-          each hub, index in hubList
-            //- Tính số chỗ trống = Tổng chỗ - Đã dùng
+          //- 🔑 Xác định Hub đang chọn: ưu tiên desID, fallback hub đầu tiên
+          - var selectedHub = hubList.find(h => h._id.toString() === desID) || hubList[0]
+
+          each hub in hubList
             - var availableSlots = Math.max(0, (hub.parkingNumber || 0) - (hub.parkingUsed || 0))
-            //- Nếu chỗ trống ít hơn 5 thì thêm class cảnh báo màu vàng
             - var isWarning = availableSlots < 5
-            //- Tự động chọn Hub đầu tiên
-            - var isSelected = index === 0
+            - var isSelected = hub._id.toString() === selectedHub._id.toString()
 
             .parking-card(
               class=(isSelected ? 'parking-card--selected' : '')
@@ -55,7 +57,7 @@ block main
                   p.parking-card__address
                     i.fa-solid.fa-location-dot
                     | #{hub.address}
-              
+
               .parking-card__right
                 strong.parking-card__slots(class=(isWarning ? 'parking-card__slots--warning' : '')) #{availableSlots} chỗ trống
                 span.parking-card__usage #{hub.parkingUsed || 0} / #{hub.parkingNumber || 0} đang sử dụng
@@ -68,12 +70,11 @@ block main
       h2.summary__label CHỖ ĐÃ ĐƯỢC CHỌN
 
       if hubList && hubList.length > 0
-        //- Lấy Hub đầu tiên làm mặc định ban đầu
-        - var firstHub = hubList[0]
-        
+        - var selectedHub = hubList.find(h => h._id.toString() === desID) || hubList[0]
+
         .summary__hub
-          h3.summary__hub-name#summaryHubName= firstHub.name
-          p.summary__hub-address#summaryHubAddress= firstHub.address
+          h3.summary__hub-name#summaryHubName= selectedHub.name
+          p.summary__hub-address#summaryHubAddress= selectedHub.address
 
         .summary__slot
           span.summary__slot-label Chỗ đã được chọn trống phù hợp
@@ -91,8 +92,8 @@ block main
           i.fa-solid.fa-triangle-exclamation
           p
             | Sau khi xác nhận, chỗ đỗ được giữ trong 60 phút. Nếu hết thời gian
-            |mà bạn chưa sử dụng, lệnh đặt sẽ tự động hết hiệu lực.
+            | mà bạn chưa sử dụng, lệnh đặt sẽ tự động hết hiệu lực.
 
         .summary__actions
-          button.btn-outline(type="button") Hủy
-          button.btn-primary#btnConfirmParking(type="button", data-id=firstHub._id) Xác nhận đặt chỗ
+          button.btn-outline#btnCancelParking(type="button") Hủy
+          button.btn-primary#btnConfirmParking(type="button", data-id=selectedHub._id) Xác nhận đặt chỗ

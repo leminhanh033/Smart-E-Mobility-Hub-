@@ -8,7 +8,7 @@ const vehicle = new Schema({
   type:String,
   model:String,
   batteryCapacity:Number,  
-  status:String,
+  status:String,// active, used, maintenance,inactive
   license:String,
 },{
   timestamps:true,

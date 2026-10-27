@@ -4,131 +4,264 @@ block main
   main.activity-page
     .container
 
-      // ---------- Header ----------
       .activity-page__header
         span.activity-page__subtitle HOẠT ĐỘNG
         h1.activity-page__title Hoạt động của tôi
         p.activity-page__desc Theo dõi các chỗ đang diễn ra hiện tại và lịch sử các đơn dịch vụ.
 
-      // ---------- Tabs ----------
       .activity-history__toggle
         a.toggle-btn.active(href="/activity/active") Đang hoạt động
         a.toggle-btn(href="/activity/history") Lịch sử
 
-      // ---------- Danh sách hoạt động ----------
       .activity-page__list
 
         if activities && activities.length > 0
           each item in activities
-            //- ==========================================
-            //- 1. KHAI BÁO CÁC BIẾN DỰA VÀO LOẠI HOẠT ĐỘNG
-            //- ==========================================
-            - var iconClass = 'fa-motorcycle'
-            - var iconColor = 'icon--green'
-            - var cardTitle = ''
-            - var tagText = ''
-            - var tagClass = 'tag--green'
-            - var subText = ''
-            - var isCountdown = false
-            - var timerTarget = item.startTime
-            - var timerLabel = ''
-            - var costLabel = 'Chi phí: '
-            - var costValue = '0 VNĐ'
-            - var showBattery = false
 
-            //- XỬ LÝ LOGIC TỪNG LOẠI
+            //- =====================================================
+            //- 1. KHAI BÁO BIẾN MẶC ĐỊNH
+            //- =====================================================
+            - var iconClass   = 'fa-motorcycle'
+            - var iconColor   = 'icon--green'
+            - var cardTitle   = ''
+            - var tagText     = ''
+            - var tagClass    = 'tag--green'
+            - var subText     = ''
+            - var isCountdown = false
+            - var timerTarget = null
+            - var timerLabel  = ''
+            - var costLabel   = 'Chi phí: '
+            - var costValue   = '0 VNĐ'
+            - var showBattery = false
+            - var liveCost    = false
+            - var liveCostRate = 500
+            - var liveCostUnit = 'minute'
+
+            - var vehiclePlate = ''
+            - var startTimeStr = ''
+
+            - var btnReceive  = false
+            - var btnReturn   = false
+            - var btnCancel   = false
+            - var btnReport   = false
+            - var btnPark     = false
+            - var btnCheckout = false
+
+            //- =====================================================
+            //- 2. RENTAL
+            //- =====================================================
             if item.type === 'rental'
-              - cardTitle = item.vehicleID ? item.vehicleID.model : "Xe đã xóa"
-              
-              //- Kiểm tra xem xe đã được nhận chưa (có endTime chưa)
-              if item.endTime
+              - cardTitle = item.vehicleID ? item.vehicleID.model : 'Xe đã xóa'
+              - vehiclePlate = (item.vehicleID && item.vehicleID.license) ? item.vehicleID.license : ''
+              - var _stR = item.startTime ? new Date(item.startTime) : null
+              - startTimeStr = (_stR && !isNaN(_stR.getTime()))? `${String(_stR.getHours()).padStart(2,'0')}:${String(_stR.getMinutes()).padStart(2,'0')} ${String(_stR.getDate()).padStart(2,'0')}/${String(_stR.getMonth()+1).padStart(2,'0')}/${_stR.getFullYear()}`: ''
+              - subText = (item.startHubID ? item.startHubID.name : 'N/A') + (item.endHubID ? ' → ' + item.endHubID.name : '')
+
+              if item.status === 'cancelled'
+                - tagText = 'Đã hủy'
+                - tagClass = 'tag--grey'
+
+              else if item.endTime
+                - tagText = 'Đã hoàn thành'
+                - tagClass = 'tag--grey'
+                - timerTarget = item.startTime
+                - timerLabel = 'tổng thời gian'
+                - costLabel = 'Tổng cước: '
+                - costValue = (item.cost || 0).toLocaleString('vi-VN') + ' VNĐ'
+                - btnReport = true
+
+              else if item.startTime
                 - tagText = 'Đang sử dụng'
+                - tagClass = 'tag--green'
+                - timerTarget = item.startTime
                 - timerLabel = 'thời gian sử dụng'
+                - costLabel = 'Cước hiện tại: '
+                - costValue = (item.cost || 0).toLocaleString('vi-VN') + ' VNĐ'
                 - showBattery = true
+                - liveCost = true
+                - liveCostRate = 500
+                - liveCostUnit = 'minute'
+                - btnReturn = true
+                - btnReport = true
+
               else
                 - tagText = 'Đang giữ xe'
+                - tagClass = 'tag--orange'
                 - isCountdown = true
                 - timerTarget = item.holdTime
                 - timerLabel = 'còn giữ chỗ'
-                
-              - subText = (item.startHubID ? item.startHubID.name : "N/A") + (item.endHubID ? ' → ' + item.endHubID.name : '')
-              - costLabel = 'Cước hiện tại: '
-              - costValue = (item.cost || 0).toLocaleString('vi-VN') + ' VNĐ'
+                - costLabel = 'Phí tạm tính: '
+                - btnReceive = true
+                - btnCancel = true
 
+            //- =====================================================
+            //- 3. PARKING
+            //- =====================================================
             else if item.type === 'parking'
               - iconClass = 'fa-square-parking'
               - iconColor = 'icon--blue'
               - cardTitle = 'Đặt chỗ đỗ ' + (item.hubID ? item.hubID.name : '')
-              - tagText = 'Đang giữ chỗ'
-              - tagClass = 'tag--orange'
-              - subText = 'Vị trí đỗ ' + item.slotCode
-              - isCountdown = true
-              //- Giả lập giữ chỗ 60 phút kể từ startTime
-              - timerTarget = new Date(new Date(item.startTime).getTime() + 60*60000).toISOString()
-              - timerLabel = 'còn giữ chỗ'
-              - costLabel = 'Phí đặt chỗ: '
-              - costValue = 'Miễn phí'
+              - subText   = 'Vị trí đỗ ' + (item.slotCode || '---')
+              - vehiclePlate = item.slotCode ? ('Chỗ ' + item.slotCode) : ''
+              - var _stP = item.startTime ? new Date(item.startTime) : (item.bookedAt ? new Date(item.bookedAt) : null)
+              - startTimeStr = (_stP && !isNaN(_stP.getTime()))? `${String(_stP.getHours()).padStart(2,'0')}:${String(_stP.getMinutes()).padStart(2,'0')} ${String(_stP.getDate()).padStart(2,'0')}/${String(_stP.getMonth()+1).padStart(2,'0')}/${_stP.getFullYear()}`: ''
 
+              if item.status === 'cancelled'
+                - tagText = 'Đã hủy'
+                - tagClass = 'tag--grey'
+                - costLabel = 'Phí đặt chỗ: '
+                - costValue = '0 VNĐ'
+
+              else if item.endTime
+                - tagText = 'Đã lấy xe'
+                - tagClass = 'tag--grey'
+                - timerTarget = item.startTime
+                - timerLabel = 'tổng thời gian gửi'
+                - var _s = new Date(item.startTime).getTime()
+                - var _e = new Date(item.endTime).getTime()
+                - var _cost = Math.ceil((_e - _s) / 3600000 * 1000)
+                - costLabel = 'Tổng phí: '
+                - costValue = _cost.toLocaleString('vi-VN') + ' VNĐ'
+
+              else if item.startTime
+                - tagText = 'Đang sử dụng'
+                - tagClass = 'tag--green'
+                - timerTarget = item.startTime
+                - timerLabel = 'thời gian gửi xe'
+                - costLabel = 'Phí đặt chỗ (1.000đ/giờ): '
+                - costValue = '0 VNĐ'
+                - liveCost = true
+                - liveCostRate = 1000
+                - liveCostUnit = 'hour'
+                - btnCheckout = true
+
+              else
+                - tagText = 'Đang giữ chỗ'
+                - tagClass = 'tag--orange'
+                - isCountdown = true
+                - var _bookedValid = item.bookedAt && !isNaN(new Date(item.bookedAt).getTime())
+                - timerTarget = _bookedValid ? new Date(new Date(item.bookedAt).getTime() + 60*60000).toISOString() : null
+                - timerLabel = 'còn giữ chỗ'
+                - costLabel = 'Phí đặt chỗ: '
+                - costValue = 'Miễn phí'
+                - btnPark = true
+                - btnCancel = true
+
+            //- =====================================================
+            //- 4. CHARGING
+            //- =====================================================
             else if item.type === 'charging'
               - iconClass = 'fa-bolt'
               - iconColor = 'icon--purple'
               - cardTitle = 'Sạc điện tại ' + (item.hubID ? item.hubID.name : '')
-              - tagText = 'Đang sạc'
-              - tagClass = 'tag--orange'
               - subText = 'Cổng ' + item.portType + ' • Mục tiêu ' + item.desiredPin + '%'
-              - timerLabel = 'thời gian sạc'
-              - costLabel = 'Chi phí: '
-              - costValue = (item.cost || 0).toLocaleString('vi-VN') + ' VNĐ'
+              - vehiclePlate = (item.vehicleOwnerID && item.vehicleOwnerID.license) ? item.vehicleOwnerID.license : ''
+              - var _stC = item.startTime ? new Date(item.startTime) : (item.scheduledStart ? new Date(item.scheduledStart) : null)
+              - startTimeStr = (_stC && !isNaN(_stC.getTime()))? `${String(_stC.getHours()).padStart(2,'0')}:${String(_stC.getMinutes()).padStart(2,'0')} ${String(_stC.getDate()).padStart(2,'0')}/${String(_stC.getMonth()+1).padStart(2,'0')}/${_stC.getFullYear()}`: ''
 
+              if item.status === 'cancelled'
+                - tagText = 'Đã hủy'
+                - tagClass = 'tag--grey'
+                - costLabel = 'Phí giữ cổng: '
+                - costValue = '0 VNĐ'
 
-            //- ==========================================
-            //- 2. RENDER HTML DÙNG CHUNG (CHỈ VIẾT 1 LẦN)
-            //- ==========================================
+              else if item.status === 'completed'
+                - tagText = 'Đã sạc xong'
+                - tagClass = 'tag--grey'
+                - timerTarget = item.startTime
+                - timerLabel = 'tổng thời gian sạc'
+                - costLabel = 'Tổng phí: '
+                - costValue = (item.cost || 0).toLocaleString('vi-VN') + ' VNĐ'
+
+              else if item.status === 'charging'
+                - tagText = 'Đang sạc'
+                - tagClass = 'tag--orange'
+                - timerTarget = item.startTime
+                - timerLabel = 'thời gian sạc'
+                - costLabel = 'Phí sạc: '
+                - costValue = '0 VNĐ'
+                - liveCost = true
+                - liveCostRate = (item.portType === 'DC' ? 800 : 500)
+                - liveCostUnit = 'minute'
+
+              else
+                - tagText = 'Chờ sạc'
+                - tagClass = 'tag--blue'
+                - isCountdown = true
+                - var _schedValid = item.scheduledStart && !isNaN(new Date(item.scheduledStart).getTime())
+                - timerTarget = _schedValid ? new Date(item.scheduledStart).toISOString() : null
+                - timerLabel = 'tự động bắt đầu sau'
+                - costLabel = 'Phí giữ cổng: '
+                - costValue = ((item.reservationFee || 0).toLocaleString('vi-VN')) + ' VNĐ'
+                - btnCancel = true
+
+            //- =====================================================
+            //- 5. RENDER CARD
+            //- =====================================================
             .activity-card
               .activity-card__left
                 .activity-card__icon(class=iconColor)
                   i.fa-solid(class=iconClass)
-                
+
                 .activity-card__info
                   .activity-card__title-group
                     h3.activity-card__title= cardTitle
                     span.activity-card__tag(class=tagClass)= tagText
-                  
+
                   p.activity-card__sub= subText
-                  
-                  //- ==========================================
-                  //- CỤM NÚT BẤM (Đã gắn data-id và data-type)
-                  //- ==========================================
-                  .activity-card__actions
-                    if item.type === 'rental' && item.endTime
-                      button.btn-return(data-id=item._id, data-type=item.type, type="button") Trả xe
-                      button.btn-report(data-id=item._id, data-type=item.type, type="button") Báo sự cố
-                      
-                    else if item.type === 'rental' && !item.endTime
-                      button.btn-extend(data-id=item._id, data-type=item.type, type="button") Gia hạn
-                      button.btn-cancel(data-id=item._id, data-type=item.type, type="button") Hủy
-                      
-                    else if item.type === 'parking'
-                      button.btn-cancel(data-id=item._id, data-type=item.type, type="button") Hủy
-                      
-                    else if item.type === 'charging'
-                      button.btn-cancel(data-id=item._id, data-type=item.type, type="button") Dừng sạc
+
+                  if vehiclePlate || startTimeStr
+                    .activity-card__meta
+                      if vehiclePlate
+                        span.activity-card__meta-item
+                          i.fa-solid.fa-id-card
+                          | #{vehiclePlate}
+                      if startTimeStr
+                        span.activity-card__meta-item
+                          i.fa-regular.fa-clock
+                          | Bắt đầu: #{startTimeStr}
+
+                  if btnReceive || btnReturn || btnCancel || btnReport || btnPark || btnCheckout
+                    .activity-card__actions
+                      if btnReceive
+                        button.btn-receive(data-id=item._id, data-type=item.type, type="button") Nhận xe
+                      if btnReturn
+                        button.btn-return(data-id=item._id, data-type=item.type, type="button") Trả xe
+                      if btnPark
+                        button.btn-park(data-id=item._id, data-type=item.type, type="button",
+                          style="background-color: #00d67d; color: white; border: none;") Gửi xe
+                      if btnCheckout
+                        button.btn-checkout(data-id=item._id, data-type=item.type, type="button") Lấy xe ra
+                      if btnCancel
+                        button.btn-cancel(data-id=item._id, data-type=item.type, type="button") Hủy
+                      if btnReport
+                        button.btn-report(data-id=item._id, data-type=item.type, type="button") Báo sự cố
 
               .activity-card__right
-                //- Đồng hồ (Tự động đếm ngược hoặc đếm tiến)
-                .activity-card__timer(data-target-time=timerTarget, data-mode=(isCountdown ? 'countdown' : 'countup'))
-                  .timer-digits(class=(!isCountdown ? 'used' : '')) 00 : 00
-                  .timer-label= timerLabel
-                
-                //- Thống kê chi phí & pin
+                if timerTarget
+                  .activity-card__timer(
+                    data-target-time=timerTarget
+                    data-mode=(isCountdown ? 'countdown' : 'countup')
+                  )
+                    .timer-digits(class=(!isCountdown ? 'used' : '')) 00 : 00
+                    .timer-label= timerLabel
+
                 .activity-card__stats
                   span= costLabel
-                  strong= costValue
-                  
+                  if liveCost
+                    strong.activity-card__cost(
+                      data-mode="live"
+                      data-start-time=item.startTime
+                      data-rate=liveCostRate
+                      data-unit=liveCostUnit
+                    )= costValue
+                  else
+                    strong= costValue
+
                   if showBattery
                     span.stats-divider &bull;
-                    span Pin: 
-                    strong= (item.vehicleID ? item.vehicleID.pin : 0) + "%"
+                    span Pin:
+                    strong= ((item.vehicleID && item.vehicleID.pin) || 0) + "%"
 
         else
           .empty-state(style="text-align: center; padding: 40px; color: #64748b;")

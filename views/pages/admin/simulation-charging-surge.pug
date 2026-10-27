@@ -6,19 +6,12 @@ block titleName
 block main 
   .simulation-page.container
     
-    // =========================================
-    // THANH TAB CHỌN KỊCH BẢN
-    // =========================================
     include ../../mixins/admin/simulation-tabs.pug
-    //- Gọi mixin với id của tab 3 (VD: 'charging-surge')
     +simulationTabs('charging-surge')
 
-    // =========================================
-    // KHU VỰC CHÍNH (2 CỘT)
-    // =========================================
     .simulation-layout
       
-      // ================= CỘT TRÁI: FORM THIẾT LẬP =================
+      // ================= CỘT TRÁI =================
       .simulation-left
         .card.settings-card
           .card-header
@@ -29,113 +22,101 @@ block main
           .card-body
             .form-group
               label.form-label HUB CHỊU TÁC ĐỘNG
-              select.form-control
-                option HUB_BK_CS2 (ĐH Bách Khoa CS2)
-                option HUB_METRO (Ga Metro ĐHQG)
-                option HUB_UIT_IU (ĐH CNTT - Quốc Tế)
+              select#simHubId.form-control
             
             .form-group
-              label.form-label CÔNG SẠC KHẢ DỤNG
-              .form-control.readonly 8 cổng
-            
-            .form-group
-              label.form-label NHU CẦU SẠC HIỆN TẠI
-              .form-control.readonly 6 xe đang sạc
-            
-            .form-group
-              label.form-label NHU CẦU SẠC GIẢ ĐỊNH
-              input.form-control(type="text", value="17 xe chờ sạc (+183%)")
+              label.form-label KỊCH BẢN MÔ PHỎNG
+              select#simScenario.form-control
+                option(value="peak-hours") Cao điểm (Tan học / Tan làm)
+                option(value="event-surge") Sự kiện Đột xuất (Hội thảo / Thi cử)
+                option(value="night-charging") Sạc qua đêm (Nhu cầu thấp, thời gian dài)
             
             .form-group
               label.form-label KHUNG GIỜ MÔ PHỎNG
-              .form-control.readonly 16:30 - 17:30
+              select#simTimeFrame.form-control
+                option(value="16:30 - 17:30") 16:30 - 17:30 (Giờ cao điểm)
+                option(value="12:00 - 13:00") 12:00 - 13:00 (Giờ nghỉ trưa)
+                option(value="22:00 - 06:00") 22:00 - 06:00 (Qua đêm)
+            
+            //- ĐÃ CHUYỂN THÀNH INPUT ĐỂ NHẬP
+            .form-group
+              label.form-label CÔNG SẠC KHẢ DỤNG
+              input#simTotalPorts.form-control(type="number", value="8", min="1")
+              small.form-text.text-muted (Nhập số lượng cổng sạc đang hoạt động)
+            
+            .form-group
+              label.form-label SỐ XE ĐANG SẠC HIỆN TẠI
+              input#simCurrentCharging.form-control(type="number", value="6", min="0")
+            
+            .form-group
+              label.form-label NHU CẦU SẠC GIẢ ĐỊNH (TỔNG)
+              input#simSimulatedDemand.form-control(type="number", value="17", min="1")
+              small.form-text.text-muted (Tổng số xe đang sạc + xe sắp tới)
 
           .card-footer
-            button.btn-run(type="button")
+            button#btnRunSimulation.btn-run(type="button")
               i.fa-solid.fa-play
               | Chạy mô phỏng kịch bản
 
-      // ================= CỘT PHẢI: KẾT QUẢ MÔ PHỎNG =================
+      // ================= CỘT PHẢI =================
       .simulation-right
-        .simulation-result-wrapper
+        
+        #simulationEmptyState.empty-state
+          .empty-icon-box
+            i.fa-regular.fa-gem
+          h3.empty-state__title Chưa có kết quả mô phỏng
+          p.empty-state__desc Vui lòng thiết lập thông số ở cột bên trái và bấm "Chạy mô phỏng kịch bản" để xem đánh giá tác động.
+
+        #simulationResultWrapper.simulation-result-wrapper(style="display: none;")
           
-          //- KHỐI 1: SO SÁNH TRẠNG THÁI
           .simulation-section
             h3.section-label SO SÁNH TRẠNG THÁI
-            
             .status-compare-grid
-              //- Box Trạng thái hiện tại
-              .status-box.status-box--current
-                .status-box__title TRẠNG THÁI HIỆN TẠI
-                .status-box__list
-                  .status-row
-                    span Công sạc sẵn sàng:
-                    strong 8 cổng
-                  .status-row
-                    span Nhu cầu sạc nến:
-                    strong 6 xe đang sạc
-                  .status-row
-                    span Trạng thái hàng chờ:
-                    strong.text-green Đáp ứng 100%
-                    
-              //- Box Trạng thái mô phỏng
-              .status-box.status-box--simulated
+              .status-box.status-box--simulated(style="background: #fffcf0; border-color: #ffeeba;")
                 .status-box__title TRẠNG THÁI MÔ PHỎNG
                 .status-box__list
                   .status-row
                     span Nhu cầu sạc giả định:
-                    strong 17 xe chờ sạc
+                    strong#resSimDemand --
                   .status-row
                     span Mức quá tải hàng chờ:
-                    strong.text-red +9 xe chờ sạc
+                    strong.text-red#resSimOverload --
                   .status-row
-                    span Cảnh báo:
-                    strong.text-red Quá tải hệ thống sạc
+                    span Kịch bản:
+                    strong#resScenarioName --
 
-          //- KHỐI 2: KẾT QUẢ ĐÁNH GIÁ
           .simulation-section
             h3.section-label KẾT QUẢ ĐÁNH GIÁ
-            
             .evaluation-grid
-              //- Thẻ 1 (Xám/Trắng)
               .eval-card.eval-card--gray
                 span.eval-card__label Cổng sạc khả dụng
-                .eval-card__value 8 cổng
-                span.eval-card__sub HUB_BK_CS2 (80% công suất)
+                .eval-card__value#resEvalPorts --
+                span.eval-card__sub#resEvalHubName --
                 
-              //- Thẻ 2 (Cam)
               .eval-card.eval-card--orange
                 span.eval-card__label Nhu cầu sạc giả định
-                .eval-card__value 17 xe
-                span.eval-card__sub Trong 2 giờ tới
+                .eval-card__value#resEvalDemand --
+                span.eval-card__sub Trong khung giờ đã chọn
                 
-              //- Thẻ 3 (Đỏ)
-              .eval-card.eval-card--red
+              .eval-card.eval-card--red#cardUnserved
                 span.eval-card__label Chưa thể phục vụ ngay
-                .eval-card__value 9 xe
-                span.eval-card__sub Cần xếp lịch / Điều hướng
+                .eval-card__value#resEvalUnserved --
+                span.eval-card__sub#resEvalUnservedSub --
 
-          //- KHỐI 3: KHUYẾN NGHỊ VẬN HÀNH
           .recommendation-card
             .recommendation-header
               .recommendation-header__title-group
                 i.fa-regular.fa-lightbulb.text-green
                 h3 KHUYẾN NGHỊ VẬN HÀNH
-              span.recommendation-header__badge Charging Scheduling &amp; Alternative Hub
+              span#resStatusBadge.recommendation-header__badge --
               
             .recommendation-body
               .recommendation-content
-                h4 Xây dựng Lịch sạc Thông minh &amp; Điều hướng Trạm lân cận
-                p
-                  | Kích hoạt thuật toán ưu tiên sạc cho xe có 
-                  strong Pin &lt;15%
-                  |  hoặc có lịch thuê gấp. Phân bổ các xe còn lại vào các khung giờ sạc nội tiếp.
-                p.recommendation-alternative
-                  | Alternative Hub: Chuyển hướng một số yêu cầu sạc khẩn sang 
-                  strong HUB_KTX_B
-                  |  (cách 800m, còn 4 cổng sạc trống).
-
-            .recommendation-footer
-              button.btn-action(type="button")
-                i.fa-solid.fa-calendar-days
-                | Thiết lập Lịch sạc thông minh
+                h4#resRecTitle --
+                p#resRecContent --
+                
+                .action-plan-box#actionPlanBox(style="display: none; margin-top: 16px; background: #fff; padding: 16px; border-radius: 8px; border: 1px solid #ffeeba;")
+                  h5(style="color: #d97706; margin-bottom: 12px; font-weight: 600;")
+                    i.fa-solid.fa-list-check
+                    |  Phương án phân bổ xe đề xuất
+                  ul#actionList(style="padding-left: 20px; margin: 0; font-size: 14px; color: #4b5563; line-height: 1.8;")

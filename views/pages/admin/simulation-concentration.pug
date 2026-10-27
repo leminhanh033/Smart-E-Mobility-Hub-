@@ -6,19 +6,12 @@ block titleName
 block main 
   .simulation-page.container
     
-    // =========================================
-    // THANH TAB CHỌN KỊCH BẢN
-    // =========================================
     include ../../mixins/admin/simulation-tabs.pug
-    //- Gọi mixin với id của tab 5 (VD: 'concentration')
     +simulationTabs('concentration')
 
-    // =========================================
-    // KHU VỰC CHÍNH (2 CỘT)
-    // =========================================
     .simulation-layout
       
-      // ================= CỘT TRÁI: FORM THIẾT LẬP =================
+      // ================= CỘT TRÁI =================
       .simulation-left
         .card.settings-card
           .card-header
@@ -29,111 +22,97 @@ block main
           .card-body
             .form-group
               label.form-label HUB TẬP TRUNG PHƯƠNG TIỆN
-              select.form-control
-                option HUB_METRO (Ga Metro ĐHQG)
-                option HUB_BK_CS2 (ĐH Bách Khoa CS2)
-                option HUB_UIT_IU (ĐH CNTT - Quốc Tế)
+              select#concHubId.form-control
+                //- JS sẽ tự động đổ 4 Hub vào đây
             
             .form-group
               label.form-label XE HIỆN TẠI TẠI HUB
-              .form-control.readonly 14 xe (Trạng thái cân bằng)
+              input#concCurrentVehicles.form-control(type="number", value="14", min="0")
+              small.form-text.text-muted (Số xe đang có sẵn tại trạm)
             
             .form-group
               label.form-label XE GIẢ ĐỊNH DỒN VỀ TRẠM
-              input.form-control(type="text", value="32 xe (+128% tích tụ)")
+              input#concSimulatedVehicles.form-control(type="number", value="18", min="0")
+              small.form-text.text-muted (Số xe khách từ nơi khác đổ về trạm)
             
             .form-group
               label.form-label NHU CẦU XUẤT PHÁT DỰ KIẾN
-              .form-control.readonly 16 xe/giờ (Thấp so với tổng xe)
+              input#concDepartureDemand.form-control(type="number", value="16", min="0")
+              small.form-text.text-muted (Số xe khách sẽ thuê và rời khỏi trạm)
 
           .card-footer
-            button.btn-run(type="button")
+            button#btnRunConcentrationSim.btn-run(type="button")
               i.fa-solid.fa-play
               | Chạy mô phỏng kịch bản
 
-      // ================= CỘT PHẢI: KẾT QUẢ MÔ PHỎNG =================
+      // ================= CỘT PHẢI =================
       .simulation-right
-        .simulation-result-wrapper
+        
+        #concEmptyState.empty-state
+          .empty-icon-box
+            i.fa-regular.fa-gem
+          h3.empty-state__title Chưa có kết quả mô phỏng
+          p.empty-state__desc Vui lòng điền thông số xe ở cột bên trái và bấm "Chạy mô phỏng" để xem đánh giá tác động.
+
+        #concResultWrapper.simulation-result-wrapper(style="display: none;")
           
-          //- KHỐI 1: SO SÁNH TRẠNG THÁI
           .simulation-section
             h3.section-label SO SÁNH TRẠNG THÁI
-            
             .status-compare-grid
-              //- Box Trạng thái hiện tại
               .status-box.status-box--current
                 .status-box__title TRẠNG THÁI HIỆN TẠI
                 .status-box__list
                   .status-row
-                    span Phân bổ phương tiện:
-                    strong 14 xe tại HUB_METRO
+                    span Xe có sẵn tại Hub:
+                    strong#resConcCurrent --
                   .status-row
-                    span Tỷ lệ lấp pin xe:
-                    strong 0% (Đạt cân bằng)
+                    span Nhu cầu xuất phát:
+                    strong#resConcDeparture --
                   .status-row
                     span Trạng thái mạng lưới:
                     strong.text-green Cân bằng ổn định
                     
-              //- Box Trạng thái mô phỏng
-              .status-box.status-box--simulated
+              .status-box.status-box--simulated(style="background: #fffcf0; border-color: #ffeeba;")
                 .status-box__title TRẠNG THÁI MÔ PHỎNG
                 .status-box__list
                   .status-row
-                    span Xe tích tụ giả định:
-                    strong 32 xe dồn về trạm
+                    span Tổng xe dồn về trạm:
+                    strong#resConcTotal --
                   .status-row
                     span Mức xe tồn đọng dư thừa:
-                    strong.text-red +16 xe dư thừa
+                    strong.text-red#resConcSurplus --
                   .status-row
                     span Cảnh báo:
-                    strong.text-red Mất cân bằng trầm trọng cục bộ
+                    strong.text-red#resConcWarning --
 
-          //- KHỐI 2: KẾT QUẢ ĐÁNH GIÁ
           .simulation-section
             h3.section-label KẾT QUẢ ĐÁNH GIÁ
-            
             .evaluation-grid
-              //- Thẻ Cam (Dư xe)
               .eval-card.eval-card--orange
                 span.eval-card__label Hub dư xe tồn đọng
-                .eval-card__value.eval-card--small HUB_METRO (+16 xe)
+                .eval-card__value.eval-card--small#resConcOverflowHub --
                 span.eval-card__sub Tỷ lệ sử dụng thấp
                 
-              //- Thẻ Đỏ (Thiếu xe)
               .eval-card.eval-card--red
                 span.eval-card__label Hub thiếu xe lân cận
-                .eval-card__value.eval-card--small HUB_UIT_IU (-8 xe)
+                .eval-card__value.eval-card--small#resConcDeficitHub --
                 span.eval-card__sub Cần bổ sung gấp
                 
-              //- Thẻ Đỏ (Mức độ)
-              .eval-card.eval-card--red
+              .eval-card.eval-card--red#cardConcUnserved
                 span.eval-card__label Mức độ mất cân bằng
-                .eval-card__value.eval-card--small Mức Cao ⚠
+                .eval-card__value.eval-card--small#resConcLevel --
                 span.eval-card__sub Lãng phí tài nguyên xe
 
-          //- KHỐI 3: KHUYẾN NGHỊ VẬN HÀNH
           .recommendation-card
             .recommendation-header
               .recommendation-header__title-group
                 i.fa-regular.fa-lightbulb.text-green
                 h3 KHUYẾN NGHỊ VẬN HÀNH
-              span.recommendation-header__badge Vehicle Redistribution
+              span#resConcStatusBadge.recommendation-header__badge --
               
             .recommendation-body
               .recommendation-content
-                h4 Tạo lệnh Điều phối Tái cân bằng Mạng lưới Phương tiện
-                p
-                  | Tạo lệnh giả lập tối khẩn cấp: Rút 
-                  strong 12 xe máy điện
-                  |  tồn đọng từ HUB_METRO sang điều phối cho các trạm đang thiếu hụt phương tiện (
-                  strong 8 xe sang HUB_UIT_IU
-                  |  &amp; 
-                  strong 4 xe sang HUB_KTX_B
-                  | ) trước 17:00.
-                p.recommendation-alternative
-                  | Dynamic Incentive Policy: Khuyến khích kích hoạt chính sách ưu đãi giá cuốc (Giảm 15% cước chuyến) cho sinh viên thuê xe xuất phát từ HUB_METRO sang trạm thiếu xe.
-
-            .recommendation-footer
-              button.btn-action(type="button")
-                | Xem phương án điều phối
-                i.fa-solid.fa-arrow-right
+                h4#resConcRecTitle --
+                p#resConcRecContent --
+                
+                ul#concSmartActions(style="margin-top: 16px; padding-left: 20px; font-size: 14px; color: #374151; line-height: 1.8;")

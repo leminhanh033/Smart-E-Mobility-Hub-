@@ -6,19 +6,12 @@ block titleName
 block main 
   .simulation-page.container
     
-    // =========================================
-    // THANH TAB CHỌN KỊCH BẢN
-    // =========================================
     include ../../mixins/admin/simulation-tabs.pug
-    //- Gọi mixin với id 'parking' (tương ứng tab số 2)
     +simulationTabs('parking')
 
-    // =========================================
-    // KHU VỰC CHÍNH (2 CỘT)
-    // =========================================
     .simulation-layout
       
-      // ================= CỘT TRÁI: FORM THIẾT LẬP =================
+      // ================= CỘT TRÁI =================
       .simulation-left
         .card.settings-card
           .card-header
@@ -29,115 +22,109 @@ block main
           .card-body
             .form-group
               label.form-label MOBILITY HUB
-              select.form-control
-                option HUB_BK_CS2 (ĐH Bách Khoa CS2)
-                option HUB_METRO (Ga Metro ĐHQG)
-                option HUB_UIT_IU (ĐH CNTT - Quốc Tế)
-            
-            .form-group
-              label.form-label CỔNG SẠC KHẢ DỤNG
-              .form-control.readonly 8 cổng (10 AC / 2 DC)
-            
-            .form-group
-              label.form-label NHU CẦU SẠC HIỆN TẠI
-              .form-control.readonly 6 xe đang sạc
-            
-            .form-group
-              label.form-label NHU CẦU SẠC GIẢ ĐỊNH
-              input.form-control(type="text", value="17 xe chờ sạc (+183%)")
+              select#parkingHubId.form-control
+                option(value="HUB_BK_CS2") HUB_BK_CS2 (ĐH Bách Khoa CS2)
+                option(value="HUB_METRO") HUB_METRO (Ga Metro ĐHQG)
+                option(value="HUB_UIT_IU") HUB_UIT_IU (ĐH CNTT - Quốc Tế)
             
             .form-group
               label.form-label KHUNG GIỜ MÔ PHỎNG
-              .form-control.readonly 16:30 - 17:30
+              select#parkingTimeFrame.form-control
+                option(value="16:30 - 17:30") 16:30 - 17:30 (Giờ cao điểm)
+                option(value="12:00 - 13:00") 12:00 - 13:00 (Giờ nghỉ trưa)
+            
+            .form-group
+              label.form-label SỨC CHỨA BÃI ĐỖ (TỔNG SỐ CHỖ)
+              input#parkingTotalCapacity.form-control(type="number", value="25", min="1")
+            
+            .form-group
+              label.form-label SỐ CHỖ ĐANG SỬ DỤNG
+              input#parkingCurrentOccupied.form-control(type="number", value="20", min="0")
+              small.form-text.text-muted (Không vượt quá sức chứa)
+            
+            .form-group
+              label.form-label NHU CẦU XE VÀO HUB (GIẢ ĐỊNH)
+              input#parkingIncomingDemand.form-control(type="number", value="12", min="0")
+              small.form-text.text-muted (Số lượng xe sắp đổ về trạm)
 
           .card-footer
-            button.btn-run(type="button")
+            button#btnRunParkingSim.btn-run(type="button")
               i.fa-solid.fa-play
               | Chạy mô phỏng kịch bản
 
-      // ================= CỘT PHẢI: KẾT QUẢ MÔ PHỎNG =================
+      // ================= CỘT PHẢI =================
       .simulation-right
-        .simulation-result-wrapper
+        
+        //- TRẠNG THÁI TRỐNG (Hiển thị mặc định)
+        #parkingEmptyState.empty-state
+          .empty-icon-box
+            i.fa-regular.fa-gem
+          h3.empty-state__title Chưa có kết quả mô phỏng
+          p.empty-state__desc Vui lòng thiết lập thông số bãi đỗ ở cột bên trái và bấm "Chạy mô phỏng" để xem đánh giá.
+
+        //- KHỐI HIỂN THỊ KẾT QUẢ (Ẩn ban đầu)
+        #parkingResultWrapper.simulation-result-wrapper(style="display: none;")
           
           //- KHỐI 1: SO SÁNH TRẠNG THÁI
           .simulation-section
             h3.section-label SO SÁNH TRẠNG THÁI
-            
             .status-compare-grid
-              //- Box Trạng thái hiện tại
               .status-box.status-box--current
                 .status-box__title TRẠNG THÁI HIỆN TẠI
                 .status-box__list
                   .status-row
                     span Sức chứa bãi đỗ:
-                    strong 25 chỗ
+                    strong#resParkingCapacity --
                   .status-row
                     span Đang sử dụng:
-                    strong.text-orange 20 chỗ (80%)
+                    strong.text-orange#resParkingOccupied --
                   .status-row
                     span Chỗ trống thực tế:
-                    strong.text-green Đáp ứng 5 chỗ
+                    strong.text-green#resParkingAvailable --
                     
-              //- Box Trạng thái mô phỏng
-              .status-box.status-box--simulated
+              .status-box.status-box--simulated(style="background: #fffcf0; border-color: #ffeeba;")
                 .status-box__title TRẠNG THÁI MÔ PHỎNG
                 .status-box__list
                   .status-row
                     span Nhu cầu vào Hub:
-                    strong 12 xe
+                    strong#resParkingIncoming --
                   .status-row
                     span Mức vượt sức chứa:
-                    strong.text-red +7 xe quá tải
+                    strong.text-red#resParkingOverflow --
                   .status-row
                     span Cảnh báo:
-                    strong.text-red Từ chối gửi xe / Tràn bãi
+                    strong#resParkingWarning --
 
           //- KHỐI 2: KẾT QUẢ ĐÁNH GIÁ
           .simulation-section
             h3.section-label KẾT QUẢ ĐÁNH GIÁ
-            
             .evaluation-grid
-              //- Thẻ Xanh (Bình thường)
-              .eval-card.eval-card--green
+              .eval-card.eval-card--gray
                 span.eval-card__label Chỗ trống hiện tại
-                .eval-card__value 5 chỗ
-                span.eval-card__sub HUB_BK_CS2
+                .eval-card__value#resEvalAvailable --
+                span.eval-card__sub#resEvalHubName --
                 
-              //- Thẻ Cam (Cảnh báo)
               .eval-card.eval-card--orange
                 span.eval-card__label Nhu cầu xe vào Hub
-                .eval-card__value 12 xe
-                span.eval-card__sub Không giữ tủi
+                .eval-card__value#resEvalIncoming --
+                span.eval-card__sub Trong khung giờ đã chọn
                 
-              //- Thẻ Đỏ (Nguy hiểm)
-              .eval-card.eval-card--red
+              .eval-card.eval-card--red#cardOverflow
                 span.eval-card__label Không thể tiếp nhận
-                .eval-card__value 7 xe
-                span.eval-card__sub Tràn bãi đỗ
+                .eval-card__value#resEvalOverflow --
+                span.eval-card__sub#resEvalOverflowSub --
 
           //- KHỐI 3: KHUYẾN NGHỊ VẬN HÀNH
           .recommendation-card
             .recommendation-header
               .recommendation-header__title-group
                 i.fa-regular.fa-lightbulb.text-green
-                h3 KHUYẾN NGHỊ VẬN HÀNH
-              span.recommendation-header__badge Vehicle Redistribution &amp; Route Hub
+                h3 KHUYẾN NGHỊ VẬN HÀNH THÔNG MINH
+              span#resParkingBadge.recommendation-header__badge --
               
             .recommendation-body
               .recommendation-content
-                h4 Điều phối giải tỏa xe &amp; Điều hướng trạm lân cận
-                p
-                  | Điều chuyển 
-                  strong 8 xe khả dụng
-                  |  ra khỏi HUB_BK_CS2 sang trạm thuê xe (
-                  strong HUB_UIT_IU
-                  | ) để giải phóng chỗ đỗ.
-                p.recommendation-alternative
-                  | Alternative Hub: Gợi ý người dùng trên App di chuyển trả xe tại 
-                  strong HUB_KTX_A
-                  |  (còn 10 chỗ trống).
-
-            .recommendation-footer
-              button.btn-action(type="button")
-                | Xem phương án điều phối
-                i.fa-solid.fa-arrow-right
+                h4#resParkingRecTitle --
+                p#resParkingRecContent --
+                
+                ul#resParkingSmartActions(style="margin-top: 16px; padding-left: 20px; font-size: 14px; color: #374151; line-height: 1.8;")

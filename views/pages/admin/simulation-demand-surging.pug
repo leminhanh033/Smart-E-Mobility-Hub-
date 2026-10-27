@@ -6,17 +6,12 @@ block titleName
 block main 
   .simulation-page.container
     
-    // =========================================
-    // THANH TAB CHỌN KỊCH BẢN
-    // =========================================
     include ../../mixins/admin/simulation-tabs.pug
     +simulationTabs('demand')
-    // =========================================
-    // KHU VỰC CHÍNH (2 CỘT)
-    // =========================================
+
     .simulation-layout
       
-      // ================= CỘT TRÁI: FORM THIẾT LẬP =================
+      // ================= CỘT TRÁI =================
       .simulation-left
         .card.settings-card
           .card-header
@@ -25,131 +20,94 @@ block main
               | THIẾT LẬP KỊCH BẢN
 
           .card-body
-            //- Input 1
             .form-group
               label.form-label HUB CHỊU TÁC ĐỘNG
-              select.form-control 
-                option HUB_METRO (Ga Metro ĐHQG)
+              //- Để trống để JS tự động đổ 4 Hub vào
+              select#demandHubId.form-control 
             
-            //- Input 2
-            .form-group
-              label.form-label NHU CẦU HIỆN TẠI
-              .form-control 20 lượt/giờ
-            
-            //- Input 3
-            .form-group
-              label.form-label NHU CẦU GIẢ ĐỊNH
-              input.form-control(value="50 lượt/giờ (+150%)")
-            
-            //- Input 4
             .form-group
               label.form-label KHUNG GIỜ MÔ PHỎNG
-              input.form-control(type="time")
+              select#demandTimeFrame.form-control
+                option(value="16:30 - 17:30") 16:30 - 17:30 (Cao điểm)
+                option(value="12:00 - 13:00") 12:00 - 13:00 (Nghỉ trưa)
+            
+            //- NHÓM 1: NHU CẦU THUÊ XE
+            .form-group(style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 12px;")
+              label.form-label(style="color: #333; font-weight: 600;") NHU CẦU THUÊ XE (LƯỢT/GIỜ)
+              input#simRentDemand.form-control(type="number", value="25", min="0", placeholder="Nhập nhu cầu giả định")
+              small.form-text.text-muted#hintRent (Sức chứa hiện tại: -- xe)
+            
+            //- NHÓM 2: NHU CẦU ĐỖ XE
+            .form-group(style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 12px;")
+              label.form-label(style="color: #333; font-weight: 600;") NHU CẦU ĐỖ XE (LƯỢT/GIỜ)
+              input#simParkingDemand.form-control(type="number", value="30", min="0", placeholder="Nhập nhu cầu giả định")
+              small.form-text.text-muted#hintParking (Sức chứa hiện tại: -- chỗ)
+            
+            //- NHÓM 3: NHU CẦU SẠC
+            .form-group(style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 12px;")
+              label.form-label(style="color: #333; font-weight: 600;") NHU CẦU SẠC (LƯỢT/GIỜ)
+              input#simChargingDemand.form-control(type="number", value="15", min="0", placeholder="Nhập nhu cầu giả định")
+              small.form-text.text-muted#hintCharging (Sức chứa hiện tại: -- cổng)
 
           .card-footer
-            button.btn-run(type="button")
+            button#btnRunDemandSim.btn-run(type="button")
               i.fa-solid.fa-play
               | Chạy mô phỏng kịch bản
 
-      // ================= CỘT PHẢI: KẾT QUẢ MÔ PHỎNG =================
+      // ================= CỘT PHẢI =================
       .simulation-right
-        //- .card.result-card
-        //-   //- Trạng thái trống (Empty State)
-        //-   .empty-state
-        //-     .empty-icon
-        //-       i.fa-regular.fa-folder-open
-        //-     h3.empty-title Chưa có kết quả mô phỏng
-        //-     p.empty-desc Chọn một scenario ở bên trái để thiết lập các tham số giả định và chạy mô phỏng.
-        .simulation-result-wrapper
-    
-          // =========================================
-          // KHỐI 1: SO SÁNH TRẠNG THÁI
-          // =========================================
-          .simulation-section
-            h3.section-label SO SÁNH TRẠNG THÁI
-            
-            .status-compare-grid
-              //- Box Trạng thái hiện tại
-              .status-box.status-box--current
-                .status-box__title TRẠNG THÁI HIỆN TẠI
-                .status-box__list
-                  .status-row
-                    span Nhu cầu nền:
-                    strong 20 lượt/giờ
-                  .status-row
-                    span Xe khả dụng tại Hub:
-                    strong.text-green 14 xe
-                  .status-row
-                    span Khả năng phục vụ:
-                    strong.text-green Đáp ứng 100%
-                    
-              //- Box Trạng thái mô phỏng
-              .status-box.status-box--simulated
-                .status-box__title TRẠNG THÁI MÔ PHỎNG
-                .status-box__list
-                  .status-row
-                    span Nhu cầu dự kiến:
-                    strong 50 lượt/giờ
-                  .status-row
-                    span Mức thiếu hụt:
-                    strong.text-red -18 xe
-                  .status-row
-                    span Cảnh báo:
-                    strong.text-red Vỡ trận nhu cầu
+        
+        #demandEmptyState.empty-state
+          .empty-icon-box
+            i.fa-regular.fa-gem
+          h3.empty-state__title Chưa có kết quả mô phỏng
+          p.empty-state__desc Vui lòng nhập nhu cầu giả định ở cột bên trái và bấm "Chạy mô phỏng" để xem đánh giá tác động.
 
-          // =========================================
-          // KHỐI 2: KẾT QUẢ ĐÁNH GIÁ
-          // =========================================
+        #demandResultWrapper.simulation-result-wrapper(style="display: none;")
+          
+          .simulation-section
+            h3.section-label TRẠNG THÁI MÔ PHỎNG
+            .status-compare-grid
+              .status-box.status-box--simulated(style="background: #fffcf0; border-color: #ffeeba; width: 100%;")
+                .status-box__list
+                  .status-row
+                    span Nhu cầu thuê xe:
+                    strong#resSimRent --
+                  .status-row
+                    span Nhu cầu đỗ xe:
+                    strong#resSimParking --
+                  .status-row
+                    span Nhu cầu sạc:
+                    strong#resSimCharging --
+
           .simulation-section
             h3.section-label KẾT QUẢ ĐÁNH GIÁ
-            
             .evaluation-grid
-              //- Thẻ Xanh (Tốt)
-              .eval-card.eval-card--green
-                span.eval-card__label Khả năng phục vụ
-                .eval-card__value 32 / 50 lượt/h
-                span.eval-card__sub Đáp ứng 64%
+              .eval-card.eval-card--gray
+                span.eval-card__label Khả năng đáp ứng thuê xe
+                .eval-card__value#resEvalRent --
+                span.eval-card__sub#resEvalRentSub --
                 
-              //- Thẻ Đỏ (Xấu)
-              .eval-card.eval-card--red
-                span.eval-card__label Thiếu hụt phương tiện
-                .eval-card__value 18 xe
-                span.eval-card__sub Cần bổ sung gấp
-                
-              //- Thẻ Cam (Cảnh báo)
               .eval-card.eval-card--orange
-                span.eval-card__label Mức độ ảnh hưởng
-                .eval-card__value Mức Cao ⚠
-                span.eval-card__sub Nguy cơ vỡ trận
+                span.eval-card__label Khả năng đáp ứng đỗ xe
+                .eval-card__value#resEvalParking --
+                span.eval-card__sub#resEvalParkingSub --
+                
+              .eval-card.eval-card--red#cardUnserved
+                span.eval-card__label Khả năng đáp ứng sạc
+                .eval-card__value#resEvalCharging --
+                span.eval-card__sub#resEvalChargingSub --
 
-          // =========================================
-          // KHỐI 3: KHUYẾN NGHỊ VẬN HÀNH
-          // =========================================
           .recommendation-card
-            //- Header
             .recommendation-header
               .recommendation-header__title-group
                 i.fa-regular.fa-lightbulb.text-green
                 h3 KHUYẾN NGHỊ VẬN HÀNH
-              span.recommendation-header__badge Vehicle Redistribution
+              span#resStatusBadge.recommendation-header__badge --
               
-            //- Body
             .recommendation-body
               .recommendation-content
-                h4 Vehicle Redistribution (Tái cân bằng xe)
-                p
-                  | Điều chuyển khẩn cấp 
-                  strong 12 xe máy điện
-                  |  từ 
-                  strong HUB_KTX_B
-                  |  sang 
-                  strong HUB_METRO
-                  |  trước khung giờ 16:15 để giảm 67% nguy cơ vỡ trận.
-                p.recommendation-alternative
-                  | Alternative Hub: Gợi ý sinh viên trên App di chuyển sang HUB_LIB_NVHSV (cách 400m, còn 6 chỗ đỗ).
-
-            //- Footer (Nút bấm)
-            .recommendation-footer
-              button.btn-action(type="button")
-                | Xem phương án điều phối
-                i.fa-solid.fa-arrow-right
+                h4#resRecTitle --
+                p#resRecContent --
+                
+                ul#demandSmartActions(style="margin-top: 16px; padding-left: 20px; font-size: 14px; color: #374151; line-height: 1.8;")
