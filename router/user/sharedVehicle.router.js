@@ -71,9 +71,14 @@ router.post("/booking/create", async (req, res) => {
     if (!vehicle) {
       return res.json({ code: "error", message: "Không tìm thấy xe!" });
     }
-    console.log(vehicle);
     if (vehicle.status !== 'active') {
       return res.json({ code: "error", message: "Xe này hiện đã có người đặt hoặc đang bảo trì!" });
+    }
+    if(!req.body.endHubID){
+      return res.json({
+        code:"error",
+        message:"Vui lòng chọn hub đi đến",
+      })
     }
 
     vehicle.status = "used"; 

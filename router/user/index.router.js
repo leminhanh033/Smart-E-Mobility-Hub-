@@ -7,6 +7,8 @@ const sharedVehicleRouter = require("./sharedVehicle.router");
 const activityRouter = require("./activity.router");
 const reportRouter = require("./report.router");
 
+const hubmodel=require("../../models/hub.model")
+
 const checkLogin = async (req, res, next) => {
   if (req.cookies.login) {
     const user = await usermodel.findOne({
@@ -39,10 +41,14 @@ router.use("/activity",checkLogin, activityRouter);
 
 router.use("/report",checkLogin, reportRouter);
 
-router.get('/', checkLogin, (req, res) => {
+router.get('/', checkLogin, async(req, res) => {
+  const hubTotal=await hubmodel.countDocuments({});
+  const hubActive=await hubmodel.countDocuments({status:"active"});
   res.render('pages/user/homepage', {
     title: "Trang chủ",
     activePage: "home",
+    hubTotal,
+    hubActive,
   })
 })
 

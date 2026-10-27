@@ -99,7 +99,6 @@ if (register) {
       })
         .then(res => res.json())
         .then(data => {
-          console.log(data);
           if (data.code == "success") {
             alertMessage(data);
             window.location.href = "/login";
@@ -154,7 +153,6 @@ if (login) {
       })
         .then(res => res.json())
         .then(data => {
-          console.log(data);
           if (data.code == "success") {
             alertMessage(data);
             window.location.href = "/";

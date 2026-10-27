@@ -5525,3 +5525,8 @@ body {
   color: #94a3b8;
   font-size: 12px;
 }
+
+.pagination__numbers{
+  display:flex;
+  gap:12px;
+}

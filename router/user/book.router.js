@@ -83,7 +83,13 @@ router.get('/charging/schedule', async (req, res) => {
 router.post('/vehicle/owner/create', async (req, res) => {
   try {
     const { license, type, model, batteryCapacity } = req.body;
-    const userId = req.account ? req.account._id : "6501abc123456789"; // Lấy ID user đang đăng nhập
+    const userId = req.account ? req.account._id : "6501abc123456789"; 
+    if(!license||!type||!model||!batteryCapacity){
+      return res.json({
+        code:"error",
+        message:"Vui lòng nhập đầu đủ thông tin"
+      })
+    }
 
     const newOwner = new vehicleOwnermodel({
       userID: userId,

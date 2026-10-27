@@ -132,18 +132,16 @@ router.get('/history', async (req, res) => {
 
       item.dateStr = start ? start.format("DD/MM/YYYY") : "---";
 
-      if (end) {
+           if (end) {
         item.timeStr = `${start.format("HH:mm")} - ${end.format("HH:mm")}`;
-        item.durationStr = `${moment.duration(end.diff(start)).asMinutes()} phút`;
+        item.durationStr = `${Math.ceil(moment.duration(end.diff(start)).asMinutes())} phút`;
       } else if (item.duration) { // Dành cho Sạc điện (có sẵn duration)
         item.timeStr = start.format("HH:mm");
-        item.durationStr = `${item.duration} phút`;
+        item.durationStr = `${Math.ceil(Number(item.duration))} phút`;
       } else {
         item.timeStr = start ? start.format("HH:mm") : "---";
         item.durationStr = "---";
       }
-
-      // Format Tiền tệ
       item.costStr = (item.cost || 0).toLocaleString('vi-VN') + " VNĐ";
 
       return item;

@@ -182,7 +182,6 @@ function bindZoomButtons() {
 
 // ----- 8. Hàm chạy chính -----
 function main() {
-  console.log('Map init...');
 
   // 1. Đọc tọa độ từ URL trước khi làm bất cứ việc gì
   loadParamsFromURL();

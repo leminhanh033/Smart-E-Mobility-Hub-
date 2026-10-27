@@ -418,7 +418,6 @@ if (editVehicle) {
       const hubID = event.target.hubID.value;
       const status = event.target.status.value;
       
-      console.log("chạy vào đây edit");
       
       fetch("/admin/vehicle/edit", {
         method: "POST",
@@ -479,7 +478,6 @@ if (btnOpenVehicleEditModals.length > 0 && vehicleEditModalOverlay) {
       })
         .then(res => res.json())
         .then((data) => {
-          console.log(data);
           const vehicleData = data.vehicle;
           const editVehicleForm = document.getElementById("edit-vehicle");
           const buttonEditVehicle = document.querySelector(".vehicle-list .modal-overlay#editVehicleModal .modal-footer .btn-submit");

@@ -24,15 +24,6 @@ router.get("/list",async(req,res)=>{
   })
 })
 
-router.post("/create",async(req,res)=>{
-  const newVehicle=new vehiclemodel(req.body);
-  await newVehicle.save();
-  res.json({
-    code:'success',
-    message:"Tạo phương tiện mới thành công",
-  })
-})
-
 router.post("/create", async (req, res) => {
   if (req.body.batteryCapacity < 0) {
     res.json({

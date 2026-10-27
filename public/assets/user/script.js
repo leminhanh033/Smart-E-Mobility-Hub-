@@ -208,7 +208,6 @@ if (reportForm) {
       })
         .then(res => res.json())
         .then(data => {
-          console.log(data);
           if (data.code == "success") {
             // alertMessage(data);
             // window.location.reload;
@@ -241,49 +240,56 @@ if (btnBackDetail) {
 }
 
 //Nút đặt xe
-const btnBookVehicle = document.getElementById("btnBookVehicle");
+const bookVehicle = function () {
+  const vehicleId = this.getAttribute("data-id");
 
-if (btnBookVehicle) {
-  btnBookVehicle.addEventListener("click", function () {
-    const vehicleId = this.getAttribute("data-id");
+  // Đổi trạng thái nút để tránh người dùng bấm nhiều lần (Double Click)
+  const originalText = this.innerText;
+  this.innerText = "Đang xử lý...";
+  this.disabled = true;
 
-    // Đổi trạng thái nút để tránh người dùng bấm nhiều lần (Double Click)
-    const originalText = this.innerText;
-    this.innerText = "Đang xử lý...";
-    this.disabled = true;
+  // Gọi API
+  fetch("/shared-vehicle/booking/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      vehicleId: vehicleId,
+      endHubID: toIDParam,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.code === "success") {
+        notyf.success(data.message);
 
-    // Gọi API
-    fetch("/shared-vehicle/booking/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        vehicleId: vehicleId,
-        endHubID: toIDParam,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.code === "success") {
-          notyf.success(data.message);
-
-          setTimeout(() => {
-            window.location.href = "/activity/active"; // Chuyển sang trang quản lý chuyến đi
-          }, 1500);
-        } else {
-          notyf.error(data.message);
-          this.innerText = originalText;
-          this.disabled = false;
-        }
-      })
-      .catch((error) => {
-        console.error("Lỗi:", error);
-        notyf.error("Không thể kết nối đến Server!");
+        setTimeout(() => {
+          window.location.href = "/activity/active"; // Chuyển sang trang quản lý chuyến đi
+        }, 1500);
+      } else {
+        notyf.error(data.message);
         this.innerText = originalText;
         this.disabled = false;
-      });
-  });
+      }
+    })
+    .catch((error) => {
+      console.error("Lỗi:", error);
+      notyf.error("Không thể kết nối đến Server!");
+      this.innerText = originalText;
+      this.disabled = false;
+    });
+}
+const btnBookVehicleList = document.querySelectorAll(".book-shared-vehicle .book-shared-vehicle__sidebar .btn-book");
+if (btnBookVehicleList && btnBookVehicleList.length > 0) {
+  btnBookVehicleList.forEach(btnBookVehicle => {
+    btnBookVehicle.addEventListener("click", bookVehicle);
+  })
+}
+
+const bookVehicleDetail=document.querySelector("#bookVehicleDetail");
+if(bookVehicleDetail){
+  bookVehicleDetail.addEventListener("click",bookVehicle)
 }
 
 // =========================================================
@@ -516,23 +522,40 @@ if (createVehicleForm) {
   if (!page) return;
 
   // ---------- Elements ----------
-  const desiredPinSelect   = page.querySelector("#desiredPinSelect");
-  const chargingDateInput  = page.querySelector("#chargingDate");
-  const chargingTimeInput  = page.querySelector("#chargingTime");
-  const hubSelectInput     = page.querySelector("#hubSelect");
+  const desiredPinSelect = page.querySelector("#desiredPinSelect");
+  const chargingDateInput = page.querySelector("#chargingDate");
+  const chargingTimeInput = page.querySelector("#chargingTime");
+  const hubSelectInput = page.querySelector("#hubSelect");
   const chargingTypeSelect = page.querySelector("#chargingType");
-  const durationRadios     = page.querySelectorAll('input[name="duration"]');
+  const durationRadios = page.querySelectorAll('input[name="duration"]');
   const btnConfirmCharging = page.querySelector("#btnConfirmCharging");
 
   if (!hubSelectInput) {
     console.warn("[schedule-charging] Không tìm thấy #hubSelect");
   }
 
-  // Set ngày mặc định hôm nay
-  if (chargingDateInput && !chargingDateInput.value) {
-    chargingDateInput.value = new Date().toISOString().split("T")[0];
-  }
+  // Set ngày và giờ mặc định (Hiện tại + 5 phút)
+  const nowPlus5 = new Date();
+  nowPlus5.setMinutes(nowPlus5.getMinutes() + 5);
 
+  // Lấy ngày (Định dạng YYYY-MM-DD theo giờ địa phương)
+  const year = nowPlus5.getFullYear();
+  const month = String(nowPlus5.getMonth() + 1).padStart(2, '0');
+  const day = String(nowPlus5.getDate()).padStart(2, '0');
+  const defaultDate = `${year}-${month}-${day}`;
+
+  // Lấy giờ (Định dạng HH:mm)
+  const hours = String(nowPlus5.getHours()).padStart(2, '0');
+  const minutes = String(nowPlus5.getMinutes()).padStart(2, '0');
+  const defaultTime = `${hours}:${minutes}`;
+
+  // Gán giá trị vào input nếu người dùng chưa nhập
+  if (chargingDateInput && !chargingDateInput.value) {
+    chargingDateInput.value = defaultDate;
+  }
+  if (chargingTimeInput && !chargingTimeInput.value) {
+    chargingTimeInput.value = defaultTime;
+  }
   const fmt = (n) => Number(n).toLocaleString("vi-VN");
 
   // Lấy duration từ radio đang checked
@@ -546,13 +569,13 @@ if (createVehicleForm) {
     const selectedVehicle = page.querySelector(".vehicle-pick--selected:not(.vehicle-pick--add)");
     if (!selectedVehicle) return;
 
-    const vehicleName  = selectedVehicle.getAttribute("data-name") || "";
+    const vehicleName = selectedVehicle.getAttribute("data-name") || "";
     const vehiclePlate = selectedVehicle.getAttribute("data-plate") || "";
-    const startPin     = parseInt(selectedVehicle.getAttribute("data-pin")) || 20;
+    const startPin = parseInt(selectedVehicle.getAttribute("data-pin")) || 20;
 
     const desiredPin = desiredPinSelect ? parseInt(desiredPinSelect.value) : 85;
-    const dateVal    = chargingDateInput ? chargingDateInput.value : "";
-    const timeVal    = chargingTimeInput ? chargingTimeInput.value : "08:00";
+    const dateVal = chargingDateInput ? chargingDateInput.value : "";
+    const timeVal = chargingTimeInput ? chargingTimeInput.value : "08:00";
 
     let hubText = "Chưa chọn Hub";
     if (hubSelectInput && hubSelectInput.selectedIndex >= 0) {
@@ -646,10 +669,10 @@ if (createVehicleForm) {
   });
 
   // ---------- Input change ----------
-  if (desiredPinSelect)   desiredPinSelect.addEventListener("change", updateSummary);
-  if (chargingDateInput)  chargingDateInput.addEventListener("change", updateSummary);
-  if (chargingTimeInput)  chargingTimeInput.addEventListener("change", updateSummary);
-  if (hubSelectInput)     hubSelectInput.addEventListener("change", updateSummary);
+  if (desiredPinSelect) desiredPinSelect.addEventListener("change", updateSummary);
+  if (chargingDateInput) chargingDateInput.addEventListener("change", updateSummary);
+  if (chargingTimeInput) chargingTimeInput.addEventListener("change", updateSummary);
+  if (hubSelectInput) hubSelectInput.addEventListener("change", updateSummary);
   if (chargingTypeSelect) chargingTypeSelect.addEventListener("change", updateSummary);
 
   // ---------- Duration radios ----------
@@ -819,17 +842,17 @@ if (cancelBtns.length > 0) {
   const btnConfirm = document.getElementById("btnConfirmDemand");
   if (!btnConfirm) return;
 
-  const hubCards        = document.querySelectorAll(".hub-pick");
-  const summaryHubName  = document.getElementById("summaryHubName");
+  const hubCards = document.querySelectorAll(".hub-pick");
+  const summaryHubName = document.getElementById("summaryHubName");
   const summaryHubAddress = document.getElementById("summaryHubAddress");
-  const btnCancel       = document.getElementById("btnCancelDemand");
+  const btnCancel = document.getElementById("btnCancelDemand");
 
   // ---------- Cập nhật summary ----------
   function updateSummary(hubId) {
     const radio = document.querySelector(`input[name="hub"][value="${hubId}"]`);
     if (!radio) return;
 
-    if (summaryHubName)    summaryHubName.textContent = radio.dataset.name || "Chưa chọn Hub";
+    if (summaryHubName) summaryHubName.textContent = radio.dataset.name || "Chưa chọn Hub";
     if (summaryHubAddress) summaryHubAddress.textContent = radio.dataset.address || "--";
 
     hubCards.forEach((card) => {
@@ -1194,3 +1217,105 @@ if (checkoutBtns.length > 0) {
     });
   });
 }
+
+//Phân trang cho trang hoạt động
+document.addEventListener("DOMContentLoaded", function () {
+  const listRows = document.querySelectorAll(".activity-history__list .list-row");
+  const paginationControls = document.getElementById("paginationControls");
+  const paginationNumbers = document.getElementById("paginationNumbers");
+  const btnPrevPage = document.getElementById("btnPrevPage");
+  const btnNextPage = document.getElementById("btnNextPage");
+  const jumpInput = document.getElementById("paginationJumpInput");
+
+  // Nếu không có dữ liệu hoặc không có thanh phân trang thì dừng
+  if (listRows.length === 0 || !paginationControls) {
+    if (paginationControls) paginationControls.style.display = "none";
+    return;
+  }
+
+  const rowsPerPage = 10; // Số dòng hiển thị trên 1 trang (Bạn có thể đổi thành 5, 20...)
+  const totalPages = Math.ceil(listRows.length / rowsPerPage);
+  let currentPage = 1;
+
+  // Ẩn tất cả các dòng ban đầu
+  listRows.forEach(row => row.style.display = "none");
+
+  // Hàm hiển thị dữ liệu của trang hiện tại
+  function renderTable(page) {
+    // Cập nhật trạng thái nút Trước / Sau
+    btnPrevPage.disabled = page === 1;
+    btnNextPage.disabled = page === totalPages;
+    jumpInput.value = page;
+
+    // Tính toán vị trí bắt đầu và kết thúc
+    const startIndex = (page - 1) * rowsPerPage;
+    const endIndex = Math.min(startIndex + rowsPerPage, listRows.length);
+
+    // Ẩn tất cả, sau đó chỉ hiện các dòng thuộc trang hiện tại
+    listRows.forEach((row, index) => {
+      if (index >= startIndex && index < endIndex) {
+        row.style.display = "flex"; // Vì layout của bạn đang dùng flex
+      } else {
+        row.style.display = "none";
+      }
+    });
+
+    // Cập nhật lại các nút số trang
+    renderPaginationNumbers(page);
+  }
+
+  // Hàm vẽ các nút số trang
+  function renderPaginationNumbers(activePage) {
+    paginationNumbers.innerHTML = ""; // Xóa các nút cũ
+
+    // Chỉ hiển thị tối đa 5 nút số trang xung quanh trang hiện tại
+    let startPage = Math.max(1, activePage - 2);
+    let endPage = Math.min(totalPages, activePage + 2);
+
+    for (let i = startPage; i <= endPage; i++) {
+      const btn = document.createElement("button");
+      btn.className = `pagination__btn ${i === activePage ? 'active' : ''}`;
+      btn.textContent = i;
+      btn.type = "button";
+
+      btn.addEventListener("click", () => {
+        currentPage = i;
+        renderTable(currentPage);
+      });
+
+      paginationNumbers.appendChild(btn);
+    }
+  }
+
+  // Sự kiện nút Trước
+  btnPrevPage.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderTable(currentPage);
+    }
+  });
+
+  // Sự kiện nút Sau
+  btnNextPage.addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderTable(currentPage);
+    }
+  });
+
+  // Sự kiện khi gõ số vào ô "Đến trang" và nhấn Enter
+  jumpInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      let page = parseInt(jumpInput.value);
+      if (isNaN(page) || page < 1) page = 1;
+      if (page > totalPages) page = totalPages;
+
+      currentPage = page;
+      renderTable(currentPage);
+      jumpInput.blur(); // Bỏ focus khỏi ô input
+    }
+  });
+
+  // Khởi chạy lần đầu (Hiển thị trang 1)
+  renderTable(currentPage);
+});

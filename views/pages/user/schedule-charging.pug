@@ -85,7 +85,7 @@ block main
           .energy-item
             label.energy-item__label KHUNG GIỜ BẮT ĐẦU
             .energy-item__value
-              input#chargingTime.input-field(type="time", value="08:00")
+              input#chargingTime.input-field(type="time")
 
         // Duration
         .duration
@@ -180,17 +180,17 @@ block main
             
             .form-row-2
               .form-group
-                label.form-label LOẠI XE
+                label.form-label LOẠI XE <span class="text-red">*</span>
                 select#type.form-control
                   option(value="Xe máy điện") Xe máy điện
                   option(value="Xe đạp điện") Xe đạp điện
               .form-group
-                label.form-label HÃNG / MODEL
-                input#model.form-control(type="text", placeholder="VinFast Feliz S")
+                label.form-label HÃNG / MODEL <span class="text-red">*</span>
+                input#model.form-control(type="text", value="VinFast Feliz S")
 
             .form-group
               label.form-label DUNG LƯỢNG PIN (kWh) <span class="text-red">*</span>
-              input#batteryCapacity.form-control(type="number", step="0.1", placeholder="3.5", required)
+              input#batteryCapacity.form-control(type="number", step="0.1",value="3.5", required)
 
         .modal-footer
           button.btn-cancel#cancelVehicleModalBtn(type="button") Hủy

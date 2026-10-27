@@ -52,7 +52,6 @@ router.patch("/edit/get",async(req,res)=>{
 })
 
 router.post("/edit",async(req,res)=>{
-  console.log(req.body);
   if(req.body.power<0){
     res.json({
       code:"error",

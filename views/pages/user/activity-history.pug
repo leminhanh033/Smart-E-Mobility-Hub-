@@ -21,12 +21,12 @@ block main
         a.toggle-btn.active(href="/activity/history") Lịch sử
       
       // ---------- Bộ lọc (Filters) ----------
-      .activity-history__filters
-        button.filter-pill.active(type="button") Tất cả
-        button.filter-pill(type="button") Đặt xe
-        button.filter-pill(type="button") Đặt chỗ đỗ
-        button.filter-pill(type="button") Đăng ký sạc
-        button.filter-pill(type="button") Báo sự cố
+      //- .activity-history__filters
+      //-   button.filter-pill.active(type="button") Tất cả
+      //-   button.filter-pill(type="button") Đặt xe
+      //-   button.filter-pill(type="button") Đặt chỗ đỗ
+      //-   button.filter-pill(type="button") Đăng ký sạc
+      //-   button.filter-pill(type="button") Báo sự cố
 
       // ---------- Danh sách (Table) ----------
       .activity-history__list
@@ -120,19 +120,21 @@ block main
       .activity-history__pagination
         
         // Nút chuyển trang
-        .pagination__controls
-          button.pagination__btn(type="button", disabled)
+        .pagination__controls#paginationControls
+          button.pagination__btn#btnPrevPage(type="button", disabled)
             i.fa-solid.fa-chevron-left
-          button.pagination__btn.active(type="button") 1
-          button.pagination__btn(type="button") 2
-          button.pagination__btn(type="button")
+          
+          .pagination__numbers#paginationNumbers
+          
+          button.pagination__btn#btnNextPage(type="button")
             i.fa-solid.fa-chevron-right
 
         // Ô nhập số trang muốn tới
         .pagination__jump
           span.pagination__jump-label Đến trang
-          input.pagination__jump-input(
+          input#paginationJumpInput.pagination__jump-input(
             type="number", 
             placeholder="..."
             value=1
+            min=1
           )
