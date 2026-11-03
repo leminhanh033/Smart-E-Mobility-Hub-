@@ -329,7 +329,7 @@ document.addEventListener("keydown", (e) => {
 
 
 //  TẠO VEHICLE (THÊM MỚI)
-const createVehicle = document.querySelector(".app-container .modal-overlay .modal-container .modal-body form");
+const createVehicle = document.querySelector("#create-vehicle");
 if (createVehicle) {
   const validate = new JustValidate('#create-vehicle');
   validate
@@ -355,7 +355,7 @@ if (createVehicle) {
       const batteryCapacity = event.target.batteryCapacity.value;
       const hubID = event.target.hubID.value;
       const status = event.target.status.value;
-      
+
       fetch("/admin/vehicle/create", {
         method: "POST",
         headers: {
@@ -375,7 +375,10 @@ if (createVehicle) {
         .then(res => res.json())
         .then(data => {
           if (data.code == "success") {
-            createModalOverlay.classList.remove("is-open");
+            const vehicleModalOverlay = document.getElementById("addVehicleModal");
+            if (vehicleModalOverlay) {
+              vehicleModalOverlay.classList.remove("is-open");
+            }
             alertMessage(data);
             window.location.href = "/admin/vehicle/list";
           }
@@ -408,7 +411,7 @@ if (editVehicle) {
     .onSuccess((event) => {
       const button = document.querySelector(".vehicle-list .modal-overlay#editVehicleModal .modal-footer .btn-submit");
       const id = button.getAttribute("data-id");
-      
+
       const vehicleCode = event.target.vehicleCode.value;
       const license = event.target.license.value; // Lấy biển số
       const VIN = event.target.VIN.value;
@@ -417,8 +420,8 @@ if (editVehicle) {
       const batteryCapacity = event.target.batteryCapacity.value;
       const hubID = event.target.hubID.value;
       const status = event.target.status.value;
-      
-      
+
+
       fetch("/admin/vehicle/edit", {
         method: "POST",
         headers: {
@@ -441,7 +444,7 @@ if (editVehicle) {
           if (data.code == "success") {
             const editModalOverlay = document.querySelector("#editVehicleModal");
             if (editModalOverlay) editModalOverlay.classList.remove("is-open");
-            
+
             alertMessage(data);
             window.location.href = "/admin/vehicle/list";
           }
@@ -492,7 +495,7 @@ if (btnOpenVehicleEditModals.length > 0 && vehicleEditModalOverlay) {
             editVehicleForm.elements["vehicleCode"].value = vehicleData.vehicleCode;
             editVehicleForm.elements["license"].value = vehicleData.license; // Đắp biển số vào
             editVehicleForm.elements["VIN"].value = vehicleData.VIN;
-            editVehicleForm.elements["type"].value = vehicleData.type; 
+            editVehicleForm.elements["type"].value = vehicleData.type;
             editVehicleForm.elements["model"].value = vehicleData.model;
             editVehicleForm.elements["batteryCapacity"].value = vehicleData.batteryCapacity;
             editVehicleForm.elements["hubID"].value = vehicleData.hubID;
@@ -729,6 +732,154 @@ if (createPort) {
 }
 
 
+
+const detailCard        = document.getElementById("detailCard");
+const emptyDetailState  = document.getElementById("emptyDetailState");
+const detailFooter      = document.getElementById("detailFooter");
+const btnConfirmTicket  = document.getElementById("btnConfirmTicket");
+const btnResolveTicket  = document.getElementById("btnResolveTicket");
+const btnIgnoreTicket   = document.getElementById("btnIgnoreTicket");
+
+let currentIncidentId = null; 
+
+function updateFooterButtons(status) {
+  if (!btnConfirmTicket || !btnResolveTicket || !btnIgnoreTicket) return;
+
+  // Ẩn tất cả trước
+  btnConfirmTicket.style.display = "none";
+  btnResolveTicket.style.display = "none";
+  btnIgnoreTicket.style.display = "none";
+
+  if (status === "Urgent" || status === "Medium" || status === "Low") {
+    // Chưa xử lý → hiện Xác nhận + Bỏ qua
+    btnConfirmTicket.style.display = "inline-flex";
+    btnIgnoreTicket.style.display  = "inline-flex";
+  } else if (status === "In Progress") {
+    // Đang xử lý (chờ KTV) → hiện "Đã xử lý xong"
+    btnResolveTicket.style.display = "inline-flex";
+  }
+}
+
+/* ----- 2. Hiển thị chi tiết khi click 1 dòng ----- */
+document.querySelectorAll(".incident-row").forEach((row) => {
+  row.addEventListener("click", () => {
+    // Đánh dấu dòng đang chọn
+    document.querySelectorAll(".incident-row").forEach(r => r.classList.remove("active"));
+    row.classList.add("active");
+
+    // Lấy dữ liệu từ data-attributes
+    currentIncidentId = row.getAttribute("data-id");
+    const ticket   = row.getAttribute("data-ticket")    || "--";
+    const vehicle  = row.getAttribute("data-vehicle")   || "--";
+    const hub      = row.getAttribute("data-hub")       || "--";
+    const type     = row.getAttribute("data-type")      || "--";
+    const createdBy= row.getAttribute("data-createdby") || "--";
+    const time     = row.getAttribute("data-time")      || "--";
+    const status   = row.getAttribute("data-status")    || "";
+
+    // Đắp vào panel chi tiết
+    document.getElementById("detailTicketCode").textContent = ticket;
+    document.getElementById("detailVehicle").textContent    = vehicle;
+    document.getElementById("detailHub").textContent        = hub;
+    document.getElementById("detailType").textContent       = type;
+    document.getElementById("detailCreatedBy").textContent  = createdBy;
+    document.getElementById("detailTime").textContent       = time;
+
+    // Cập nhật badge
+    const badge = document.getElementById("detailBadge");
+    if (badge) {
+      badge.textContent = status || "--";
+      badge.className = "badge";
+      if (status === "Urgent")        badge.classList.add("badge--red");
+      else if (status === "Medium")   badge.classList.add("badge--orange");
+      else if (status === "In Progress") badge.classList.add("badge--blue");
+      else if (status === "Resolved") badge.classList.add("badge--green");
+      else                            badge.classList.add("badge--gray");
+    }
+
+    if (emptyDetailState) emptyDetailState.style.display = "none";
+    if (detailCard)       detailCard.style.display = "block";
+
+    updateFooterButtons(status);
+  });
+});
+
+/* ----- 3. Nút "Đã xử lý xong" ----- */
+if (btnResolveTicket) {
+  btnResolveTicket.addEventListener("click", () => {
+    if (!currentIncidentId) {
+      notyf.error("Không xác định được sự cố cần cập nhật!");
+      return;
+    }
+
+    btnResolveTicket.disabled = true;
+    btnResolveTicket.textContent = "Đang xử lý...";
+
+    fetch("/admin/incident/resolve", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: currentIncidentId }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.code === "success") {
+          alertMessage(data);
+          window.location.href = "/admin/incident/manage";
+        } else {
+          notyf.error(data.message || "Cập nhật thất bại!");
+          btnResolveTicket.disabled = false;
+          btnResolveTicket.textContent = "Đã xử lý xong";
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        notyf.error("Có lỗi xảy ra khi cập nhật!");
+        btnResolveTicket.disabled = false;
+        btnResolveTicket.textContent = "Đã xử lý xong";
+      });
+  });
+}
+
+/* ----- 4. (Tuỳ chọn) Nút xác nhận / bỏ qua hiện có ----- */
+if (btnConfirmTicket) {
+  btnConfirmTicket.addEventListener("click", () => {
+    if (!currentIncidentId) return notyf.error("Chưa chọn sự cố!");
+    fetch("/admin/incident/confirm", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: currentIncidentId }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.code === "success") {
+          alertMessage(data);
+          window.location.href = "/admin/incident/manage";
+        } else {
+          notyf.error(data.message || "Cập nhật thất bại!");
+        }
+      });
+  });
+}
+
+if (btnIgnoreTicket) {
+  btnIgnoreTicket.addEventListener("click", () => {
+    if (!currentIncidentId) return notyf.error("Chưa chọn sự cố!");
+    fetch("/admin/incident/ignore", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: currentIncidentId }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.code === "success") {
+          alertMessage(data);
+          window.location.href = "/admin/incident/manage";
+        } else {
+          notyf.error(data.message || "Cập nhật thất bại!");
+        }
+      });
+  });
+}
 
 
 

@@ -45,10 +45,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }).addTo(map);
   }
 
-  // setTimeout(() => { 
-  //   map.invalidateSize(); 
-  //   map.dragging.enable();
-  // }, 300);
     map.invalidateSize(); 
     map.dragging.enable();
 
@@ -149,7 +145,6 @@ document.addEventListener("DOMContentLoaded", function () {
     markerLayer.clearLayers();
 
     hubs.forEach(hub => {
-      // Backend đã ép kiểu số (parseFloat, parseInt) nên có thể dùng trực tiếp
       const lat = hub.lat;
       const lng = hub.lng;
 
@@ -181,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Bắt sự kiện Click vào Marker
       marker.on("click", event => {
-        L.DomEvent.stopPropagation(event); // Ngăn click lan ra map
+        L.DomEvent.stopPropagation(event); 
         showHubPanel(hub, isOverload);
         map.panTo(marker.getLatLng());
       });

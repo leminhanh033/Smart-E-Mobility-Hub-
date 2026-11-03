@@ -9,7 +9,7 @@ block main
     // =========================================
     // HÀNG 1: THỐNG KÊ (STATS)
     // =========================================
-    .stats-grid
+    //- .stats-grid
       .stat-card
         .stat-card__header
           .stat-card__info
@@ -107,7 +107,7 @@ block main
                         else if report.status === 'Medium'
                           span.badge.badge--orange Medium
                         else if report.status === 'Resolved'
-                          span.badge.badge--green Resolved
+                          span.badge.badge--green Đã xử lý
                         else if report.status === 'In Progress'
                           span.badge.badge--blue Đang xử lý
                         else
@@ -116,7 +116,7 @@ block main
                   tr
                     td(colspan="8", style="text-align: center; padding: 20px;") Không có sự cố nào cần xử lý.
 
-          .history-link-wrapper
+          //- .history-link-wrapper
             a.history-link(href="#")
               | Xem lịch sử sự cố đã khắc phục
               i.fa-solid.fa-arrow-right
@@ -167,4 +167,5 @@ block main
           //- ID detailFooter để JS điều khiển ẩn/hiện nút
           .card-footer.detail-footer#detailFooter
             button#btnConfirmTicket.btn-primary-full(type="button") Xác nhận sự cố & Yêu cầu sửa chữa
+            button#btnResolveTicket.btn-success-full(type="button") Đã xử lý xong
             button#btnIgnoreTicket.btn-secondary-full(type="button") Bỏ qua cảnh báo

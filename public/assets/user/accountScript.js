@@ -164,3 +164,78 @@ if (login) {
     })
 }
 
+const resetPassword = document.querySelector("#change-password");
+if (resetPassword) {
+  const validate = new JustValidate('#change-password');
+  
+  validate
+    .addField('#phoneEmail', [
+      {
+        rule: 'required',
+        errorMessage: "Vui lòng nhập số điện thoại hoặc email",
+      },
+      {
+        validator: (value) => {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/; // Hoặc dùng /^[0-9]{10,11}$/ cho linh hoạt
+          return emailRegex.test(value) || phoneRegex.test(value);
+        },
+        errorMessage: "Vui lòng nhập đúng định dạng số điện thoại hoặc email",
+      },
+    ])
+    .addField('#otp', [
+      {
+        rule: 'required',
+        errorMessage: "Vui lòng nhập mã xác thực OTP",
+      }
+    ])
+    .addField('#new-password', [
+      {
+        rule: 'required',
+        errorMessage: "Vui lòng nhập mật khẩu mới",
+      }
+    ])
+    .addField('#check-password', [
+      {
+        rule: 'required',
+        errorMessage: "Vui lòng xác nhận lại mật khẩu mới",
+      },
+      {
+        validator: (value) => {
+          const passwordValue = document.querySelector('#new-password').value;
+          return value === passwordValue;
+        },
+        errorMessage: "Mật khẩu xác nhận không khớp",
+      },
+    ])
+    .onSuccess((event) => {
+      const phoneEmail = event.target.phoneEmail.value;
+      const otp = event.target.otp.value;
+      const newPassword = event.target['new-password'].value;
+
+      fetch("/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phoneEmail: phoneEmail,
+          otp: otp,
+          newPassword: newPassword,
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.code == "success") {
+            alertMessage(data);
+            window.location.href = "/login";
+          }
+          if (data.code == "error") {
+            notyf.error(data.message);
+          }
+        })
+        .catch(err => {
+          console.error("Lỗi kết nối:", err);
+        });
+    });
+}

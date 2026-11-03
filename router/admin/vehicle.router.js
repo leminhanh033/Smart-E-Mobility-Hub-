@@ -57,9 +57,6 @@ router.patch("/edit/get", async (req, res) => {
 
 
 router.post("/edit", async (req, res) => {
-  console.log("Dữ liệu cập nhật:", req.body);
-  
-  // Kiểm tra dung lượng pin
   if (req.body.batteryCapacity < 0) {
     res.json({
       code: "error",
@@ -68,7 +65,6 @@ router.post("/edit", async (req, res) => {
     return;
   }
 
-  // Cập nhật vào Database
   await vehiclemodel.updateOne({
     _id: req.body.id,
   }, req.body);

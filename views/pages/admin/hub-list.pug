@@ -11,13 +11,13 @@ block main
     // THANH CÔNG CỤ (Lọc, Tìm kiếm, Thêm mới)
     // =========================================
     .hub-controls
-      .hub-controls__left
+      //- .hub-controls__left
         .search-box
           i.fa-solid.fa-magnifying-glass
           input(type="text", placeholder="Tìm theo Hub ID hoặc tên Hub...")
       
       .hub-controls__right
-        .status-filter-wrapper
+        //- .status-filter-wrapper
           .status-filter-label Trạng thái hoạt động
           
           .status-filter-group
@@ -57,7 +57,7 @@ block main
 
 
         tbody
-          //- Duyệt mảng listHub. Nếu mảng rỗng, có thể thêm phần hiển thị "Không có dữ liệu"
+          //- Duyệt mảng listHub. Nếu mảng rỗng, hiển thị "Không có dữ liệu"
           if listHub && listHub.length > 0
             each hub, index in listHub
               tr
@@ -130,7 +130,7 @@ block main
     // =========================================
     // CẢNH BÁO CHÂN TRANG
     // =========================================
-    .warning-banner
+    //- .warning-banner
       .warning-content
         i.fa-solid.fa-triangle-exclamation
         div
@@ -149,22 +149,22 @@ block main
         | Tổng cộng: 
         strong #{listHub.length} Mobility Hubs
       
-      .pagination-controls
-        .page-size
-          span Hiển thị
-          select
-            option 10
-            option 20
-            option 50
-          span / trang
+      //- .pagination-controls
+      //-   .page-size
+      //-     span Hiển thị
+      //-     select
+      //-       option 10
+      //-       option 20
+      //-       option 50
+      //-     span / trang
         
-        .page-nav
-          span Trang 1 / 1
-          button.btn-page(type="button", disabled)
-            i.fa-solid.fa-chevron-left
-          button.btn-page.btn-page--active(type="button") 1
-          button.btn-page(type="button", disabled)
-            i.fa-solid.fa-chevron-right
+      //-   .page-nav
+      //-     span Trang 1 / 1
+      //-     button.btn-page(type="button", disabled)
+      //-       i.fa-solid.fa-chevron-left
+      //-     button.btn-page.btn-page--active(type="button") 1
+      //-     button.btn-page(type="button", disabled)
+      //-       i.fa-solid.fa-chevron-right
     // =========================================
     // MODAL THÊM HUB MỚI
     // =========================================

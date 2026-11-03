@@ -123,9 +123,6 @@ const CHARGING_RATE_DC = 800;   // đ/phút
 
 router.post("/charging/create", async (req, res) => {
   try {
-    // Log body để debug khi cần
-    console.log("[charging/create] body:", req.body);
-
     const {
       vehicleOwnerID,
       hubId,
@@ -139,12 +136,10 @@ router.post("/charging/create", async (req, res) => {
 
     const userId = req.account ? req.account._id : "6501abc123456789012345";
 
-    // ---------- Validate input cơ bản ----------
     if (!vehicleOwnerID) {
       return res.json({ code: "error", message: "Vui lòng chọn xe cần sạc." });
     }
     if (!hubId) {
-      console.log("lỗi");
       return res.json({ code: "error", message: "Vui lòng chọn Mobility Hub." });
     }
 

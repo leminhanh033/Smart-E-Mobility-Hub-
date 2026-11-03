@@ -11,9 +11,9 @@ block main
           p.activity-history__desc Xem lại toàn bộ đặt xe, đặt chỗ và các giao dịch của bạn trên hệ thống.
 
         // Thanh tìm kiếm
-        .activity-history__search
-          i.fa-solid.fa-magnifying-glass
-          input(type="text", placeholder="Tìm kiếm Hub, mã xe, mã đặt chỗ...")
+        //- .activity-history__search
+        //-   i.fa-solid.fa-magnifying-glass
+        //-   input(type="text", placeholder="Tìm kiếm Hub, mã xe, mã đặt chỗ...")
 
       // ---------- Toggle (Đang hoạt động / Lịch sử) ----------
       .activity-history__toggle
@@ -43,7 +43,6 @@ block main
         // ==========================================
         if historyList && historyList.length > 0
           each item in historyList
-            //- 1. Khai báo các biến mặc định
             - var iconClass = 'fa-motorcycle'
             - var iconColor = 'icon--green'
             - var title = ''
@@ -53,7 +52,6 @@ block main
             - var badgeClass = (item.status === 'completed') ? 'badge--green' : 'badge--gray'
             - var statusText = (item.status === 'completed') ? 'Hoàn tất' : 'Đã hủy'
 
-            //- 2. Xử lý logic theo từng loại
             if item.type === 'rental'
               - title = 'Thuê xe máy'
               - subText = (item.vehicleID ? item.vehicleID.model : 'Xe đã xóa') + (item.vehicleID ? ' — ' + item.vehicleID.vehicleCode : '')

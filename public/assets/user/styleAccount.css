@@ -412,7 +412,7 @@ body {
 .reset-password .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .reset-password .form__group {

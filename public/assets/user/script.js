@@ -65,7 +65,6 @@ if (timeSlots.length > 0) {
       // Chọn cái vừa click
       slot.classList.add("time-slot--selected");
 
-      // Đồng bộ radio bên trong (vì click vào label có thể không tự check)
       const radio = slot.querySelector('input[type="radio"]');
       if (radio) radio.checked = true;
     });
@@ -287,9 +286,9 @@ if (btnBookVehicleList && btnBookVehicleList.length > 0) {
   })
 }
 
-const bookVehicleDetail=document.querySelector("#bookVehicleDetail");
-if(bookVehicleDetail){
-  bookVehicleDetail.addEventListener("click",bookVehicle)
+const bookVehicleDetail = document.querySelector("#bookVehicleDetail");
+if (bookVehicleDetail) {
+  bookVehicleDetail.addEventListener("click", bookVehicle)
 }
 
 // =========================================================
@@ -744,7 +743,6 @@ if (createVehicleForm) {
         portType,
         scheduledStart,
       };
-      console.log("[schedule-charging] POST /book/charging/create →", payload);
 
       const originalText = this.innerText;
       this.innerText = "Đang xử lý...";
@@ -1233,7 +1231,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  const rowsPerPage = 10; // Số dòng hiển thị trên 1 trang (Bạn có thể đổi thành 5, 20...)
+  const rowsPerPage = 10; 
   const totalPages = Math.ceil(listRows.length / rowsPerPage);
   let currentPage = 1;
 
@@ -1319,3 +1317,33 @@ document.addEventListener("DOMContentLoaded", function () {
   // Khởi chạy lần đầu (Hiển thị trang 1)
   renderTable(currentPage);
 });
+
+
+const logoutBtn = document.querySelector(".log-out");
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      const response = await fetch("/logout", {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.code === "success") {
+        window.location.href = "/login";
+      } 
+      else {
+          alert(data.message || "Đăng xuất thất bại!");
+      }
+    } catch (error) {
+      console.error("Lỗi đăng xuất:", error);
+      if (typeof notyf !== "undefined") {
+        notyf.error("Có lỗi xảy ra, vui lòng thử lại!");
+      }
+    }
+  });
+}

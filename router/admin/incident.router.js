@@ -81,7 +81,7 @@ router.post('/update-status', async (req, res) => {
     const updated = await ReportModel.findByIdAndUpdate(
       id,
       { status: status },
-      { new: true }
+      { returnDocument: "after" }
     );
 
     if (!updated) {
@@ -95,5 +95,37 @@ router.post('/update-status', async (req, res) => {
   }
 });
 
+router.patch("/resolve", async (req, res) => {
+  try {
+    const { id } = req.body || {};
+    if (!id) {
+      return res.json({ code: "error", message: "Thiếu ID sự cố!" });
+    }
+
+    const incident = await ReportModel.findById(id);
+    if (!incident) {
+      return res.json({ code: "error", message: "Không tìm thấy sự cố!" });
+    }
+
+    if (incident.status !== "In Progress") {
+      return res.json({
+        code: "error",
+        message: "Chỉ có thể đánh dấu hoàn thành khi sự cố đang ở trạng thái 'Đang xử lý'!",
+      });
+    }
+
+    incident.status = "Resolved";
+    incident.resolvedAt = new Date();
+    await incident.save();
+
+    return res.json({
+      code: "success",
+      message: `Đã xử lý xong sự cố!`,
+    });
+  } catch (err) {
+    console.error("[incident/resolve]", err);
+    return res.json({ code: "error", message: "Lỗi server!" });
+  }
+});
 
 module.exports = router

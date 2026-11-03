@@ -97,6 +97,11 @@ body {
 .dashboard__header .header__right {
   display: flex;
   align-items: center;
+  gap:20px
+}
+
+.dashboard__header .header__right .log-out{
+  cursor:pointer;
 }
 
 .dashboard__header .header__right .user-profile {
