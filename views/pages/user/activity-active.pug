@@ -46,6 +46,8 @@ block main
             - var btnReport   = false
             - var btnPark     = false
             - var btnCheckout = false
+            - var btnStartCharging = false 
+            - var btnStopCharging = false // 🔥 Thêm nút Dừng sạc
 
             //- =====================================================
             //- 2. RENTAL
@@ -88,7 +90,11 @@ block main
                 - tagText = 'Đang giữ xe'
                 - tagClass = 'tag--orange'
                 - isCountdown = true
-                - timerTarget = item.holdTime
+                
+                - var _created = item.createdAt ? new Date(item.createdAt).getTime() : Date.now()
+                - var _expire = new Date(_created + 60 * 60 * 1000) // Cộng 1 tiếng
+                - timerTarget = _expire.toISOString()
+                
                 - timerLabel = 'còn giữ chỗ'
                 - costLabel = 'Phí tạm tính: '
                 - btnReceive = true
@@ -139,8 +145,11 @@ block main
                 - tagText = 'Đang giữ chỗ'
                 - tagClass = 'tag--orange'
                 - isCountdown = true
-                - var _bookedValid = item.bookedAt && !isNaN(new Date(item.bookedAt).getTime())
-                - timerTarget = _bookedValid ? new Date(new Date(item.bookedAt).getTime() + 60*60000).toISOString() : null
+                
+                - var _created = item.createdAt ? new Date(item.createdAt).getTime() : Date.now()
+                - var _expire = new Date(_created + 60 * 60 * 1000)
+                - timerTarget = _expire.toISOString()
+                
                 - timerLabel = 'còn giữ chỗ'
                 - costLabel = 'Phí đặt chỗ: '
                 - costValue = 'Miễn phí'
@@ -176,13 +185,20 @@ block main
               else if item.status === 'charging'
                 - tagText = 'Đang sạc'
                 - tagClass = 'tag--orange'
-                - timerTarget = item.startTime
-                - timerLabel = 'thời gian sạc'
+                
+                //- Đồng hồ đếm ngược thời gian còn lại
+                - var _start = new Date(item.startTime)
+                - var _end = new Date(_start.getTime() + item.duration * 60000)
+                - timerTarget = _end.toISOString()
+                - timerLabel = 'thời gian còn lại'
+                - isCountdown = true 
+                
+                //- Lấy trực tiếp cost từ model
                 - costLabel = 'Phí sạc: '
-                - costValue = '0 VNĐ'
-                - liveCost = true
-                - liveCostRate = (item.portType === 'DC' ? 800 : 500)
-                - liveCostUnit = 'minute'
+                - costValue = (item.cost || 0).toLocaleString('vi-VN') + ' VNĐ'
+                - liveCost = false 
+                
+                - btnStopCharging = true // 🔥 Bật nút Dừng sạc
 
               else
                 - tagText = 'Chờ sạc'
@@ -194,6 +210,9 @@ block main
                 - costLabel = 'Phí giữ cổng: '
                 - costValue = ((item.reservationFee || 0).toLocaleString('vi-VN')) + ' VNĐ'
                 - btnCancel = true
+                
+                //- Luôn hiện nút bắt đầu sạc
+                - btnStartCharging = true
 
             //- =====================================================
             //- 5. RENDER CARD
@@ -221,7 +240,7 @@ block main
                           i.fa-regular.fa-clock
                           | Bắt đầu: #{startTimeStr}
 
-                  if btnReceive || btnReturn || btnCancel || btnReport || btnPark || btnCheckout
+                  if btnReceive || btnReturn || btnCancel || btnReport || btnPark || btnCheckout || btnStartCharging || btnStopCharging
                     .activity-card__actions
                       if btnReceive
                         button.btn-receive(data-id=item._id, data-type=item.type, type="button") Nhận xe
@@ -232,6 +251,10 @@ block main
                           style="background-color: #00d67d; color: white; border: none;") Gửi xe
                       if btnCheckout
                         button.btn-checkout(data-id=item._id, data-type=item.type, type="button") Lấy xe ra
+                      if btnStartCharging
+                        button.btn-start-charging(data-id=item._id, type="button", style="background-color: #3b82f6; color: white;") Bắt đầu sạc
+                      if btnStopCharging
+                        button.btn-stop-charging(data-id=item._id, type="button", style="background-color: #ef4444; color: white; border: none;") Dừng sạc
                       if btnCancel
                         button.btn-cancel(data-id=item._id, data-type=item.type, type="button") Hủy
 

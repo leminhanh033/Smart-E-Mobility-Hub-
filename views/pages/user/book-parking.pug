@@ -36,7 +36,6 @@ block main
           span.book-parking__list-count #{hubList.length} kết quả
 
         if hubList && hubList.length > 0
-          //- 🔑 Xác định Hub đang chọn: ưu tiên desID, fallback hub đầu tiên
           - var selectedHub = hubList.find(h => h._id.toString() === desID) || hubList[0]
 
           each hub in hubList
@@ -83,7 +82,7 @@ block main
         ul.summary__meta
           li
             span Thời gian giữ chỗ
-            strong 5 phút
+            strong 60 phút
           li
             span Phí đặt chỗ
             strong Miễn phí

@@ -1347,3 +1347,115 @@ if (logoutBtn) {
     }
   });
 }
+
+
+// =========================================================
+// BẮT ĐẦU SẠC (Chuyển từ Chờ sạc -> Đang sạc)
+// =========================================================
+const startChargingBtns = document.querySelectorAll(".activity-card .btn-start-charging");
+
+if (startChargingBtns.length > 0) {
+  startChargingBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.getAttribute("data-id");
+      const type = this.getAttribute("data-type");
+
+      if (!confirm("Bắt đầu phiên sạc ngay bây giờ?")) {
+        return;
+      }
+
+      const originalText = this.innerText;
+      this.innerText = "Đang xử lý...";
+      this.disabled = true;
+
+      fetch("/activity/charging/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: id, type: type }), // Gửi kèm type để Backend tiện xử lý
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code === "success") {
+            // Hiển thị thông báo thành công
+            if (window.notyf) {
+              notyf.success(data.message || "Đã bắt đầu sạc!");
+            }
+            
+            // Đợi 1.5 giây cho người dùng đọc thông báo rồi mới reload
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          } else {
+            if (window.notyf) {
+              notyf.error(data.message || "Không thể bắt đầu sạc.");
+            }
+            this.innerText = originalText;
+            this.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error("Lỗi bắt đầu sạc:", error);
+          if (window.notyf) {
+            notyf.error("Lỗi kết nối đến server!");
+          }
+          this.innerText = originalText;
+          this.disabled = false;
+        });
+    });
+  });
+}
+
+
+// =========================================================
+// DỪNG SẠC
+// =========================================================
+const stopChargingBtns = document.querySelectorAll(".activity-card .btn-stop-charging");
+
+if (stopChargingBtns.length > 0) {
+  stopChargingBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const id = this.getAttribute("data-id");
+
+      if (!confirm("Bạn có chắc chắn muốn dừng phiên sạc này không?")) {
+        return;
+      }
+
+      const originalText = this.innerText;
+      this.innerText = "Đang xử lý...";
+      this.disabled = true;
+
+      fetch("/activity/charging/stop", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: id }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code === "success") {
+            if (window.notyf) {
+              notyf.success(data.message || "Đã dừng sạc!");
+            }
+            
+            // Đợi 1.5 giây cho người dùng đọc thông báo rồi tải lại trang
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          } else {
+            if (window.notyf) {
+              notyf.error(data.message || "Không thể dừng sạc.");
+            }
+            this.innerText = originalText;
+            this.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error("Lỗi dừng sạc:", error);
+          if (window.notyf) {
+            notyf.error("Lỗi kết nối đến server!");
+          }
+          this.innerText = originalText;
+          this.disabled = false;
+        });
+    });
+  });
+}

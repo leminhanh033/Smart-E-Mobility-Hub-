@@ -12,7 +12,8 @@ const chargingBookingSchema = new Schema({
 
   duration: { type: Number, required: true },
 
-  startTime: { type: Date },   
+  startTime: { type: Date }, 
+  endTime: { type: Date },   
 
   reservationFee: { type: Number, default: 0 },
   cost: { type: Number, default: 0 },

@@ -3,12 +3,15 @@ const hubmodel = require("../../models/hub.model")
 const bookingmodel = require("../../models/booking.model");
 const parkingBookingModel = require("../../models/booking-parking.model")
 const chargingBookingModel = require("../../models/booking-charging.model")
-const vehiclemodel = require("../../models/vehicle.model")
+const vehiclemodel = require("../../models/vehicle.model");
+const vehicleOwnerModel = require("../../models/vehicleOwner.model");
 const moment = require("moment")
 
 
 const RATE_PER_MINUTE = 500;
 const PARKING_HOLD_MS = 60 * 60 * 1000; // 60 phút
+const CHARGING_RATE_AC = 500;
+const CHARGING_RATE_DC = 800;
 
 router.get('/active', async (req, res) => {
   try {
@@ -49,7 +52,7 @@ router.get('/active', async (req, res) => {
     }
 
     // 3. Lấy danh sách Đăng ký sạc (Đang active)
-    const chargings = await chargingBookingModel.find({ userID: userId, status: 'active' })
+    const chargings = await chargingBookingModel.find({ userID: userId, status: { $in: ['active', 'charging'] } })
       .populate("hubID")        // Lấy tên Hub
       .lean();
 
@@ -201,7 +204,6 @@ router.post('/cancel', async (req, res) => {
       parking.status = 'cancelled';
       await parking.save();
 
-      // 🔑 Trả lại chỗ đã chiếm lúc đặt (không cho âm)
       await hubmodel.findOneAndUpdate(
         { _id: parking.hubID, parkingUsed: { $gt: 0 } },
         { $inc: { parkingUsed: -1 } }
@@ -366,7 +368,6 @@ router.post("/park/checkin", async (req, res) => {
       booking.status = "cancelled";
       await booking.save();
 
-      // 🔑 Hết hạn giữ chỗ → trả lại chỗ đã chiếm lúc đặt
       await hubmodel.findOneAndUpdate(
         { _id: booking.hubID, parkingUsed: { $gt: 0 } },
         { $inc: { parkingUsed: -1 } }
@@ -388,7 +389,6 @@ router.post("/park/checkin", async (req, res) => {
     booking.status = "completed"; // completed = đang gửi xe
     await booking.save();
 
-    // ❌ KHÔNG $inc parkingUsed — đã chiếm từ lúc đặt rồi
 
     return res.json({
       code: "success",
@@ -463,10 +463,8 @@ router.post("/charging/stop", async (req, res) => {
     const endTime = new Date();
     const minutes = Math.max(1, Math.ceil((endTime - new Date(booking.startTime)) / 60000));
     const rate = booking.portType === "DC" ? CHARGING_RATE_DC : CHARGING_RATE_AC;
-    const cost = minutes * rate;
 
     booking.endTime = endTime;
-    booking.cost = cost;
     booking.status = "completed";
     await booking.save();
 
@@ -482,7 +480,7 @@ router.post("/charging/stop", async (req, res) => {
 
     return res.json({
       code: "success",
-      message: `Đã kết thúc sạc (${minutes} phút). Chi phí: ${cost.toLocaleString("vi-VN")} VNĐ.`,
+      message: `Đã kết thúc sạc`,
       cost,
       minutes,
     });
@@ -491,4 +489,44 @@ router.post("/charging/stop", async (req, res) => {
     return res.json({ code: "error", message: "Lỗi máy chủ." });
   }
 });
+
+
+router.post("/charging/start", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ code: "error", message: "Thiếu ID lịch sạc" });
+    }
+
+    const booking = await chargingBookingModel.findById(id);
+
+    if (!booking) {
+      return res.status(404).json({ code: "error", message: "Không tìm thấy lịch sạc" });
+    }
+
+    if (booking.status !== "active") {
+      return res.status(400).json({ 
+        code: "error", 
+        message: "Lịch sạc này không ở trạng thái chờ hoặc đã được bắt đầu." 
+      });
+    }
+
+    booking.status = "charging";
+    booking.startTime = new Date(); 
+    
+    await booking.save();
+
+    return res.json({ 
+      code: "success", 
+      message: "Đã bắt đầu sạc thành công!",
+      data: booking 
+    });
+
+  } catch (error) {
+    console.error("Lỗi bắt đầu sạc:", error);
+    return res.status(500).json({ code: "error", message: "Lỗi server" });
+  }
+});
+
 module.exports = router
