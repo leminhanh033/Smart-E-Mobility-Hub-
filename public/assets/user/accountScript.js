@@ -164,6 +164,37 @@ if (login) {
     })
 }
 
+//Gửi otp
+const sendOTP=document.querySelector(".btn-send-otp");
+if(sendOTP){
+  sendOTP.addEventListener("click",()=>{
+    const phoneEmail=document.querySelector("#phoneEmail").value;
+    if(!phoneEmail){
+      notyf.error("Vui lòng nhập email hoặc số điện thoại");
+    }
+    else{
+      fetch("/send-otp",{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phoneEmail: phoneEmail,
+        })
+      })
+      .then(res=>res.json())
+      .then(data=>{
+        if(data.code=="success"){
+          notyf.success(data.message);
+        }
+        if(data.code=="error"){
+          notyf.error(data.message);
+        }
+      })
+    }
+  })
+}
+
 const resetPassword = document.querySelector("#change-password");
 if (resetPassword) {
   const validate = new JustValidate('#change-password');

@@ -111,6 +111,31 @@ router.post('/change-password', async(req, res) => {
   })
 })
 
+router.post('/send-otp', async(req, res) => {
+  const emailAccount=await usermodel.findOne({
+    email:req.body.phoneEmail,
+  })
+  if(emailAccount){
+    return res.json({
+      code:"success",
+      message:"Đã gửi mã otp vào số điện thoại"
+    })
+  }
+  const phoneAccount=await usermodel.findOne({
+    phone:req.body.phoneEmail,
+  })
+  if(phoneAccount){
+    return res.json({
+      code:"success",
+      message:"Đã gửi mã otp vào email thành công"
+    })
+  }
+  res.json({
+    code:"error",
+    message:"Không tìm thấy email hoặc số điện thoại",
+  })
+})
+
 router.post("/logout", async (req, res) => {
   try {
     res.clearCookie("login"); 

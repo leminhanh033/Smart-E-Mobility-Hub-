@@ -4,7 +4,7 @@ extends ../../layouts/user/account.pug
 block main 
   // Bên phải: Form đăng ký
   .register 
-    a.btn-back(href="#")
+    a.btn-back(href="/login")
       i.fa-solid.fa-arrow-left
       span Quay lại
 
@@ -60,15 +60,6 @@ block main
 
       // Nút đăng ký
       button.btn-submit(type="submit") Đăng ký tài khoản
-
-      // Hoặc
-      .divider
-        span HOẶC
-
-      // Đăng ký qua OTP
-      button.btn-otp(type="button")
-        i.fa-regular.fa-comment-dots
-        span Đăng ký nhanh qua mã OTP (SMS/Email)
 
       // Đăng nhập ngay
       .form__footer
