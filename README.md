@@ -22,4 +22,8 @@ Sử dụng lệnh yarn start hoặc npm start
 ### 🔍 Bước 3: Sử dụng website
 Truy cập đường dẫn để sử dụng các dịch vụ bên user: http://localhost:3000. Trước đó, cần đăng ký và đăng nhập
 Truy cập đường dẫn để sử dụng các dịch vụ bên đơn vị vận hành: http://localhost:3000/admin/login. Vì là giả lập nên có thể đăng nhập bằng email hoặc mật khẩu nào cũng được
-
+Để đăng nhập vào trang admin có thể dùng các tài khoản (theo thứ tự là email, số điện thoại, mật khẩu)
+1. admin@ecohub.vn	0988789421	admin123
+2.	operator.hub@ecohub.vn	0912345678	operator123	
+3.	manager.noc@ecohub.vn	0905123456	manager123	
+4.	support@ecohub.vn	0938765432	support123	
