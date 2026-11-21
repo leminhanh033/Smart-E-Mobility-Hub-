@@ -10,67 +10,10 @@ block main
     // THANH CHỌN HUB & NÚT THÊM MỚI
     // =========================================
     .port-hub-toolbar
-      //- .port-hub-toolbar__left
-        label.form-label Mobility Hub đang quản lý
-        p.port-hub-toolbar__desc Chọn Hub để xem và quản lý các cổng sạc thuộc Hub đó.
       .port-hub-toolbar__right
-        //- select.form-select.hub-selector
-          option HUB_BK_CS2 - ĐH Bách Khoa CS2
-          option HUB_METRO - Ga Metro ĐHQG
-          option HUB_UIT_IU - ĐH CNTT & Quốc Tế
         button.btn-add-port(type="button")
           i.fa-solid.fa-plus
           span Thêm cổng sạc
-
-    // =========================================
-    // THỐNG KÊ (STATS)
-    // =========================================
-    //- .port-stats-grid
-      .port-stat-card
-        span.port-stat-card__label TỔNG CỔNG SẠC
-        .port-stat-card__value 10
-        span.port-stat-card__sub AC: 8 &bull; DC: 2
-      
-      .port-stat-card.port-stat-card--ready
-        span.port-stat-card__label SẴN SÀNG
-        .port-stat-card__value 7
-        span.port-stat-card__sub Có thể phân bổ
-        
-      .port-stat-card.port-stat-card--charging
-        span.port-stat-card__label ĐANG SẠC
-        .port-stat-card__value 1
-        span.port-stat-card__sub Có phiên hoạt động
-        
-      .port-stat-card.port-stat-card--error
-        span.port-stat-card__label BẢO TRÌ / LỖI
-        .port-stat-card__value 2
-        span.port-stat-card__sub Không khả dụng
-
-    // =========================================
-    // THANH CÔNG CỤ (Tìm kiếm, Bộ lọc)
-    // =========================================
-    //- .port-toolbar
-      .port-toolbar__left
-        .search-box
-          i.fa-solid.fa-magnifying-glass
-          input(type="text", placeholder="Tìm theo mã cổng sạc (VD: CH-01)...")
-        
-        .filter-selects
-          select.form-select
-            option Tất cả loại
-            option AC
-            option DC
-          
-          select.form-select
-            option Tất cả trạng thái
-            option Sẵn sàng
-            option Đang sạc
-            option Bảo trì
-            option Lỗi
-          
-          button.btn-sync(type="button")
-            i.fa-solid.fa-rotate
-            | Đặt lại
 
     // =========================================
     // BẢNG DỮ LIỆU CỔNG SẠC
@@ -78,7 +21,6 @@ block main
     .port-table-wrapper
       .table-header
         h3.table-title Danh sách cổng sạc
-        //- span.table-badge HUB_BK_CS2 &bull; 10 cổng
 
       table.port-table
         thead
@@ -135,7 +77,7 @@ block main
                 td
                   if port.status === 'charging' && port.session
                     .session-info.session-info--active
-                      strong= port.session.vehicleId
+                      strong= port.session.license
                       span= port.session.time
                   else
                     span.session-info ---
@@ -143,8 +85,12 @@ block main
                 td.timestamp= port.updatedAtFormat
                 
                 td.inrow 
-                  if port.status === 'charging'
-                    button.btn-detail.btn-warning(type="button", data-id=port._id)
+                  if port.status === 'charging' && port.session
+                    button.btn-detail.btn-warning.js-stop-charging(
+                      type="button",
+                      data-booking-id=port.session.bookingId,
+                      data-port-code=port.portCode
+                    )
                       | Dừng sạc
                   
                   button.btn-detail.btn-edit-port(type="button", data-id=port._id)

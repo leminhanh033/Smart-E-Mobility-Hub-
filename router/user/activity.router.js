@@ -6,7 +6,7 @@ const chargingBookingModel = require("../../models/booking-charging.model")
 const vehiclemodel = require("../../models/vehicle.model");
 const vehicleOwnerModel = require("../../models/vehicleOwner.model");
 const moment = require("moment")
-
+const chargingPortmodel = require("../../models/chargingPort.model");
 
 const RATE_PER_MINUTE = 500;
 const PARKING_HOLD_MS = 60 * 60 * 1000; // 60 phút
@@ -135,7 +135,7 @@ router.get('/history', async (req, res) => {
 
       item.dateStr = start ? start.format("DD/MM/YYYY") : "---";
 
-           if (end) {
+      if (end) {
         item.timeStr = `${start.format("HH:mm")} - ${end.format("HH:mm")}`;
         item.durationStr = `${Math.ceil(moment.duration(end.diff(start)).asMinutes())} phút`;
       } else if (item.duration) { // Dành cho Sạc điện (có sẵn duration)
@@ -219,7 +219,12 @@ router.post('/cancel', async (req, res) => {
       if (charging.status === 'cancelled') return res.json({ code: "error", message: "Đơn đã bị hủy trước đó." });
       if (charging.status === 'charging') return res.json({ code: "error", message: "Đang sạc, hãy dừng sạc thay vì hủy." });
       if (charging.status === 'completed') return res.json({ code: "error", message: "Phiên sạc đã kết thúc." });
-
+      if (charging.status !== "active") {
+        return res.json({
+          code: "error",
+          message: "Chỉ có thể hủy lịch sạc đang ở trạng thái chờ.",
+        });
+      }
       charging.status = 'cancelled';
       charging.cost = 0;
       await charging.save();
@@ -230,6 +235,13 @@ router.post('/cancel', async (req, res) => {
         { _id: charging.hubID, ...(isAC ? { ACUsed: { $gt: 0 } } : { DCUsed: { $gt: 0 } }) },
         isAC ? { $inc: { ACUsed: -1 } } : { $inc: { DCUsed: -1 } }
       );
+      if (charging.portID) {
+        await chargingPortmodel.updateOne(
+          { _id: charging.portID },
+          { $set: { status: "active", vehicleUsed: null } }
+        );
+      }
+
 
       return res.json({ code: "success", message: "Hủy phiên sạc thành công! Phí giữ cổng được hoàn." });
     }
@@ -284,9 +296,6 @@ router.post("/receive", async (req, res) => {
   }
 });
 
-// =========================================================
-// POST /return — TRẢ XE (rental)
-// =========================================================
 // =========================================================
 // POST /return — TRẢ XE (rental)
 // =========================================================
@@ -463,7 +472,7 @@ router.post("/charging/stop", async (req, res) => {
     const endTime = new Date();
     const minutes = Math.max(1, Math.ceil((endTime - new Date(booking.startTime)) / 60000));
     const rate = booking.portType === "DC" ? CHARGING_RATE_DC : CHARGING_RATE_AC;
-
+    const cost = minutes * rate;
     booking.endTime = endTime;
     booking.status = "completed";
     await booking.save();
@@ -477,6 +486,12 @@ router.post("/charging/stop", async (req, res) => {
       { _id: booking.hubID, ...(isAC ? { ACUsed: { $gt: 0 } } : { DCUsed: { $gt: 0 } }) },
       isAC ? { $inc: { ACUsed: -1 } } : { $inc: { DCUsed: -1 } }
     );
+    if (booking.portID) {
+      await chargingPortmodel.updateOne(
+        { _id: booking.portID },
+        { $set: { status: "active", vehicleUsed: null } }
+      );
+    }
 
     return res.json({
       code: "success",
@@ -506,21 +521,21 @@ router.post("/charging/start", async (req, res) => {
     }
 
     if (booking.status !== "active") {
-      return res.status(400).json({ 
-        code: "error", 
-        message: "Lịch sạc này không ở trạng thái chờ hoặc đã được bắt đầu." 
+      return res.status(400).json({
+        code: "error",
+        message: "Lịch sạc này không ở trạng thái chờ hoặc đã được bắt đầu."
       });
     }
 
     booking.status = "charging";
-    booking.startTime = new Date(); 
-    
+    booking.startTime = new Date();
+
     await booking.save();
 
-    return res.json({ 
-      code: "success", 
+    return res.json({
+      code: "success",
       message: "Đã bắt đầu sạc thành công!",
-      data: booking 
+      data: booking
     });
 
   } catch (error) {

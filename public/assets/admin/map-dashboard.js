@@ -9,6 +9,19 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+  // Bật/tắt nút chuyển lớp bản đồ (giao diện giống ảnh mẫu thì để false)
+  const SHOW_LAYER_SWITCHER = false;
+
+  // Escape HTML để chèn text an toàn vào innerHTML
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   // ==========================================
   // 2. KHỞI TẠO BẢN ĐỒ
   // ==========================================
@@ -28,7 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Khởi tạo bản đồ
     map = L.map("hubMapDashboard", {
       dragging: true,
       touchZoom: true,
@@ -39,14 +51,99 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.nocMapInstance = map;
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "&copy; OpenStreetMap contributors"
-    }).addTo(map);
+    // ------------------------------------------
+    // Các nguồn tile (không cần API key)
+    // Thứ tự = thứ tự ưu tiên khi tự động chuyển nguồn
+    // ------------------------------------------
+    const baseLayers = {
+      "OpenStreetMap": L.tileLayer(
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          maxZoom: 19,
+          attribution: "&copy; OpenStreetMap"
+        }
+      ),
+      "OSM France": L.tileLayer(
+        "https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",
+        {
+          maxZoom: 20,
+          subdomains: "abc",
+          attribution: "&copy; OpenStreetMap France | &copy; OpenStreetMap"
+        }
+      ),
+      "OSM HOT": L.tileLayer(
+        "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+        {
+          maxZoom: 19,
+          subdomains: "abc",
+          attribution: "&copy; OpenStreetMap | Humanitarian OSM Team"
+        }
+      ),
+      "Esri - Đường phố": L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 19,
+          attribution: "Tiles &copy; Esri"
+        }
+      )
+    };
+
+    const layerNames = Object.keys(baseLayers);
+    let currentLayerName = layerNames[0];
+    let currentLayer = baseLayers[currentLayerName];
+    currentLayer.addTo(map);
+
+    if (SHOW_LAYER_SWITCHER) {
+      L.control.layers(baseLayers, null, { position: "topright" }).addTo(map);
+    }
+
+    // ------------------------------------------
+    // Tự động chuyển nguồn nếu tile lỗi liên tục
+    // ------------------------------------------
+    let tileErrorCount = 0;
+    const MAX_TILE_ERRORS = 6;
+    const triedLayers = new Set();
+
+    // Người dùng đổi lớp bằng tay (khi bật layer switcher)
+    map.on("baselayerchange", e => {
+      currentLayerName = e.name;
+      currentLayer = e.layer;
+      tileErrorCount = 0;
+    });
+
+    layerNames.forEach(name => {
+      const layer = baseLayers[name];
+
+      layer.on("tileload", () => {
+        if (currentLayer === layer) tileErrorCount = 0;
+      });
+
+      layer.on("tileerror", () => {
+        if (currentLayer !== layer) return;
+
+        tileErrorCount++;
+        if (tileErrorCount < MAX_TILE_ERRORS) return;
+
+        triedLayers.add(currentLayerName);
+        const next = layerNames.find(n => !triedLayers.has(n));
+
+        if (!next) {
+          console.error("Tất cả nguồn bản đồ đều không tải được. Kiểm tra mạng/DNS/firewall.");
+          return;
+        }
+
+        console.warn(`Nguồn "${currentLayerName}" lỗi, chuyển sang "${next}".`);
+        map.removeLayer(currentLayer);
+        currentLayerName = next;
+        currentLayer = baseLayers[next];
+        currentLayer.addTo(map);
+        tileErrorCount = 0;
+      });
+    });
   }
 
-    map.invalidateSize(); 
-    map.dragging.enable();
+  map.invalidateSize();
+  map.dragging.enable();
 
   // ==========================================
   // 3. XỬ LÝ PANEL CHI TIẾT
@@ -125,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (data && Array.isArray(data.hubList)) {
         return data.hubList;
       }
-      
+
       throw new Error("Dữ liệu trả về không chứa mảng hubList.");
     } catch (error) {
       console.error("Lỗi khi tải dữ liệu HUB:", error);
@@ -145,10 +242,13 @@ document.addEventListener("DOMContentLoaded", function () {
     markerLayer.clearLayers();
 
     hubs.forEach(hub => {
-      const lat = hub.lat;
-      const lng = hub.lng;
+      // Loại null/undefined/chuỗi rỗng/NaN
+      if (hub.lat == null || hub.lng == null || hub.lat === "" || hub.lng === "") return;
 
-      if (isNaN(lat) || isNaN(lng)) return;
+      const lat = Number(hub.lat);
+      const lng = Number(hub.lng);
+
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
       // Tính toán xem Hub có bị quá tải không
       const totalPorts = (hub.ACNumber || 0) + (hub.DCNumber || 0);
@@ -160,8 +260,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const customIcon = L.divIcon({
         className: "custom-marker-wrapper",
         html: `<div class="custom-marker-label" style="border-color: ${color};">
-                 <span style="width: 10px; height: 10px; background-color: ${color}; border-radius: 50%; display: inline-block;"></span> 
-                 ${hub.name}
+                 <span style="width: 10px; height: 10px; background-color: ${color}; border-radius: 50%; display: inline-block;"></span>
+                 ${escapeHtml(hub.name)}
                </div>`,
         iconSize: [0, 0],
         iconAnchor: [0, 0]
@@ -176,12 +276,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Bắt sự kiện Click vào Marker
       marker.on("click", event => {
-        L.DomEvent.stopPropagation(event); 
+        L.DomEvent.stopPropagation(event);
         showHubPanel(hub, isOverload);
         map.panTo(marker.getLatLng());
       });
     });
-
   }
 
   // ==========================================

@@ -4,6 +4,7 @@ const parkingBookingModel = require("../../models/booking-parking.model")
 const vehicleOwnermodel = require("../../models/vehicleOwner.model");
 const chargingDemandModel = require("../../models/charging-demand.model");
 const chargingBookingModel=require("../../models/booking-charging.model")
+const  chargingPortmodel=require("../../models/chargingPort.model")
 router.get('/parking', async (req, res) => {
   const desID = req.query.destinationId;
   const filter = {
@@ -136,20 +137,14 @@ router.post("/charging/create", async (req, res) => {
 
     const userId = req.account ? req.account._id : "6501abc123456789012345";
 
-    if (!vehicleOwnerID) {
-      return res.json({ code: "error", message: "Vui lòng chọn xe cần sạc." });
-    }
-    if (!hubId) {
-      return res.json({ code: "error", message: "Vui lòng chọn Mobility Hub." });
-    }
+    if (!vehicleOwnerID) return res.json({ code: "error", message: "Vui lòng chọn xe cần sạc." });
+    if (!hubId) return res.json({ code: "error", message: "Vui lòng chọn Mobility Hub." });
 
     const durationNum = Number(duration);
     if (![45, 60, 120].includes(durationNum)) {
       return res.json({ code: "error", message: "Thời lượng không hợp lệ." });
     }
 
-    // ---------- Compute scheduledStart ----------
-    // Ưu tiên client gửi, fallback ghép date + time
     let scheduledStart;
     if (scheduledStartRaw) {
       scheduledStart = new Date(scheduledStartRaw);
@@ -163,39 +158,19 @@ router.post("/charging/create", async (req, res) => {
       return res.json({ code: "error", message: "Không thể đặt lịch trong quá khứ." });
     }
 
-    // ---------- Verify xe ----------
     const vehicle = await vehicleOwnermodel.findOne({
       _id: vehicleOwnerID,
       userID: String(userId),
     });
-    if (!vehicle) {
-      return res.json({ code: "error", message: "Không tìm thấy xe của bạn." });
-    }
+    if (!vehicle) return res.json({ code: "error", message: "Không tìm thấy xe của bạn." });
     if (vehicle.status === "charging") {
       return res.json({ code: "error", message: "Xe này đang được sạc ở phiên khác." });
     }
 
-    // ---------- Verify hub ----------
     const hub = await hubmodel.findById(hubId);
-    if (!hub) {
-      return res.json({ code: "error", message: "Không tìm thấy Hub." });
-    }
-    if (!hub.turnOn) {
-      return res.json({ code: "error", message: "Hub hiện không hoạt động." });
-    }
+    if (!hub) return res.json({ code: "error", message: "Không tìm thấy Hub." });
+    if (!hub.turnOn) return res.json({ code: "error", message: "Hub hiện không hoạt động." });
 
-    // ---------- Check cổng còn trống ----------
-    const isAC = portType === "AC" || !portType;
-    const used = isAC ? (hub.ACUsed || 0) : (hub.DCUsed || 0);
-    const total = isAC ? (hub.ACNumber || 0) : (hub.DCNumber || 0);
-    if (used >= total) {
-      return res.json({
-        code: "error",
-        message: `Hub đã hết cổng ${isAC ? "AC" : "DC"} trống. Vui lòng chọn Hub khác.`,
-      });
-    }
-
-    // ---------- Check xe chưa có lịch đang chờ / đang sạc ----------
     const existing = await chargingBookingModel.findOne({
       userID: userId,
       vehicleOwnerID,
@@ -208,35 +183,67 @@ router.post("/charging/create", async (req, res) => {
       });
     }
 
-    // ---------- Tính phí giữ cổng ----------
-    // Phí = (giờ hẹn - giờ hiện tại) tính bằng phút × 200đ/phút
+    const isAC = portType === "AC" || !portType;
+
+    // Atomic: tìm và khóa cổng trong 1 bước
+    const availablePort = await chargingPortmodel.findOneAndUpdate(
+      {
+        hubID: String(hubId),
+        type: isAC ? "AC" : "DC",
+        status: "active",
+      },
+      {
+        $set: {
+          status: "charging",
+          vehicleUsed: String(vehicle._id),
+        },
+      },
+      { returnDocument: 'after', sort: { _id: 1 } }
+    );
+
+    if (!availablePort) {
+      return res.json({
+        code: "error",
+        message: `Hub đã hết cổng ${isAC ? "AC" : "DC"} trống. Vui lòng chọn Hub khác.`,
+      });
+    }
+
     const minutesUntilStart = Math.max(
       0,
       Math.ceil((scheduledStart.getTime() - Date.now()) / 60000)
     );
     const reservationFee = minutesUntilStart * 200;
 
-    // ---------- Tạo booking ----------
-    const booking = await chargingBookingModel.create({
-      userID: userId,
-      vehicleOwnerID,
-      hubID: hubId,
-      portType: isAC ? "AC" : "DC",
-      desiredPin: Number(desiredPin) || 85,
-      startPin: vehicle.pin || 20,
-      startTime:scheduledStart,
-      duration: durationNum,
-      reservationFee,
-      status: "active",
-    });
+    let booking;
+    try {
+      booking = await chargingBookingModel.create({
+        userID: userId,
+        vehicleOwnerID,
+        hubID: hubId,
+        portID: availablePort._id,
+        portCode: availablePort.portCode,
+        portType: isAC ? "AC" : "DC",
+        desiredPin: Number(desiredPin) || 85,
+        startPin: vehicle.pin || 20,
+        startTime: scheduledStart,
+        duration: durationNum,
+        reservationFee,
+        status: "active",
+      });
 
-    // ---------- Reserve cổng ngay khi đặt ----------
-    await hubmodel.findByIdAndUpdate(
-      hubId,
-      isAC ? { $inc: { ACUsed: 1 } } : { $inc: { DCUsed: 1 } }
-    );
+      await hubmodel.findByIdAndUpdate(
+        hubId,
+        isAC ? { $inc: { ACUsed: 1 } } : { $inc: { DCUsed: 1 } }
+      );
+    } catch (err) {
+      // Rollback: nhả cổng nếu tạo booking thất bại
+      await chargingPortmodel.updateOne(
+        { _id: availablePort._id },
+        { $set: { status: "active", vehicleUsed: null } }
+      );
+      throw err;
+    }
 
-    // ---------- Response ----------
     const dateStr = scheduledStart.toLocaleDateString("vi-VN");
     const timeStr =
       String(scheduledStart.getHours()).padStart(2, "0") + ":" +
@@ -245,11 +252,12 @@ router.post("/charging/create", async (req, res) => {
     return res.json({
       code: "success",
       message:
-        `Đã đặt lịch sạc lúc ${timeStr} ngày ${dateStr} tại ${hub.name}. ` +
-        `Hệ thống sẽ tự khởi động khi tới giờ. ` +
-        `Phí giữ cổng: ${reservationFee.toLocaleString("vi-VN")}đ ` +
-        `(chờ ${minutesUntilStart} phút × 200đ).`,
+        `Đã đặt` +
+        `Cổng sạc: ${availablePort.portCode} (${isAC ? "AC" : "DC"}). ` +
+        `Phí giữ cổng: ${reservationFee.toLocaleString("vi-VN")}đ.`,
       bookingId: booking._id,
+      portId: availablePort._id,
+      portCode: availablePort.portCode,
       reservationFee,
       minutesUntilStart,
     });
@@ -258,7 +266,6 @@ router.post("/charging/create", async (req, res) => {
     return res.json({ code: "error", message: "Lỗi máy chủ." });
   }
 });
-
 
 // =========================================================
 // POST /book/charging/demand — nhận nhu cầu sạc

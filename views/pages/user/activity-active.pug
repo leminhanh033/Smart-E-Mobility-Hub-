@@ -163,7 +163,7 @@ block main
               - iconClass = 'fa-bolt'
               - iconColor = 'icon--purple'
               - cardTitle = 'Sạc điện tại ' + (item.hubID ? item.hubID.name : '')
-              - subText = 'Cổng ' + item.portType + ' • Mục tiêu ' + item.desiredPin + '%'
+              - subText = 'Cổng ' + item.portCode + ' • Mục tiêu ' + item.desiredPin + '%'
               - vehiclePlate = (item.vehicleOwnerID && item.vehicleOwnerID.license) ? item.vehicleOwnerID.license : ''
               - var _stC = item.startTime ? new Date(item.startTime) : (item.scheduledStart ? new Date(item.scheduledStart) : null)
               - startTimeStr = (_stC && !isNaN(_stC.getTime()))? `${String(_stC.getHours()).padStart(2,'0')}:${String(_stC.getMinutes()).padStart(2,'0')} ${String(_stC.getDate()).padStart(2,'0')}/${String(_stC.getMonth()+1).padStart(2,'0')}/${_stC.getFullYear()}`: ''

@@ -10,22 +10,56 @@ const dashboardRouter=require("./dashboard.router");
 const vehicleRouter=require("./vehicle.router");
 const chargingPortROuter=require("./chargingPort.router");
 
-router.use("/",dashboardRouter);
+const Admin = require('../../models/admin.model');
 
-router.use("/",accountRouter);
+const requireAdmin = async (req, res, next) => {
+  try {
+    const loginCookie = req.cookies?.login;
 
-router.use("/hub",hubRouter);
+    if (!loginCookie || !loginCookie.id) {
+      return res.redirect('/admin/account/login');
+    }
 
-router.use("/incident",incidentRouter);
+    const admin = await Admin.findById(loginCookie.id).lean();
 
-router.use("/simulation",simulationRouter);
+    if (!admin || !admin.isActive) {
+      res.clearCookie('login');
+      return res.redirect('/admin/account/login');
+    }
 
-router.use("/dispatch",dispatchRouter);
+    res.locals.admin = {
+      id: admin._id.toString(),
+      fullname: admin.fullName,
+      email: admin.email,
+      role: admin.role,
+    };
 
-router.use("/charging",chargingRouter);
+    req.admin = res.locals.admin;
 
-router.use("/vehicle",vehicleRouter);
+    next();
+  } catch (error) {
+    console.error('Lỗi xác thực admin:', error);
+    res.clearCookie('login');
+    return res.redirect('/admin/account/login');
+  }
+};
 
-router.use("/charging/port",chargingPortROuter)
+router.use("/account",accountRouter);
+
+router.use("/",requireAdmin,dashboardRouter);
+
+router.use("/hub",requireAdmin,hubRouter);
+
+router.use("/incident",requireAdmin,incidentRouter);
+
+router.use("/simulation",requireAdmin,simulationRouter);
+
+router.use("/dispatch",requireAdmin,dispatchRouter);
+
+router.use("/charging",requireAdmin,chargingRouter);
+
+router.use("/vehicle",requireAdmin,vehicleRouter);
+
+router.use("/charging/port",requireAdmin,chargingPortROuter)
 
 module.exports=router;

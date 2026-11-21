@@ -20,6 +20,38 @@ if (notify) {
   sessionStorage.removeItem("notify");
 }
 
+
+//Đăng xuất
+const btnLogout = document.querySelector(".log-out");
+if(btnLogout){
+  btnLogout.addEventListener("click",(e)=>{
+    e.preventDefault();
+    const confirmed = confirm("Bạn có chắc chắn muốn đăng xuất không?");
+    if(!confirmed){
+      return;
+    }
+    fetch("/admin/account/logout",{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      if(data.code=="success"){
+        alertMessage(data);
+        window.location.href = "/admin/login";
+      }
+      if(data.code=="error"){
+        notyf.error(data.message);
+      }
+    })
+    .catch(()=>{
+      notyf.error("Lỗi kết nối, vui lòng thử lại");
+    })
+  })
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   // 1. Tìm các element cần thiết
   var menuToggleBtn = document.getElementById("menuToggle");
@@ -881,6 +913,54 @@ if (btnIgnoreTicket) {
   });
 }
 
-
+//Nút dừng sạc trong trang danh sách cổng sạc
+const stopChargingBtns = document.querySelectorAll(".js-stop-charging");
+if (stopChargingBtns.length > 0) {
+  stopChargingBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const bookingId = btn.getAttribute("data-booking-id");
+      const portCode = btn.getAttribute("data-port-code") || "";
+      if (!bookingId) {
+        notyf.error("Không xác định được phiên sạc cần dừng.");
+      }
+      else {
+        if (confirm(`Dừng sạc cho cổng ${portCode}?`)) {
+          const originalText = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerHTML = "Đang dừng...";
+          fetch("/admin/charging/port/stop", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: bookingId,
+            })
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.code == "success") {
+                notyf.success(data.message);
+                setTimeout(() => {
+                  window.location.reload();
+                }, 1200);
+              }
+              if (data.code == "error") {
+                notyf.error(data.message);
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              notyf.error("Lỗi kết nối, vui lòng thử lại.");
+              btn.disabled = false;
+              btn.innerHTML = originalText;
+            });
+        }
+      }
+    });
+  });
+}
 
 

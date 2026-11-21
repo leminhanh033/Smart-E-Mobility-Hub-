@@ -6,6 +6,8 @@ const chargingBookingSchema = new Schema({
   vehicleOwnerID: { type: Schema.Types.ObjectId, ref: 'vehicleOwner', required: true },
   hubID: { type: Schema.Types.ObjectId, ref: 'hub', required: true },
 
+  portID: { type: Schema.Types.ObjectId, ref: 'chargingPort' }, 
+  portCode: { type: String }, 
   portType: { type: String, enum: ['AC', 'DC'], default: 'AC' },
   desiredPin: { type: Number, min: 0, max: 100, default: 85 },
   startPin: { type: Number, min: 0, max: 100, default: 20 },

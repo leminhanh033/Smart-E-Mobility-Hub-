@@ -103,9 +103,9 @@ html(lang="vi")
               i.fa-solid.fa-circle
               | Mobility Hubs Online
             .user-profile-header
-              .avatar-sm AM
-              span Nguyễn Minh Anh
-              i.fa-solid.fa-chevron-down
+              .avatar-sm= (admin && admin.fullname ? admin.fullname.charAt(0).toUpperCase() : 'A')
+              span= (admin && admin.fullname ? admin.fullname : 'Quản trị viên')
+            .log-out Đăng xuất
 
         // ---------- Body ----------
         block main
